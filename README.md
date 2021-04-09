@@ -1,3 +1,3 @@
 # IAS Project
 
-by Simon laube, Philipp Weber and Maximilian barth
+by Simon Laube, Philipp Weber and Maximilian Barth
