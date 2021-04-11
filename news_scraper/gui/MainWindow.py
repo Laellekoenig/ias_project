@@ -85,7 +85,7 @@ class MainWindow(qtw.QWidget):
         self.resize(w, h)
 
     def getArticleList(self):
-        files = os.listdir("articles")
+        files = os.listdir("data/articles")
         articles = []
         for item in files:
             if item.endswith(".html"):
@@ -96,7 +96,7 @@ class MainWindow(qtw.QWidget):
     def selectionChanged(self):
         selectedArticle = self.selector.currentItem().text()
         fileName = self.getFileName(selectedArticle)
-        location = "articles/" + fileName
+        location = "data/articles/" + fileName
         with open(location, "r") as html:
             self.article.clear()
             self.article.insertHtml(html.read())
