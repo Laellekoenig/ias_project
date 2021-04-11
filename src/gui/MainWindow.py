@@ -46,8 +46,9 @@ class MainWindow(qtw.QWidget):
         logo.setObjectName("logo")
         menu.addWidget(logo)
         b1 = qtw.QPushButton(text="B1")
-        b2 = qtw.QPushButton(text="B2")
-        b3 = qtw.QPushButton(text="B3")
+        b2 = qtw.QPushButton(text="get new articles")
+        b3 = qtw.QPushButton(text="share on BAC-net")
+        # TODO b2 and b3 implementation
         b4 = qtw.QPushButton(text="dark")
         b4.clicked.connect(self.switch)
         self.switch = b4
@@ -134,7 +135,7 @@ class MainWindow(qtw.QWidget):
             border-left: 5px;
             padding-right: 100px;
             padding-left: 50px;
-            padding-top: 50px;
+            padding-top: 30px;
         }
         QTextBrowser QScrollBar {
             height: 0px;
@@ -144,11 +145,12 @@ class MainWindow(qtw.QWidget):
         }
         QListWidget {
             font-family: Roboto;
-            font-size: 20px;
+            font-size: 18px;
             line-height: 2;
             border-style: none;
             border-right: 1px solid lightgrey;
             spacing: 10;
+            padding-left: 10px;
         }
         QListWidget::Item {
             margin: 10px;
@@ -184,7 +186,7 @@ class MainWindow(qtw.QWidget):
             border-left: 5px;
             padding-right: 100px;
             padding-left: 50px;
-            padding-top: 50px;
+            padding-top: 30px;
         }
         QScrollBar {
             height: 0px;
@@ -199,6 +201,7 @@ class MainWindow(qtw.QWidget):
             border-style: none;
             border-right: 1px solid lightgrey;
             spacing: 10;
+            padding-left: 10px;
         }
         QListWidget::Item {
             margin: 10px;
