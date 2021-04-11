@@ -20,6 +20,7 @@ class MainWindow(qtw.QWidget):
         #text reader
         text = qtw.QTextBrowser()
         self.article = text
+        self.setArticleStyle()
         #with open("articles/article1.html", "r") as html:
         #    text.insertHtml(html.read())
         text.setOpenExternalLinks(True)
@@ -121,6 +122,15 @@ class MainWindow(qtw.QWidget):
         name = name.replace(" ", "_")
         name += ".html"
         return name
+
+    def setArticleStyle(self):
+        self.article.document().setDefaultStyleSheet(
+            "body {} "
+            "p {font-size: 18px; line-height: 1.5;} "
+            "h1 {} "
+            "h3 {color: lightgrey;}"
+            "h2 {color: grey;}"
+        )
 
     def getLightStyleSheet(self):
         stylesheet = """
