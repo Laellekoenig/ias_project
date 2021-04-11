@@ -136,6 +136,7 @@ class MainWindow(qtw.QWidget):
         stylesheet = """
         QWidget {
             background-color: white;
+            color: black;
             padding: 0px;
             margin: 0px;
         }
@@ -158,7 +159,6 @@ class MainWindow(qtw.QWidget):
             font-size: 18px;
             line-height: 2;
             border-style: none;
-            border-right: 1px solid lightgrey;
             spacing: 10;
             padding-left: 10px;
         }
@@ -177,7 +177,6 @@ class MainWindow(qtw.QWidget):
         #main {
         }
         #container {
-            border-bottom: 1px solid lightgrey;
         }"""
         return stylesheet
 
