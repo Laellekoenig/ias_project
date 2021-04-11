@@ -18,24 +18,17 @@ class MainWindow(qtw.QWidget):
         text = qtw.QTextBrowser()
         with open("gui/test.html", "r") as html:
             text.insertHtml(html.read())
-        
         text.setOpenExternalLinks(True)
-         # for styling
-        text.setObjectName("article")
 
-        # grid layout for playing items
-        layout = qtw.QGridLayout()
-        layout.addWidget(text, 0, 5)
-
-        # horizontal layout for placing menu items
-        menu_layout = qtw.QHBoxLayout()
-        layout.addLayout(menu_layout, 0, 0)
-
-        #menu
-        menu = qtw.QListWidget()
+        #article selector
+        selector = qtw.QListWidget()
         entries = self.getEntries()
-        menu.addItems(entries)
-        menu_layout.addWidget(menu)
+        selector.addItems(entries)
+
+        # grid layout for playing items, 10 rows, 10 cols
+        layout = qtw.QGridLayout()
+        layout.addWidget(selector, 0, 0, 10, 2)
+        layout.addWidget(text, 0, 4, 10, 7)
 
         self.setLayout(layout)
         self.startScreenSize(app)
@@ -61,15 +54,31 @@ class MainWindow(qtw.QWidget):
         QWidget {
             background-color: white;
         }
-        QWidget#article {
+        QTextBrowser {
             background-color: white;
             border-style: none;
             border-left: 5px;
             padding-right: 100px;
+            padding-left: 50px;
+        }
+        QTextBrowser QScrollBar {
+            height: 0px;
+            width: 0px;
         }
         QPushButton {
+        }
+        QListWidget {
+            font-family: Roboto;
+            font-size: 30px;
+            line-height: 2;
+            border-style: none;
+            border-right: 1px solid lightgrey;
+            spacing: 10;
+        }
+        QListWidget::Item {
+            margin: 10px;
         }"""
         return stylesheet
 
     def getEntries(self):
-        return ["hallo", "welt", "wie", "geht", "es"]
+        return ["Artikel 1", "Artikel 2", "Artikel 3", "Artikel 4", "Artikel 5"]
