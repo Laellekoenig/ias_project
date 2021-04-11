@@ -206,7 +206,7 @@ class MainWindow(qtw.QWidget):
         }
         QListWidget {
             font-family: Roboto;
-            font-size: 20px;
+            font-size: 18px;
             line-height: 2;
             border-style: none;
             border-right: 1px solid lightgrey;
