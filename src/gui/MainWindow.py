@@ -87,19 +87,19 @@ class MainWindow(qtw.QWidget):
         articles = []
         for item in files:
             if item.endswith(".html"):
-                articles.append(item)
+                articleName = self.getArticleName(item)
+                articles.append(articleName)
         return articles
 
     def selectionChanged(self):
         selectedArticle = self.selector.currentItem().text()
-        location = "articles/" + selectedArticle
+        fileName = self.getFileName(selectedArticle)
+        location = "articles/" + fileName
         with open(location, "r") as html:
             self.article.clear()
             self.article.insertHtml(html.read())
 
     def switch(self):
-        print("switch")
-
         if self.light:
             self.switch.setText("light")
             css = self.getDarkStyleSheet()
@@ -110,6 +110,16 @@ class MainWindow(qtw.QWidget):
         self.setStyleSheet(css)
         self.light = not self.light
 
+    def getArticleName(self, name):
+        # cut away .html
+        name = name[:-5]
+        name = name.replace("_", " ")
+        return name
+
+    def getFileName(self, name):
+        name = name.replace(" ", "_")
+        name += ".html"
+        return name
 
     def getLightStyleSheet(self):
         stylesheet = """
@@ -124,6 +134,7 @@ class MainWindow(qtw.QWidget):
             border-left: 5px;
             padding-right: 100px;
             padding-left: 50px;
+            padding-top: 50px;
         }
         QTextBrowser QScrollBar {
             height: 0px;
@@ -173,8 +184,9 @@ class MainWindow(qtw.QWidget):
             border-left: 5px;
             padding-right: 100px;
             padding-left: 50px;
+            padding-top: 50px;
         }
-        QTextBrowser QScrollBar {
+        QScrollBar {
             height: 0px;
             width: 0px;
         }
