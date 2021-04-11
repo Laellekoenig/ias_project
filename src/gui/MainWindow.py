@@ -12,7 +12,8 @@ class MainWindow(qtw.QWidget):
         # initiate window
         super().__init__(windowTitle="IAS Project")
 
-        css = self.getStyleSheet()
+        self.light = True
+        css = self.getLightStyleSheet()
         self.setStyleSheet(css)
         self.setObjectName("main")
         
@@ -47,7 +48,9 @@ class MainWindow(qtw.QWidget):
         b1 = qtw.QPushButton(text="B1")
         b2 = qtw.QPushButton(text="B2")
         b3 = qtw.QPushButton(text="B3")
-        b4 = qtw.QPushButton(text="B4")
+        b4 = qtw.QPushButton(text="dark")
+        b4.clicked.connect(self.switch)
+        self.switch = b4
         menu.addWidget(b1)
         menu.addWidget(b2)
         menu.addWidget(b3)
@@ -94,8 +97,21 @@ class MainWindow(qtw.QWidget):
             self.article.clear()
             self.article.insertHtml(html.read())
 
+    def switch(self):
+        print("switch")
 
-    def getStyleSheet(self):
+        if self.light:
+            self.switch.setText("light")
+            css = self.getDarkStyleSheet()
+        else:
+            self.switch.setText("dark")
+            css = self.getLightStyleSheet()
+        
+        self.setStyleSheet(css)
+        self.light = not self.light
+
+
+    def getLightStyleSheet(self):
         stylesheet = """
         QWidget {
             background-color: white;
@@ -141,3 +157,53 @@ class MainWindow(qtw.QWidget):
             border-bottom: 1px solid lightgrey;
         }"""
         return stylesheet
+
+    def getDarkStyleSheet(self):
+        stylesheet = """
+        QWidget {
+            background-color: black;
+            color: white;
+            padding: 0px;
+            margin: 0px;
+        }
+        QTextBrowser {
+            background-color: black;
+            color: white;
+            border-style: none;
+            border-left: 5px;
+            padding-right: 100px;
+            padding-left: 50px;
+        }
+        QTextBrowser QScrollBar {
+            height: 0px;
+            width: 0px;
+        }
+        QPushButton {
+        }
+        QListWidget {
+            font-family: Roboto;
+            font-size: 20px;
+            line-height: 2;
+            border-style: none;
+            border-right: 1px solid lightgrey;
+            spacing: 10;
+        }
+        QListWidget::Item {
+            margin: 10px;
+        }
+        #logo {
+            font-size: 30px;
+            font-weight: bold;
+        }
+        QPushButton {
+            height: 50%;
+            border-style: none;
+            border-right: 1px solid lightgrey;
+        }
+        #main {
+        }
+        #container {
+            border-bottom: 1px solid lightgrey;
+        }"""
+        return stylesheet
+    
