@@ -31,7 +31,7 @@ class GUI:
         menu_width = math.floor(MENU_RATIO * w)
         article_width = math.floor((1 - MENU_RATIO) * w)
 
-        self.menu = tk.Frame(self.window, width=menu_width, borderwidth=10)
+        self.menu = tk.Frame(self.window, width=menu_width, borderwidth=1)
         self.article = tk.Frame(self.window, width=article_width)
 
         self.menu.pack(side="left", fill="both", expand=True)
