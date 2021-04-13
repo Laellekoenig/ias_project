@@ -14,6 +14,7 @@ poetry run python news_scraper/main.py
 PyQt5 - pip3 install PyQt5
 
 ---
-## Progress 11.04.2021
+## Progress 13.04.2021
 
-![progress](progress.png)
+![light](light.png)
+![dark](dark.png)
