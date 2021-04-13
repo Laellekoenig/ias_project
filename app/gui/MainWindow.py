@@ -12,6 +12,8 @@ class MainWindow(qtw.QWidget):
         # initiate window
         super().__init__(windowTitle="IAS Project")
 
+        self.loadFonts()
+
         self.light = True
         css = self.getLightStyleSheet()
         self.setStyleSheet(css)
@@ -70,6 +72,22 @@ class MainWindow(qtw.QWidget):
         self.setMinimumSize(700, 500)
         self.show()
 
+    def loadFonts(self):
+        db = qtg.QFontDatabase()
+        walbaum = os.getcwd() + "/data/fonts/Walbaum.ttf"
+        merri_light = os.getcwd() + "/data/fonts/Merriweather-Light.ttf"
+        merri_regular = os.getcwd() + "/data/fonts/Merriweather-Regular.ttf"
+        merri_bold = os.getcwd() + "/data/fonts/Merriweather-Bold.ttf"
+        merri_black = os.getcwd() + "/data/fonts/Merriweather-BlackItalic.ttf"
+        merri_italic = os.getcwd() + "/data/fonts/Merriweather-Italic.ttf"
+
+        db.addApplicationFont(walbaum)
+        db.addApplicationFont(merri_light)
+        db.addApplicationFont(merri_regular)
+        db.addApplicationFont(merri_bold)
+        db.addApplicationFont(merri_black)
+        db.addApplicationFont(merri_italic)
+
     def getScreenSize(self, app):
         screen = app.primaryScreen()
         size = screen.size()
@@ -125,9 +143,9 @@ class MainWindow(qtw.QWidget):
 
     def setArticleStyle(self):
         self.article.document().setDefaultStyleSheet(
-            "body {} "
-            "p {font-size: 18px; line-height: 1.5;} "
-            "h1 {} "
+            "body {font-family: Merriweather;} "
+            "p {font-size: 18px; line-height: 1.5; font-weight: 300;} "
+            "h1 {font-weight: bold; font-style: italic;} "
             "h3 {color: lightgrey;}"
             "h2 {color: grey;}"
         )
@@ -135,28 +153,35 @@ class MainWindow(qtw.QWidget):
     def getLightStyleSheet(self):
         stylesheet = """
         QWidget {
-            background-color: white;
+            background-color: #f7f7f7;
             color: black;
             padding: 0px;
             margin: 0px;
+            font-family: Merriweather;
         }
         QTextBrowser {
-            background-color: white;
+            background-color: #f7f7f7;
             border-style: none;
             border-left: 5px;
             padding-right: 100px;
             padding-left: 50px;
-            padding-top: 30px;
+            padding-top: 10px;
         }
         QTextBrowser QScrollBar {
             height: 0px;
             width: 0px;
         }
+        QListWidget QScrollBar {
+            height: 0px;
+            width: 0px;
+        }
         QPushButton {
+            font-weight: light;
+            font-size: 15px;
         }
         QListWidget {
-            font-family: Roboto;
-            font-size: 18px;
+            font-family: Merriweather;
+            font-size: 15px;
             line-height: 2;
             border-style: none;
             spacing: 10;
@@ -165,64 +190,89 @@ class MainWindow(qtw.QWidget):
         QListWidget::Item {
             margin: 10px;
         }
+        QListWidget::Item:selected {
+            color: #f7f7f7;
+            background-color: black;
+            margin: 0px;
+            padding: 0px;
+            border-radius: 3px;
+        }
         #logo {
-            font-size: 30px;
+            font-size: 40px;
             font-weight: bold;
+            font-family: Walbaum Fraktur;
         }
         QPushButton {
             height: 50%;
             border-style: none;
-            border-right: 1px solid lightgrey;
+            font-family: Merriweather;
+            font-weight: bold;
         }
         #main {
         }
         #container {
+            border-bottom: 1px solid lightgrey;
         }"""
         return stylesheet
 
     def getDarkStyleSheet(self):
         stylesheet = """
         QWidget {
-            background-color: black;
-            color: white;
+            background-color: #282828;
+            color: #f7f7f7;
             padding: 0px;
             margin: 0px;
+            font-family: Merriweather;
         }
         QTextBrowser {
-            background-color: black;
-            color: white;
+            background-color: #282828;
+            color: #f7f7f7;
             border-style: none;
             border-left: 5px;
             padding-right: 100px;
             padding-left: 50px;
-            padding-top: 30px;
+            padding-top: 10px;
         }
-        QScrollBar {
+        QTextBrowser QScrollBar {
+            height: 0px;
+            width: 0px;
+        }
+        QListWidget QScrollBar {
             height: 0px;
             width: 0px;
         }
         QPushButton {
+            font-weight: light;
+            font-size: 15px;
         }
         QListWidget {
-            font-family: Roboto;
-            font-size: 18px;
+            font-family: Merriweather;
+            font-size: 15px;
             line-height: 2;
             border-style: none;
-            border-right: 1px solid lightgrey;
             spacing: 10;
             padding-left: 10px;
         }
         QListWidget::Item {
             margin: 10px;
         }
+        QListWidget::Item:selected {
+            color: #282828;
+            background-color: #f7f7f7;
+            margin: 0px;
+            padding: 0px;
+            border-radius: 3px;
+        }
         #logo {
-            font-size: 30px;
+            font-size: 40px;
             font-weight: bold;
+            font-family: Walbaum Fraktur;
         }
         QPushButton {
             height: 50%;
             border-style: none;
-            border-right: 1px solid lightgrey;
+            font-family: Merriweather;
+            font-weight: bold;
         }
         #main {
         }
