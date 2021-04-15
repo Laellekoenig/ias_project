@@ -5,74 +5,101 @@ from PyQt5 import QtWidgets as qtw
 from PyQt5 import QtGui as qtg
 from PyQt5 import QtCore as qtc
 
-
 class MainWindow(qtw.QWidget):
 
     def __init__(self, app):
         # initiate window
         super().__init__(windowTitle="IAS Project")
 
+        # load fonts used in ui
         self.loadFonts()
 
+        # start in light theme
         self.light = True
         css = self.getLightStyleSheet()
         self.setStyleSheet(css)
+
+        # used for styling in css
         self.setObjectName("main")
         
-        #text reader
+        # main article box, HTML reader
         text = qtw.QTextBrowser()
         self.article = text
+        # css styling for article
         self.setArticleStyle()
-        #with open("articles/article1.html", "r") as html:
-        #    text.insertHtml(html.read())
         text.setOpenExternalLinks(True)
 
-        #article selector
+        #article selector, LHS of app
         selector = qtw.QListWidget()
         self.selector = selector
+        # read articles from /data/articles folder
         entries = self.getArticleList()
         selector.addItems(entries)
+        # add event for user input
         selector.itemSelectionChanged.connect(self.selectionChanged)
 
-        # grid layout for playing items, 10 rows, 10 cols
-        layout = qtw.QGridLayout()
-        layout.addWidget(selector, 0, 0, 10, 2)
-        layout.addWidget(text, 0, 4, 10, 7)
+        # grid layout for placing items, 10 rows, 10 cols
+        # main part of program
+        main = qtw.QGridLayout()
+        # article selector 20% of content
+        main.addWidget(selector, 0, 0, 10, 2)
+        # article 80% of content
+        main.addWidget(text, 0, 3, 10, 8)
 
-        # h layout for menu
-        container = qtw.QWidget()
-        container.setObjectName("container")
-
+        # menu bar on top of screen
         menu = qtw.QHBoxLayout()
 
+        # logo, top left
         logo = qtw.QLabel(text="News")
         logo.setObjectName("logo")
         menu.addWidget(logo)
+
+        # menu items
+        # from left to right
+        # button 1
         b1 = qtw.QPushButton(text="B1")
+        # b1.clicked.connect()
+        menu.addWidget(b1)
+
+        # button 2
         b2 = qtw.QPushButton(text="get new articles")
+        # b2.clicked.connect()
+        menu.addWidget(b2)
+
+        # button3
         b3 = qtw.QPushButton(text="share on BAC-net")
-        # TODO b2 and b3 implementation
+        # b3.clicked.connect()
+        menu.addWidget(b3)
+
+        # button 4
         b4 = qtw.QPushButton(text="dark")
         b4.clicked.connect(self.switch)
+        # switch for changing UI style sheet
         self.switch = b4
-        menu.addWidget(b1)
-        menu.addWidget(b2)
-        menu.addWidget(b3)
         menu.addWidget(b4)
-        
+
+        # container for menu bar 
+        container = qtw.QWidget()
+        # for styling
+        container.setObjectName("container")
+        # add menu to container
         container.setLayout(menu)
 
-        # layout of layouts
+        # master layout with menu, selector and article
         superLayout = qtw.QGridLayout()
+        superLayout.setObjectName("super")
+        # add menu and main
         superLayout.addWidget(container, 0, 0, 1, 10)
-        superLayout.addLayout(layout, 2, 0, 9, 10)
+        superLayout.addLayout(main, 2, 0, 9, 10)
 
+        # configure window and application details and show
         self.setLayout(superLayout)
         self.startScreenSize(app)
         self.setMinimumSize(700, 500)
         self.show()
 
     def loadFonts(self):
+        # adds custom fonts to application
         db = qtg.QFontDatabase()
         walbaum = os.getcwd() + "/data/fonts/Walbaum.ttf"
         merri_light = os.getcwd() + "/data/fonts/Merriweather-Light.ttf"
@@ -97,12 +124,18 @@ class MainWindow(qtw.QWidget):
 
     def startScreenSize(self, app):
         w, h = self.getScreenSize(app)
+        # application takes up 70% of screen size on start
         RATIO = 0.7
         w = math.floor(RATIO * w)
         h = math.floor(RATIO * h)
         self.resize(w, h)
 
     def getArticleList(self):
+        # articles must be in data/articles folder
+        # must be .html files
+        # name will be formatted as follows:
+        # generic_article_name.html     ->      generic article name
+
         files = os.listdir("data/articles")
         articles = []
         for item in files:
@@ -112,6 +145,7 @@ class MainWindow(qtw.QWidget):
         return articles
 
     def selectionChanged(self):
+        # change displayed article in UI on selection
         selectedArticle = self.selector.currentItem().text()
         fileName = self.getFileName(selectedArticle)
         location = "data/articles/" + fileName
@@ -120,6 +154,8 @@ class MainWindow(qtw.QWidget):
             self.article.insertHtml(html.read())
 
     def switch(self):
+        # switch from dark to light or vice versa
+
         if self.light:
             self.switch.setText("light")
             css = self.getDarkStyleSheet()
@@ -133,15 +169,18 @@ class MainWindow(qtw.QWidget):
     def getArticleName(self, name):
         # cut away .html
         name = name[:-5]
+        # format name:  article_name -> article name
         name = name.replace("_", " ")
         return name
 
     def getFileName(self, name):
+        # article name  -> article_name ->  article_name.html
         name = name.replace(" ", "_")
         name += ".html"
         return name
 
     def setArticleStyle(self):
+        # style sheet for displayed article
         self.article.document().setDefaultStyleSheet(
             "body {font-family: Merriweather;} "
             "p {font-size: 18px; line-height: 1.5; font-weight: 300;} "
@@ -151,6 +190,7 @@ class MainWindow(qtw.QWidget):
         )
 
     def getLightStyleSheet(self):
+        # light mode style sheet
         stylesheet = """
         QWidget {
             background-color: #f7f7f7;
@@ -216,6 +256,7 @@ class MainWindow(qtw.QWidget):
         return stylesheet
 
     def getDarkStyleSheet(self):
+        # dark mode style sheet
         stylesheet = """
         QWidget {
             background-color: #282828;
