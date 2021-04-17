@@ -29,6 +29,7 @@ poetry run python news_scraper/main.py
 - [ ] read indication
 - [ ] save settings
 - [ ] custom themes
+- [ ] images
 
 ---
 
