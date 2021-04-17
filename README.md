@@ -12,23 +12,23 @@ poetry run python news_scraper/main.py
 ## Feature Ideas
 
 ### Essential
-- [] article class
-- [] article to QT HTML
-- [] delete articles
-- [] BAC net integration
-- [] bluetooth article transmission
-- [] local network article transmission
-- [] download new articles
+- [ ] article class
+- [ ] article to QT HTML
+- [ ] delete articles
+- [ ] BAC net integration
+- [ ] bluetooth article transmission
+- [ ] local network article transmission
+- [ ] download new articles
 
 ### Nice to have
-- [] article signature for authenticity
-- [] source logo, theme 
-- [] sort articles by category
-- [] bookmark articles
-- [] many news sources
-- [] read indication
-- [] save settings
-- [] custom themes
+- [ ] article signature for authenticity
+- [ ] source logo, theme 
+- [ ] sort articles by category
+- [ ] bookmark articles
+- [ ] many news sources
+- [ ] read indication
+- [ ] save settings
+- [ ] custom themes
 
 ---
 
