@@ -5,6 +5,7 @@ class NewsSource(str, Enum):
     SRF = 'SRF'
     DIE_ZEIT = 'Die Zeit'
 
+# the html file is written with tags according to this class
 class HTMLTag(str, Enum):
     TITLE_0 = 'h3'
     TITLE_1 = 'h1'
