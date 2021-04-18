@@ -105,7 +105,7 @@ class Article:
             elif c == 'paragraph':
                 html += self.get_tagged_string(HTMLTag.PARAGRAPH, self.content[i])
             i += 1
-        html += "<body>\n<qt>"
+        html += "</body>\n</qt>"
         return html
 
     def get_tagged_string(self, HTMLTag, str):
