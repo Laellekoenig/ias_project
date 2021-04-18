@@ -43,8 +43,8 @@ class Article:
     def set_author(self, author):
         self.author = author
 
-    def set_time_and_date(self, time_and_date):
-        self.time_and_date = time_and_date
+    def set_date_and_time(self, date_and_time):
+        self.date_and_time = date_and_time
 
     def add_tagline(self, tagline):
         self.content_index.append("tagline")
