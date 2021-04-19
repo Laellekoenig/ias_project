@@ -15,10 +15,22 @@ class HTMLTag(str, Enum):
     TAGLINE = 'h2'
     PARAGRAPH = 'p'
 
+class Category(str, Enum):
+    POLITICS = 'politics'
+    GEO_POLITICS = 'geo_politics'
+    SPORTS = 'sports'
+    CULTURE = 'culture'
+    TECHNOLOGY = 'technology'
+    WEATHER = 'weather'
+    OTHER = 'other'
+
+
 class Article:
     def __init__(self, news_source):
         self.news_source = news_source
-        self.date_and_time_updated = ""
+        self.category = Category.OTHER
+        self.tags = []
+        self.date_and_time_modified = ""
         self.bookmarked = False
         self.opened = False
 
@@ -30,7 +42,12 @@ class Article:
         self.content_index = []
         self.content = []
 
-    
+    def set_category(self, main_category):
+        self.main_category = main_category
+
+    def add_tag(self, tag):
+        self.tags.append(tag)
+
     def set_title_0(self, title_0):
         self.title_0 = title_0
     
@@ -46,6 +63,9 @@ class Article:
     def set_date_and_time(self, date_and_time):
         self.date_and_time = date_and_time
 
+    def set_date_and_time_modified(self, date_and_time_modified):
+        self.date_and_time_modified = date_and_time_modified
+
     def add_tagline(self, tagline):
         self.content_index.append("tagline")
         self.content.append(tagline)
@@ -58,7 +78,9 @@ class Article:
         data = json.load(file)
 
         self.news_source = data['news_source']
-        self.date_and_time_updated = data['date_and_time_updated']
+        self.category = data['category']
+        self.tags = data['tags']
+        self.date_and_time_modified = data['date_and_time_modified']
         self.bookmarked = data['bookmarked']
         self.opened = data['opened']
 
@@ -76,7 +98,9 @@ class Article:
     def get_json(self):
         data = {}
         data['news_source'] = self.news_source
-        data['date_and_time_updated'] = self.date_and_time_updated
+        data['category'] = self.category
+        data['tags'] = self.tags
+        data['date_and_time_modified'] = self.date_and_time_modified
         data['bookmarked'] = self.bookmarked
         data['opened'] = self.opened
 
