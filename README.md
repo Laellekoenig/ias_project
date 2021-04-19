@@ -19,6 +19,7 @@ poetry run python news_scraper/main.py
 - [ ] bluetooth article transmission
 - [ ] local network article transmission
 - [ ] download new articles
+- [ ] loading animation when scraping
 
 ### Nice to have
 - [ ] article signature for authenticity
