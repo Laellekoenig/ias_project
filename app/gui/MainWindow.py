@@ -5,7 +5,7 @@ from PyQt5 import QtWidgets as qtw
 from PyQt5 import QtGui as qtg
 from PyQt5 import QtCore as qtc
 import qtawesome as qta
-from gui.ScraperInterface import ScraperInterface
+from gui.Interface import Interface
 
 class MainWindow(qtw.QWidget):
 
@@ -14,7 +14,7 @@ class MainWindow(qtw.QWidget):
         super().__init__(windowTitle="IAS Project")
 
         # for scraping articles
-        self.scraper = ScraperInterface()
+        self.interface = Interface()
 
         # load fonts used in ui
         self.loadFonts()
@@ -207,7 +207,7 @@ class MainWindow(qtw.QWidget):
         articles = []
         for article in self.downloadSelector.selectedItems():
             articles.append(article.text())
-        self.scraper.downloadArticles(articles)
+        self.interface.downloadArticles(articles)
 
         #remove downloaded articles form list
         for article in self.downloadSelector.selectedItems():

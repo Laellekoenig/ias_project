@@ -1,7 +1,7 @@
 from scraper.SRFScraper import getSRFArticles
 from logic.article import Article
 
-class ScraperInterface:
+class Interface:
 
     def __init__(self):
         pass
