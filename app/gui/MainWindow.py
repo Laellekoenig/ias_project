@@ -21,30 +21,13 @@ class MainWindow(qtw.QWidget):
 
         # used for styling in css
         self.setObjectName("main")
-        
-        # main article box, HTML reader
-        text = qtw.QTextBrowser()
-        self.article = text
-        # css styling for article
-        self.setArticleStyle()
-        text.setOpenExternalLinks(True)
-
-        #article selector, LHS of app
-        selector = qtw.QListWidget()
-        self.selector = selector
-        # read articles from /data/articles folder
-        entries = self.getArticleList()
-        selector.addItems(entries)
-        # add event for user input
-        selector.itemSelectionChanged.connect(self.selectionChanged)
 
         # grid layout for placing items, 10 rows, 10 cols
         # main part of program
-        main = qtw.QGridLayout()
-        # article selector 20% of content
-        main.addWidget(selector, 0, 0, 10, 2)
-        # article 80% of content
-        main.addWidget(text, 0, 3, 10, 8)
+        self.main = qtw.QGridLayout()
+
+        # start with article view
+        self.setReader();
 
         # menu bar on top of screen
         menu = qtw.QHBoxLayout()
@@ -57,13 +40,13 @@ class MainWindow(qtw.QWidget):
         # menu items
         # from left to right
         # button 1
-        b1 = qtw.QPushButton(text="B1")
-        # b1.clicked.connect()
+        b1 = qtw.QPushButton(text="read")
+        b1.clicked.connect(self.setReader)
         menu.addWidget(b1)
 
         # button 2
         b2 = qtw.QPushButton(text="get new articles")
-        # b2.clicked.connect()
+        b2.clicked.connect(self.setArticleDownloader)
         menu.addWidget(b2)
 
         # button3
@@ -90,7 +73,7 @@ class MainWindow(qtw.QWidget):
         superLayout.setObjectName("super")
         # add menu and main
         superLayout.addWidget(container, 0, 0, 1, 10)
-        superLayout.addLayout(main, 2, 0, 9, 10)
+        superLayout.addLayout(self.main, 2, 0, 9, 10)
 
         # configure window and application details and show
         self.setLayout(superLayout)
@@ -165,6 +148,46 @@ class MainWindow(qtw.QWidget):
         
         self.setStyleSheet(css)
         self.light = not self.light
+
+    def setReader(self):
+        # clear previous layout
+        self.removeWidgets(self.main)
+
+        # main article box, HTML reader
+        text = qtw.QTextBrowser()
+        self.article = text
+        # css styling for article
+        self.setArticleStyle()
+        text.setOpenExternalLinks(True)
+
+        #article selector, LHS of app
+        selector = qtw.QListWidget()
+        self.selector = selector
+        # read articles from /data/articles folder
+        entries = self.getArticleList()
+        selector.addItems(entries)
+        # add event for user input
+        selector.itemSelectionChanged.connect(self.selectionChanged)
+
+        # article selector 20% of content
+        self.main.addWidget(selector, 0, 0, 10, 2)
+        # article 80% of content
+        self.main.addWidget(text, 0, 3, 10, 8)
+
+    def setArticleDownloader(self):
+        # clear main layout
+        self.removeWidgets(self.main)
+
+        # new widgets
+        test = qtw.QLabel(text="Test")
+
+        # add to layout
+        self.main.addWidget(test)
+
+
+    def removeWidgets(self, layout):
+        for i in reversed(range(layout.count())):
+            layout.itemAt(i).widget().setParent(None)
 
     def getArticleName(self, name):
         # cut away .html
