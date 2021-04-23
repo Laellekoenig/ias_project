@@ -209,17 +209,33 @@ class MainWindow(qtw.QWidget):
         self.setSelected(self.b2)
 
         # new widgets
+        # article selector
         articleList = qtw.QListWidget()
+        # allow multiple selection
+        articleList.setSelectionMode(qtw.QAbstractItemView.ExtendedSelection)
+        # get updated article list
         articles = self.scraper.getArticleList()
         articleList.addItems(articles)
-        #articleList.itemSelectionChanged.connect()
+        #TODO articleList.itemSelectionChanged.connect()
+
+        # selection buttons
+        buttons = qtw.QHBoxLayout()
+
+        downloadB = qtw.QPushButton(text="download")
+        downloadB.setObjectName("fillButton")
+
+        buttons.addWidget(downloadB)
 
         # add to layout
-        self.main.addWidget(articleList)
+        self.main.addWidget(articleList, 0, 0, 10, 9)
+        self.main.addLayout(buttons, 10, 0, 1, 1)
 
     def removeWidgets(self, layout):
         for i in reversed(range(layout.count())):
-            layout.itemAt(i).widget().setParent(None)
+            try:
+                layout.itemAt(i).widget().setParent(None)
+            except:
+                layout.itemAt(i).layout().setParent(None)
 
     def getArticleName(self, name):
         # cut away .html
@@ -310,6 +326,18 @@ class MainWindow(qtw.QWidget):
         }
         #selected {
             color: red;
+        }
+        #fillButton {
+            background-color: black;
+            color: white;
+            border-radius: 3px;
+        }
+        #fillButton:pressed {
+            background-color: white;
+            color: black;
+            border-style: solid;
+            border-width: 1px;
+            border-color: black;
         }"""
         return stylesheet
 
@@ -377,6 +405,19 @@ class MainWindow(qtw.QWidget):
         }
         #container {
             border-bottom: 1px solid lightgrey;
+        }
+        #fillButton {
+            background-color: #f7f7f7;
+            color: #282828;
+            border-radius: 3px;
+            border-style: none;
+        }
+        #fillButton:pressed {
+            background-color: #282828;
+            color: #f7f7f7;
+            border-style: solid;
+            border-width: 1px;
+            border-color: #f7f7f7;
         }"""
         return stylesheet
     
