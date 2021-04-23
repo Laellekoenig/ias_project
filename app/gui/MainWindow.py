@@ -26,53 +26,17 @@ class MainWindow(qtw.QWidget):
         # main part of program
         self.main = qtw.QGridLayout()
 
+        # get menu bar
+        menu = self.getMenuBar()
+
         # start with article view
         self.setReader();
-
-        # menu bar on top of screen
-        menu = qtw.QHBoxLayout()
-
-        # logo, top left
-        logo = qtw.QLabel(text="News")
-        logo.setObjectName("logo")
-        menu.addWidget(logo)
-
-        # menu items
-        # from left to right
-        # button 1
-        b1 = qtw.QPushButton(text="read")
-        b1.clicked.connect(self.setReader)
-        menu.addWidget(b1)
-
-        # button 2
-        b2 = qtw.QPushButton(text="get new articles")
-        b2.clicked.connect(self.setArticleDownloader)
-        menu.addWidget(b2)
-
-        # button3
-        b3 = qtw.QPushButton(text="share on BAC-net")
-        # b3.clicked.connect()
-        menu.addWidget(b3)
-
-        # button 4
-        b4 = qtw.QPushButton(text="dark")
-        b4.clicked.connect(self.switch)
-        # switch for changing UI style sheet
-        self.switch = b4
-        menu.addWidget(b4)
-
-        # container for menu bar 
-        container = qtw.QWidget()
-        # for styling
-        container.setObjectName("container")
-        # add menu to container
-        container.setLayout(menu)
 
         # master layout with menu, selector and article
         superLayout = qtw.QGridLayout()
         superLayout.setObjectName("super")
         # add menu and main
-        superLayout.addWidget(container, 0, 0, 1, 10)
+        superLayout.addWidget(menu, 0, 0, 1, 10)
         superLayout.addLayout(self.main, 2, 0, 9, 10)
 
         # configure window and application details and show
@@ -113,6 +77,51 @@ class MainWindow(qtw.QWidget):
         h = math.floor(RATIO * h)
         self.resize(w, h)
 
+    def getMenuBar(self):
+        # menu bar on top of screen
+        menu = qtw.QHBoxLayout()
+
+        # logo, top left
+        logo = qtw.QLabel(text="News")
+        logo.setObjectName("logo")
+        menu.addWidget(logo)
+
+        # menu items
+        # from left to right
+        # button 1
+        self.b1 = qtw.QPushButton(text="read")
+        self.b1.clicked.connect(self.setReader)
+        menu.addWidget(self.b1)
+
+        # used for setting style of currently selected section
+        self.selected = self.b1
+
+        # button 2
+        self.b2 = qtw.QPushButton(text="get new articles")
+        self.b2.clicked.connect(self.setArticleDownloader)
+        menu.addWidget(self.b2)
+
+        # button3
+        self.b3 = qtw.QPushButton(text="share on BAC-net")
+        # b3.clicked.connect()
+        menu.addWidget(self.b3)
+
+        # button 4
+        self.b4 = qtw.QPushButton(text="dark")
+        self.b4.clicked.connect(self.switch)
+        # switch for changing UI style sheet
+        self.switch = self.b4
+        menu.addWidget(self.b4)
+
+        # container for menu bar
+        container = qtw.QWidget()
+        # for styling
+        container.setObjectName("container")
+        # add menu to container
+        container.setLayout(menu)
+
+        return container
+
     def getArticleList(self):
         # articles must be in data/articles folder
         # must be .html files
@@ -127,7 +136,7 @@ class MainWindow(qtw.QWidget):
                 articles.append(articleName)
         return articles
 
-    def selectionChanged(self):
+    def selectedArticleChanged(self):
         # change displayed article in UI on selection
         selectedArticle = self.selector.currentItem().text()
         fileName = self.getFileName(selectedArticle)
@@ -138,7 +147,6 @@ class MainWindow(qtw.QWidget):
 
     def switch(self):
         # switch from dark to light or vice versa
-
         if self.light:
             self.switch.setText("light")
             css = self.getDarkStyleSheet()
@@ -149,9 +157,25 @@ class MainWindow(qtw.QWidget):
         self.setStyleSheet(css)
         self.light = not self.light
 
+        # update colors of menu bar
+        self.setSelected(self.selected)
+
+    def setSelected(self, button):
+        self.selected = button
+        buttons = [self.b1, self.b2, self.b3, self.b4]
+        for b in buttons:
+            if (self.light):
+                b.setStyleSheet("color: black;")
+            else:
+                b.setStyleSheet("color: white")
+
+        button.setStyleSheet("color: grey;")
+
     def setReader(self):
         # clear previous layout
         self.removeWidgets(self.main)
+
+        self.setSelected(self.b1)
 
         # main article box, HTML reader
         text = qtw.QTextBrowser()
@@ -167,7 +191,7 @@ class MainWindow(qtw.QWidget):
         entries = self.getArticleList()
         selector.addItems(entries)
         # add event for user input
-        selector.itemSelectionChanged.connect(self.selectionChanged)
+        selector.itemSelectionChanged.connect(self.selectedArticleChanged)
 
         # article selector 20% of content
         self.main.addWidget(selector, 0, 0, 10, 2)
@@ -178,12 +202,13 @@ class MainWindow(qtw.QWidget):
         # clear main layout
         self.removeWidgets(self.main)
 
+        self.setSelected(self.b2)
+
         # new widgets
         test = qtw.QLabel(text="Test")
 
         # add to layout
         self.main.addWidget(test)
-
 
     def removeWidgets(self, layout):
         for i in reversed(range(layout.count())):
@@ -275,6 +300,9 @@ class MainWindow(qtw.QWidget):
         }
         #container {
             border-bottom: 1px solid lightgrey;
+        }
+        #selected {
+            color: red;
         }"""
         return stylesheet
 
