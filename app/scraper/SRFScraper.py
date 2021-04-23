@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
 import requests
 import re
-from article import Article
+from logic.article import Article
 
 
 def getURLsfromRSS():

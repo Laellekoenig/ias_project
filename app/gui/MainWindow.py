@@ -221,35 +221,16 @@ class MainWindow(qtw.QWidget):
 
         # new widgets
         # title
-        title = qtw.QLabel(text="Available articles:")
+        title = qtw.QLabel(text="Title")
         title.setObjectName("downloadTitle")
-        # article selector
-        articleList = qtw.QListWidget()
-        self.downloadSelector = articleList
-        # allow multiple selection
-        articleList.setSelectionMode(qtw.QAbstractItemView.ExtendedSelection)
-        # get updated article list
-        articles = self.scraper.getArticleList()
-        articleList.addItems(articles)
-        #articleList.itemSelectionChanged.connect()
 
-        # selection buttons
-        buttons = qtw.QHBoxLayout()
-
-        downloadB = qtw.QPushButton(text="download")
-        downloadB.clicked.connect(self.downloadArticleSelection)
+        downloadB = qtw.QPushButton(text="update from SRF")
+        #downloadB.clicked.connect()
         downloadB.setObjectName("fillButton")
-
-        refreshB = qtw.QPushButton()
-        refreshB.setIcon(qta.icon("mdi.file-refresh"))
-
-        buttons.addWidget(downloadB)
-        buttons.addWidget(refreshB)
 
         # add to layout
         self.main.addWidget(title, 0, 0, 1, 1)
-        self.main.addWidget(articleList, 1, 0, 10, 9)
-        self.main.addLayout(buttons, 10, 0, 1, 1)
+        self.main.addWidget(downloadB, 1, 0)
 
     def setBACNet(self):
         # clear main layout
@@ -360,16 +341,16 @@ class MainWindow(qtw.QWidget):
             color: red;
         }
         #fillButton {
-            background-color: black;
+            background-color: #AF011E;
             color: white;
             border-radius: 3px;
         }
         #fillButton:pressed {
             background-color: white;
-            color: black;
+            color: #AF011E;
             border-style: solid;
             border-width: 1px;
-            border-color: black;
+            border-color: #AF011E;
         }
         #downloadTitle {
             font-size: 20px;
@@ -442,17 +423,17 @@ class MainWindow(qtw.QWidget):
             border-bottom: 1px solid lightgrey;
         }
         #fillButton {
-            background-color: #f7f7f7;
-            color: #282828;
+            background-color: #AF011E;
+            color: #f7f7f7;
             border-radius: 3px;
             border-style: none;
         }
         #fillButton:pressed {
-            background-color: #282828;
-            color: #f7f7f7;
+            background-color: #f7f7f7;
+            color: #AF011E;
             border-style: solid;
             border-width: 1px;
-            border-color: #f7f7f7;
+            border-color: #AF011E;
         }"""
         return stylesheet
     

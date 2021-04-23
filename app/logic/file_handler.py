@@ -12,12 +12,14 @@ def store_files():
         os.makedirs(DIR_ARTICLES)
 
 def get_stored_articles():
-    todo
+    #todo
+    pass
 
 def get_new_articles():
-    todo
+    #todo
+    pass
 
-def safe_article(article):
+def save_article(article):
     source = article.news_source
     title = article.title_0
     file = open(DIR_ARTICLES + '/' + source + ' - ' + title + '.json', 'w')
@@ -30,8 +32,6 @@ def get_article_by_path(path):
     article.fill_article_from_json_file(file)
     file.close()
     return article
-
-
 
 def get_article_list():
     return glob.glob(DIR_ARTICLES + '/*.json')
@@ -56,7 +56,7 @@ article_test.add_paragraph("Paragraph 3")
 article_test.add_tagline("tagline number 2")
 article_test.add_tag("environment")
 article_test.add_tag("guggus")
-safe_article(article_test)
+save_article(article_test)
 #print(article_test.get_html())
 #print(get_article_list())
 #a = get_article_by_path(get_article_list()[1])

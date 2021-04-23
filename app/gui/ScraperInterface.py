@@ -1,12 +1,20 @@
+from scraper.SRFScraper import getSRFArticles
+from logic.article import Article
+
 class ScraperInterface:
 
     def __init__(self):
         pass
 
-    def getArticleList(self):
-        list = ["Test", "Hallo", "Tada", "Wie", "Geht's"]
-        return list
+    def getDownloadedArticles(self):
+        return ["test", "blabla", "tada"]
 
-    def downloadArticles(self, list):
-        for article in list:
-            print(article)
+    def download(self):
+        articles = getSRFArticles()
+        titles = []
+
+        for article in articles:
+            if article is not None:
+                titles.append(article.title_0)
+
+        return titles
