@@ -224,13 +224,18 @@ class MainWindow(qtw.QWidget):
         title = qtw.QLabel(text="Title")
         title.setObjectName("downloadTitle")
 
-        downloadB = qtw.QPushButton(text="update from SRF")
-        #downloadB.clicked.connect()
-        downloadB.setObjectName("fillButton")
+        srfB = qtw.QPushButton(text="update from SRF")
+        #srfB.clicked.connect()
+        srfB.setObjectName("srfButton")
+
+        blueB = qtw.QPushButton(text="share via bluetooth")
+        #blueB.clicked.connect()
+        blueB.setObjectName("blueButton")
 
         # add to layout
         self.main.addWidget(title, 0, 0, 1, 1)
-        self.main.addWidget(downloadB, 1, 0)
+        self.main.addWidget(srfB, 1, 0)
+        self.main.addWidget(blueB, 2, 0)
 
     def setBACNet(self):
         # clear main layout
@@ -340,17 +345,29 @@ class MainWindow(qtw.QWidget):
         #selected {
             color: red;
         }
-        #fillButton {
+        #srfButton {
             background-color: #AF011E;
             color: white;
             border-radius: 3px;
         }
-        #fillButton:pressed {
+        #srfButton:pressed {
             background-color: white;
             color: #AF011E;
             border-style: solid;
             border-width: 1px;
             border-color: #AF011E;
+        }
+        #blueButton {
+            background-color: #0C3C91;
+            color: white;
+            border-radius: 3px;
+        }
+        #blueButton:pressed {
+            background-color: white;
+            color: #0C3C91;
+            border-style: solid;
+            border-width: 1px;
+            border-color: #0C3C91;
         }
         #downloadTitle {
             font-size: 20px;
@@ -422,13 +439,13 @@ class MainWindow(qtw.QWidget):
         #container {
             border-bottom: 1px solid lightgrey;
         }
-        #fillButton {
+        #srfButton {
             background-color: #AF011E;
             color: #f7f7f7;
             border-radius: 3px;
             border-style: none;
         }
-        #fillButton:pressed {
+        #srfButton:pressed {
             background-color: #f7f7f7;
             color: #AF011E;
             border-style: solid;
