@@ -6,6 +6,7 @@ class Interface:
     def __init__(self):
         pass
 
+    # returns a list of all downloaded article files
     def getDownloadedArticles(self):
         return ["test", "blabla", "tada"]
 
