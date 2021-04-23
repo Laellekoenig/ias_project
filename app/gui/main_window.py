@@ -5,7 +5,7 @@ from PyQt5 import QtWidgets as qtw
 from PyQt5 import QtGui as qtg
 from PyQt5 import QtCore as qtc
 import qtawesome as qta
-from gui.Interface import Interface
+from gui.interface import Interface
 
 class MainWindow(qtw.QWidget):
 

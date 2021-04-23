@@ -1,4 +1,4 @@
-from scraper.SRFScraper import getSRFArticles
+from scraper.srf_scraper import getSRFArticles
 from logic.article import Article
 
 class Interface:
