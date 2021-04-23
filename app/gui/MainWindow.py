@@ -202,6 +202,12 @@ class MainWindow(qtw.QWidget):
         # article 80% of content
         self.main.addWidget(text, 0, 3, 10, 8)
 
+    def downloadArticleSelection(self):
+        articles = []
+        for article in self.donloadSelector.selectedItems():
+            articles.append(article.text())
+        self.scraper.downloadArticles(articles)
+
     def setArticleDownloader(self):
         # clear main layout
         self.removeWidgets(self.main)
@@ -211,17 +217,19 @@ class MainWindow(qtw.QWidget):
         # new widgets
         # article selector
         articleList = qtw.QListWidget()
+        self.donloadSelector = articleList
         # allow multiple selection
         articleList.setSelectionMode(qtw.QAbstractItemView.ExtendedSelection)
         # get updated article list
         articles = self.scraper.getArticleList()
         articleList.addItems(articles)
-        #TODO articleList.itemSelectionChanged.connect()
+        #articleList.itemSelectionChanged.connect()
 
         # selection buttons
         buttons = qtw.QHBoxLayout()
 
         downloadB = qtw.QPushButton(text="download")
+        downloadB.clicked.connect(self.downloadArticleSelection)
         downloadB.setObjectName("fillButton")
 
         buttons.addWidget(downloadB)
