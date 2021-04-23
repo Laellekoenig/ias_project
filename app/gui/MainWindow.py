@@ -4,6 +4,7 @@ import os
 from PyQt5 import QtWidgets as qtw
 from PyQt5 import QtGui as qtg
 from PyQt5 import QtCore as qtc
+import qtawesome as qta
 from gui.ScraperInterface import ScraperInterface
 
 class MainWindow(qtw.QWidget):
@@ -219,6 +220,9 @@ class MainWindow(qtw.QWidget):
         self.setSelected(self.b2)
 
         # new widgets
+        # title
+        title = qtw.QLabel(text="Available articles:")
+        title.setObjectName("downloadTitle")
         # article selector
         articleList = qtw.QListWidget()
         self.downloadSelector = articleList
@@ -236,10 +240,15 @@ class MainWindow(qtw.QWidget):
         downloadB.clicked.connect(self.downloadArticleSelection)
         downloadB.setObjectName("fillButton")
 
+        refreshB = qtw.QPushButton()
+        refreshB.setIcon(qta.icon("mdi.file-refresh"))
+
         buttons.addWidget(downloadB)
+        buttons.addWidget(refreshB)
 
         # add to layout
-        self.main.addWidget(articleList, 0, 0, 10, 9)
+        self.main.addWidget(title, 0, 0, 1, 1)
+        self.main.addWidget(articleList, 1, 0, 10, 9)
         self.main.addLayout(buttons, 10, 0, 1, 1)
 
     def setBACNet(self):
@@ -361,6 +370,9 @@ class MainWindow(qtw.QWidget):
             border-style: solid;
             border-width: 1px;
             border-color: black;
+        }
+        #downloadTitle {
+            font-size: 20px;
         }"""
         return stylesheet
 

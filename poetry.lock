@@ -164,6 +164,25 @@ checkqa-mypy = ["mypy (==v0.761)"]
 testing = ["argcomplete", "hypothesis (>=3.56)", "mock", "nose", "requests", "xmlschema"]
 
 [[package]]
+name = "qtawesome"
+version = "1.0.2"
+description = "FontAwesome icons in PyQt and PySide applications"
+category = "main"
+optional = false
+python-versions = ">=3.6"
+
+[package.dependencies]
+qtpy = "*"
+
+[[package]]
+name = "qtpy"
+version = "1.9.0"
+description = "Provides an abstraction layer on top of the various Qt bindings (PyQt5, PyQt4 and PySide) and additional custom QWidgets."
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "requests"
 version = "2.25.1"
 description = "Python HTTP for Humans."
@@ -213,7 +232,7 @@ python-versions = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "853068237923297a20e9d40558c6d22be298c5c6e4f83be98cdfe1f6b407e2ee"
+content-hash = "8441b48014885d81ea903a8649b82eb1d6190257b8e033f7361ac6e15360ad0a"
 
 [metadata.files]
 atomicwrites = [
@@ -304,6 +323,14 @@ pyqt5-sip = [
 pytest = [
     {file = "pytest-5.4.3-py3-none-any.whl", hash = "sha256:5c0db86b698e8f170ba4582a492248919255fcd4c79b1ee64ace34301fb589a1"},
     {file = "pytest-5.4.3.tar.gz", hash = "sha256:7979331bfcba207414f5e1263b5a0f8f521d0f457318836a7355531ed1a4c7d8"},
+]
+qtawesome = [
+    {file = "QtAwesome-1.0.2-py3-none-any.whl", hash = "sha256:fc81b7c7a1919e95f535a145b3027ad9eccd336696fffc47d8c1d443584d9f7a"},
+    {file = "QtAwesome-1.0.2.tar.gz", hash = "sha256:771dd95ac4f50d647d18b4e892fd310a580b56d258476554c7b3498593dfd887"},
+]
+qtpy = [
+    {file = "QtPy-1.9.0-py2.py3-none-any.whl", hash = "sha256:fa0b8363b363e89b2a6f49eddc162a04c0699ae95e109a6be3bb145a913190ea"},
+    {file = "QtPy-1.9.0.tar.gz", hash = "sha256:2db72c44b55d0fe1407be8fba35c838ad0d6d3bb81f23007886dc1fc0f459c8d"},
 ]
 requests = [
     {file = "requests-2.25.1-py2.py3-none-any.whl", hash = "sha256:c210084e36a42ae6b9219e00e48287def368a26d03a048ddad7bfee44f75871e"},
