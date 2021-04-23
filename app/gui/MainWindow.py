@@ -4,12 +4,16 @@ import os
 from PyQt5 import QtWidgets as qtw
 from PyQt5 import QtGui as qtg
 from PyQt5 import QtCore as qtc
+from gui.ScraperInterface import ScraperInterface
 
 class MainWindow(qtw.QWidget):
 
     def __init__(self, app):
         # initiate window
         super().__init__(windowTitle="IAS Project")
+
+        # for scraping articles
+        self.scraper = ScraperInterface()
 
         # load fonts used in ui
         self.loadFonts()
@@ -205,10 +209,13 @@ class MainWindow(qtw.QWidget):
         self.setSelected(self.b2)
 
         # new widgets
-        test = qtw.QLabel(text="Test")
+        articleList = qtw.QListWidget()
+        articles = self.scraper.getArticleList()
+        articleList.addItems(articles)
+        #articleList.itemSelectionChanged.connect()
 
         # add to layout
-        self.main.addWidget(test)
+        self.main.addWidget(articleList)
 
     def removeWidgets(self, layout):
         for i in reversed(range(layout.count())):
