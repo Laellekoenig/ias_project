@@ -107,7 +107,7 @@ class MainWindow(qtw.QWidget):
 
         # button3
         self.b3 = qtw.QPushButton(text="share on BAC-net")
-        # b3.clicked.connect()
+        self.b3.clicked.connect(self.setBACNet)
         menu.addWidget(self.b3)
 
         # button 4
@@ -204,20 +204,24 @@ class MainWindow(qtw.QWidget):
 
     def downloadArticleSelection(self):
         articles = []
-        for article in self.donloadSelector.selectedItems():
+        for article in self.downloadSelector.selectedItems():
             articles.append(article.text())
         self.scraper.downloadArticles(articles)
+
+        #remove downloaded articles form list
+        for article in self.downloadSelector.selectedItems():
+            row = self.downloadSelector.row(article)
+            self.downloadSelector.takeItem(row)
 
     def setArticleDownloader(self):
         # clear main layout
         self.removeWidgets(self.main)
-
         self.setSelected(self.b2)
 
         # new widgets
         # article selector
         articleList = qtw.QListWidget()
-        self.donloadSelector = articleList
+        self.downloadSelector = articleList
         # allow multiple selection
         articleList.setSelectionMode(qtw.QAbstractItemView.ExtendedSelection)
         # get updated article list
@@ -237,6 +241,17 @@ class MainWindow(qtw.QWidget):
         # add to layout
         self.main.addWidget(articleList, 0, 0, 10, 9)
         self.main.addLayout(buttons, 10, 0, 1, 1)
+
+    def setBACNet(self):
+        # clear main layout
+        self.removeWidgets(self.main)
+        self.setSelected(self.b3)
+
+        # new widgets
+        title = qtw.QLabel(text="BAC-NET")
+
+        # add to layout
+        self.main.addWidget(title)
 
     def removeWidgets(self, layout):
         for i in reversed(range(layout.count())):
