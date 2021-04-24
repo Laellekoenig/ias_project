@@ -224,10 +224,12 @@ class MainWindow(qtw.QWidget):
 
     def toggle2Download(self):
         if self.toggle2.isChecked():
+            self.toggle2.setObjectName("toggleTrue")
             self.toggle.setChecked(False)
+            self.toggle.setObjectName("toggleFalse")
             if self.light:
                 self.toggle2.setStyleSheet("color: black;")
-                self.toggle.setStyleSheet("color: lightgrey;")
+                self.toggle.setStyleSheet("color: grey;")
             else:
                 self.toggle2.setStyleSheet("color: #f7f7f7;")
                 self.toggle.setStyleSheet("color: grey;")
@@ -236,10 +238,12 @@ class MainWindow(qtw.QWidget):
 
     def toggleDownload(self):
         if self.toggle.isChecked():
+            self.toggle.setObjectName("toggleTrue")
             self.toggle2.setChecked(False)
+            self.toggle2.setObjectName("toggleFalse")
             if self.light:
                 self.toggle.setStyleSheet("color: black;")
-                self.toggle2.setStyleSheet("color: lightgrey;")
+                self.toggle2.setStyleSheet("color: grey;")
             else:
                 self.toggle.setStyleSheet("color: #f7f7f7;")
                 self.toggle2.setStyleSheet("color: grey;")
@@ -450,7 +454,7 @@ class MainWindow(qtw.QWidget):
             color: black;
         }
         #toggleFalse {
-            color: lightgrey;
+            color: grey;
         }
         #bacButton {
             color: white;
