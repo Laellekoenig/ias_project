@@ -2,7 +2,7 @@
 import os
 import glob
 from pathlib import Path
-from article import Article, NewsSource
+from logic.article import Article, NewsSource
 
 DIR_MAIN = str(Path.home()) + '/NewsTest'
 DIR_ARTICLES = DIR_MAIN + '/Articles'
@@ -33,8 +33,17 @@ def get_article_by_path(path):
     file.close()
     return article
 
-def get_article_list():
-    return glob.glob(DIR_ARTICLES + '/*.json')
+def get_articles():
+    articles = []
+    for path in glob.glob(DIR_ARTICLES + '/*.json'):
+        articles.append(get_article_by_path(path))
+    return articles
+
+def get_article_titles():
+    list = []
+    for a in get_articles():
+        list.append(a)
+    return list
 
 #def read_article():
     
