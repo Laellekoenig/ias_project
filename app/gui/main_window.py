@@ -224,17 +224,25 @@ class MainWindow(qtw.QWidget):
 
     def toggle2Download(self):
         if self.toggle2.isChecked():
-            self.toggle2.setStyleSheet("color: black;")
             self.toggle.setChecked(False)
-            self.toggle.setStyleSheet("color: lightgrey;")
+            if self.light:
+                self.toggle2.setStyleSheet("color: black;")
+                self.toggle.setStyleSheet("color: lightgrey;")
+            else:
+                self.toggle2.setStyleSheet("color: #f7f7f7;")
+                self.toggle.setStyleSheet("color: grey;")
         else:
             self.toggle2.setChecked(True)
 
     def toggleDownload(self):
         if self.toggle.isChecked():
-            self.toggle.setStyleSheet("color: black;")
             self.toggle2.setChecked(False)
-            self.toggle2.setStyleSheet("color: lightgrey;")
+            if self.light:
+                self.toggle.setStyleSheet("color: black;")
+                self.toggle2.setStyleSheet("color: lightgrey;")
+            else:
+                self.toggle.setStyleSheet("color: #f7f7f7;")
+                self.toggle2.setStyleSheet("color: grey;")
         else:
             self.toggle.setChecked(True)
 
@@ -245,7 +253,7 @@ class MainWindow(qtw.QWidget):
 
         # new widgets
         downLayout = qtw.QVBoxLayout()
-        downLayout.setContentsMargins(100, 0, 100, 0)
+        downLayout.setContentsMargins(200, 30, 200, 0)
         toggleLayout = qtw.QHBoxLayout()
 
         toggle = qtw.QPushButton(text="download")
@@ -293,6 +301,7 @@ class MainWindow(qtw.QWidget):
         downLayout.addWidget(bacB)
         downLayout.addWidget(blueB)
         downLayout.addWidget(localB)
+        downLayout.addStretch()
 
         # add to layout
         self.main.addLayout(downLayout, 0, 0)
@@ -316,8 +325,9 @@ class MainWindow(qtw.QWidget):
             if str(type(item)) == "<class 'PyQt5.QtWidgets.QWidgetItem'>":
                 item.widget().setParent(None)
             else:
-                self.removeWidgets(item)
-                item.layout().setParent(None)
+                if str(type(item)) != "<class 'PyQt5.QtWidgets.QSpacerItem'>":
+                    self.removeWidgets(item)
+                    item.layout().setParent(None)
 
     def getArticleName(self, name):
         # cut away .html
@@ -523,17 +533,51 @@ class MainWindow(qtw.QWidget):
             border-bottom: 1px solid lightgrey;
         }
         #srfButton {
-            background-color: #AF011E;
-            color: #f7f7f7;
+            background-color: #f7f7f7;
+            color: #AF011E;
             border-radius: 3px;
             border-style: none;
         }
         #srfButton:pressed {
-            background-color: #f7f7f7;
-            color: #AF011E;
+            background-color: #AF011E;
+            color: #f7f7f7;
             border-style: solid;
             border-width: 1px;
-            border-color: #AF011E;
+            border-color: #f7f7f7;
+        }
+        #blueButton {
+            background-color: #f7f7f7;
+            color: #0C3C91;
+            border-radius: 3px;
+        }
+        #blueButton:pressed {
+            background-color: #0C3C91;
+            color: #f7f7f7;
+            border-style: solid;
+            border-width: 1px;
+            border-color: #f7f7f7;
+        }
+        #downloadTitle {
+            font-size: 20px;
+        }
+        #toggleTrue {
+            color: #f7f7f7;
+        }
+        #toggleFalse {
+            color: grey;
+        }
+        #bacButton {
+            color: #282828;
+            background-color: #f7f7f7;
+            border-radius: 3px;
+            border-style: none;
+        }
+        #bacButton:pressed {
+            color: #f7f7f7;
+            background-color: #282828;
+            border-style: solid;
+            border-width: 1px;
+            border-color: #f7f7f7;
         }"""
         return stylesheet
     
