@@ -59,6 +59,7 @@ class MainWindow(qtw.QWidget):
         merri_bold = os.getcwd() + "/data/fonts/Merriweather-Bold.ttf"
         merri_black = os.getcwd() + "/data/fonts/Merriweather-BlackItalic.ttf"
         merri_italic = os.getcwd() + "/data/fonts/Merriweather-Italic.ttf"
+        assistant = os.getcwd() + "/data/fonts/Assistant.ttf"
 
         db.addApplicationFont(walbaum)
         db.addApplicationFont(merri_light)
@@ -66,6 +67,7 @@ class MainWindow(qtw.QWidget):
         db.addApplicationFont(merri_bold)
         db.addApplicationFont(merri_black)
         db.addApplicationFont(merri_italic)
+        db.addApplicationFont(assistant)
 
     def getScreenSize(self, app):
         screen = app.primaryScreen()
@@ -387,8 +389,9 @@ class MainWindow(qtw.QWidget):
             font-size: 15px;
         }
         QListWidget {
-            font-family: Merriweather;
-            font-size: 15px;
+            font-family: Assistant;
+            font-weight: 400;
+            font-size: 18px;
             line-height: 2;
             border-style: none;
             spacing: 10;
@@ -412,8 +415,9 @@ class MainWindow(qtw.QWidget):
         QPushButton {
             height: 50%;
             border-style: none;
-            font-family: Merriweather;
-            font-weight: bold;
+            font-family: Assistant;
+            font-weight: 500;
+            font-size: 16px;
         }
         #main {
         }
@@ -500,11 +504,12 @@ class MainWindow(qtw.QWidget):
         }
         QPushButton {
             font-weight: light;
-            font-size: 15px;
+            font-size: 16px;
         }
         QListWidget {
-            font-family: Merriweather;
-            font-size: 15px;
+            font-family: Assistant;
+            font-wight: 400;
+            font-size: 18px;
             line-height: 2;
             border-style: none;
             spacing: 10;
@@ -528,8 +533,9 @@ class MainWindow(qtw.QWidget):
         QPushButton {
             height: 50%;
             border-style: none;
-            font-family: Merriweather;
-            font-weight: bold;
+            font-family: Assistant;
+            font-weight: 500;
+            font-size 18px;
         }
         #main {
         }
