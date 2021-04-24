@@ -117,7 +117,7 @@ class MainWindow(qtw.QWidget):
         selector = qtw.QListWidget()
         self.selector = selector
         # read articles from /data/articles folder
-        entries = utils.get_article_list()
+        entries = self.interface.get_downloaded_articles()
         selector.addItems(entries)
         # add event for user input
         selector.itemSelectionChanged.connect(self.selected_article_changed)
@@ -163,7 +163,7 @@ class MainWindow(qtw.QWidget):
 
         srfB = qtw.QPushButton(text="SRF")
         srfB.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
-        #srfB.clicked.connect()
+        srfB.clicked.connect(self.interface.threaded_download)
         srfB.setObjectName("srfButton")
 
         blueB = qtw.QPushButton(text="bluetooth")
@@ -207,11 +207,14 @@ class MainWindow(qtw.QWidget):
     def selected_article_changed(self):
         # change displayed article in UI on selection
         selectedArticle = self.selector.currentItem().text()
-        fileName = utils.get_file_name(selectedArticle)
-        location = "data/articles/" + fileName
-        with open(location, "r") as html:
-            self.article.clear()
-            self.article.insertHtml(html.read())
+        html = self.interface.get_article_html_by_title(selectedArticle)
+        self.article.clear()
+        self.article.insertHtml(html)
+        #fileName = utils.get_file_name(selectedArticle)
+        #location = "data/articles/" + fileName
+        #with open(location, "r") as html:
+            #self.article.clear()
+            #self.article.insertHtml(html.read())
 
     def switch(self):
         # switch from dark to light or vice versa
