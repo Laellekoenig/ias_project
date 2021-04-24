@@ -7,7 +7,7 @@ class Interface:
         pass
 
     # returns a list of all downloaded article files
-    def getDownloadedArticles(self):
+    def get_downloaded_articles(self):
         return ["test", "blabla", "tada"]
 
     def download(self):
