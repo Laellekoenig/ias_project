@@ -16,6 +16,9 @@ class MainWindow(qtw.QWidget):
         # for interacting with other parts of program
         self.interface = Interface(self)
 
+        # load app icons
+        utils.load_app_icons(app)
+
         # load fonts used in ui
         utils.load_fonts()
 
