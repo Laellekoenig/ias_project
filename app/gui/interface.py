@@ -4,7 +4,8 @@ from logic.article import Article
 
 class Interface:
 
-    def __init__(self):
+    def __init__(self, window):
+        self.window = window
         self.article_list = None
         self.article_titles = None
         self.is_downloading = False
@@ -17,10 +18,10 @@ class Interface:
 
     def threaded_download(self):
         if not self.is_downloading:
+            self.window.switch_to_loading()
             thread = threading.Thread(target=self.download)
             thread.start()
         else:
-            #Todo handle this in gui
             print("already downloading")
 
     def download(self):
