@@ -18,10 +18,10 @@ poetry run python news_scraper/main.py
 - [ ] BAC net integration
 - [ ] bluetooth article transmission
 - [ ] local network article transmission
-- [ ] download articles
+- [x] download articles
 - [ ] loading animation when scraping
 - [ ] only download new articles
-- [ ] logic interface for GUI
+- [x] logic interface for GUI
 
 ### Nice to have
 - [ ] article signature for authenticity
