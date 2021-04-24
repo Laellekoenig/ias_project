@@ -1,20 +1,26 @@
 import threading
 from scraper.srf_scraper import getSRFArticles
 from logic.article import Article
+from logic.interface import LogicInterface
 
 class Interface:
 
     def __init__(self, window):
         self.window = window
-        self.article_list = None
-        self.article_titles = None
+        self.logic_interface = LogicInterface()
+        self.article_list = self.logic_interface.get_articles()
+        self.article_titles = self.get_downloaded_articles()
         self.is_downloading = False
 
     # returns a list of all downloaded article files
     def get_downloaded_articles(self):
-        if self.article_titles == None:
-            return []
-        return self.article_titles
+        #if self.article_titles == None:
+        #    return []
+        #return self.article_titles
+        titles = []
+        for article in self.logic_interface.get_articles():
+            titles.append(article.title_1)
+        return titles
 
     def threaded_download(self):
         if not self.is_downloading:
@@ -26,7 +32,8 @@ class Interface:
 
     def download(self):
         self.is_downloading = True
-        articles = getSRFArticles()
+        self.logic_interface.download_new_articles()
+        articles = self.logic_interface.get_articles()
         self.article_list = articles
         titles = []
 
