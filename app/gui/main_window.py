@@ -116,6 +116,7 @@ class MainWindow(qtw.QWidget):
         #article selector, LHS of app
         selector = qtw.QListWidget()
         self.selector = selector
+        selector.setWordWrap(True)
         # read articles from /data/articles folder
         entries = self.interface.get_downloaded_articles()
         selector.addItems(entries)

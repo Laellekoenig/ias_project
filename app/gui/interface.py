@@ -32,7 +32,7 @@ class Interface:
 
         for article in articles:
             if article is not None:
-                titles.append(article.title_0)
+                titles.append(article.title_1)
 
         self.article_titles = titles
         self.is_downloading = False
@@ -43,5 +43,5 @@ class Interface:
             return ""
 
         for article in self.article_list:
-            if article != None and article.title_0 == title:
+            if article != None and article.title_1 == title:
                 return article.get_html()
