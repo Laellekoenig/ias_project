@@ -79,3 +79,13 @@ def remove_widgets(layout):
                 remove_widgets(item)
                 item.layout().setParent(None)
     return
+
+def load_app_icons(app):
+    app_icon = qtg.QIcon()
+    path = os.getcwd() + "/data/images/"
+    app_icon.addFile(path + "16x16.png", qtc.QSize(16, 16))
+    app_icon.addFile(path + "24x24.png", qtc.QSize(24, 24))
+    app_icon.addFile(path + "32x32.png", qtc.QSize(32, 32))
+    app_icon.addFile(path + "48x48.png", qtc.QSize(48, 48))
+    app_icon.addFile(path + "256x256.png", qtc.QSize(256, 256))
+    app.setWindowIcon(app_icon)

@@ -14,7 +14,10 @@ class MainWindow(qtw.QWidget):
         super().__init__(windowTitle="IAS Project")
 
         # for interacting with other parts of program
-        self.interface = Interface()
+        self.interface = Interface(self)
+
+        # load app icons
+        utils.load_app_icons(app)
 
         # load fonts used in ui
         utils.load_fonts()
@@ -116,6 +119,7 @@ class MainWindow(qtw.QWidget):
         #article selector, LHS of app
         selector = qtw.QListWidget()
         self.selector = selector
+        selector.setWordWrap(True)
         # read articles from /data/articles folder
         entries = self.interface.get_downloaded_articles()
         selector.addItems(entries)
@@ -133,6 +137,10 @@ class MainWindow(qtw.QWidget):
 
     # downloading and sharing section of app
     def set_downloading_section(self):
+        if self.interface.is_downloading:
+            self.set_loading_screen_section()
+            return
+
         # clear main layout
         utils.remove_widgets(self.main)
         self.set_selected_menu_button(self.b2)
@@ -191,6 +199,27 @@ class MainWindow(qtw.QWidget):
 
         # add to layout
         self.main.addLayout(downLayout, 0, 0)
+
+    def set_loading_screen_section(self):
+        utils.remove_widgets(self.main)
+        self.set_selected_menu_button(self.b2)
+
+        #new widgets
+        layout = qtw.QVBoxLayout()
+
+        gif_path = os.getcwd() + "/data/images/loading2.gif"
+        loading = qtg.QMovie(gif_path)
+
+        loading_label = qtw.QLabel()
+        loading_label.setGeometry(qtc.QRect(0, 0, 250, 250))
+        loading_label.setMovie(loading)
+        loading.start()
+
+        layout.addStretch()
+        layout.addWidget(loading_label)
+        layout.addStretch()
+
+        self.main.addLayout(layout, 0, 0)
 
     # archive section of app
     def set_archiving_section(self):
@@ -269,3 +298,12 @@ class MainWindow(qtw.QWidget):
                 self.toggle.setStyleSheet("color: grey;")
         else:
             self.toggle2.setChecked(True)
+
+    def switch_to_loading(self):
+        if self.selected == self.b2:
+            self.set_loading_screen_section()
+
+    def finished_downloading(self):
+        print(self.selected)
+        if self.selected == self.b2:
+            self.set_downloading_section()
