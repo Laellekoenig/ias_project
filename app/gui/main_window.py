@@ -95,6 +95,7 @@ class MainWindow(qtw.QWidget):
         # from left to right
         # button 1
         self.b1 = qtw.QPushButton(text="read")
+        self.b1.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
         self.b1.clicked.connect(self.setReader)
         menu.addWidget(self.b1)
 
@@ -103,16 +104,19 @@ class MainWindow(qtw.QWidget):
 
         # button 2
         self.b2 = qtw.QPushButton(text="get new articles")
+        self.b2.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
         self.b2.clicked.connect(self.setArticleDownloader)
         menu.addWidget(self.b2)
 
         # button3
-        self.b3 = qtw.QPushButton(text="share on BAC-net")
-        self.b3.clicked.connect(self.setBACNet)
+        self.b3 = qtw.QPushButton(text="archive")
+        self.b3.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
+        self.b3.clicked.connect(self.setArchive)
         menu.addWidget(self.b3)
 
         # button 4
         self.b4 = qtw.QPushButton(text="dark")
+        self.b4.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
         self.b4.clicked.connect(self.switch)
         # switch for changing UI style sheet
         self.switch = self.b4
@@ -197,6 +201,10 @@ class MainWindow(qtw.QWidget):
         selector.addItems(entries)
         # add event for user input
         selector.itemSelectionChanged.connect(self.selectedArticleChanged)
+        # start with first article selected
+        selector.setCurrentRow(0)
+        # move cursor to start of text
+        text.moveCursor(qtg.QTextCursor.Start)
 
         # article selector 20% of content
         self.main.addWidget(selector, 0, 0, 10, 2)
@@ -214,46 +222,102 @@ class MainWindow(qtw.QWidget):
             row = self.downloadSelector.row(article)
             self.downloadSelector.takeItem(row)
 
+    def toggle2Download(self):
+        if self.toggle2.isChecked():
+            self.toggle2.setStyleSheet("color: black;")
+            self.toggle.setChecked(False)
+            self.toggle.setStyleSheet("color: lightgrey;")
+        else:
+            self.toggle2.setChecked(True)
+
+    def toggleDownload(self):
+        if self.toggle.isChecked():
+            self.toggle.setStyleSheet("color: black;")
+            self.toggle2.setChecked(False)
+            self.toggle2.setStyleSheet("color: lightgrey;")
+        else:
+            self.toggle.setChecked(True)
+
     def setArticleDownloader(self):
         # clear main layout
         self.removeWidgets(self.main)
         self.setSelected(self.b2)
 
         # new widgets
-        # title
-        title = qtw.QLabel(text="Title")
-        title.setObjectName("downloadTitle")
+        downLayout = qtw.QVBoxLayout()
+        downLayout.setContentsMargins(100, 0, 100, 0)
+        toggleLayout = qtw.QHBoxLayout()
 
-        srfB = qtw.QPushButton(text="update from SRF")
+        toggle = qtw.QPushButton(text="download")
+        toggle.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
+        toggle.setCheckable(True)
+        toggle.setChecked(True)
+        toggle.clicked.connect(self.toggleDownload)
+        toggle.setObjectName("toggleActive")
+        self.toggle = toggle
+
+        toggle2 = qtw.QPushButton(text="share")
+        toggle2.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
+        toggle2.setCheckable(True)
+        toggle2.setChecked(False)
+        toggle2.clicked.connect(self.toggle2Download)
+        toggle2.setObjectName("toggleFalse")
+        self.toggle2 = toggle2
+
+        toggleLayout.addWidget(toggle)
+        toggleLayout.addWidget(toggle2)
+
+        srfB = qtw.QPushButton(text="SRF")
+        srfB.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
         #srfB.clicked.connect()
         srfB.setObjectName("srfButton")
 
-        blueB = qtw.QPushButton(text="share via bluetooth")
+        blueB = qtw.QPushButton(text="bluetooth")
+        blueB.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
         #blueB.clicked.connect()
         blueB.setObjectName("blueButton")
 
-        # add to layout
-        self.main.addWidget(title, 0, 0, 1, 1)
-        self.main.addWidget(srfB, 1, 0)
-        self.main.addWidget(blueB, 2, 0)
+        bacB = qtw.QPushButton(text="BAC-Net")
+        bacB.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
+        # bacB.clicked.connect()
+        bacB.setObjectName("bacButton")
 
-    def setBACNet(self):
+        localB = qtw.QPushButton(text="local network")
+        localB.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
+        # localB.clicked.connect()
+        localB.setObjectName("bacButton")
+
+        # add to download layout
+        downLayout.addLayout(toggleLayout)
+        downLayout.addWidget(srfB)
+        downLayout.addWidget(bacB)
+        downLayout.addWidget(blueB)
+        downLayout.addWidget(localB)
+
+        # add to layout
+        self.main.addLayout(downLayout, 0, 0)
+
+    def setArchive(self):
         # clear main layout
         self.removeWidgets(self.main)
         self.setSelected(self.b3)
 
         # new widgets
-        title = qtw.QLabel(text="BAC-NET")
+        title = qtw.QLabel(text="archive")
 
         # add to layout
         self.main.addWidget(title)
 
     def removeWidgets(self, layout):
         for i in reversed(range(layout.count())):
-            try:
-                layout.itemAt(i).widget().setParent(None)
-            except:
-                layout.itemAt(i).layout().setParent(None)
+            item = layout.itemAt(i)
+
+            # not ideal but seems to work
+            if str(type(item)) == "<class 'PyQt5.QtWidgets.QWidgetItem'>":
+                item.widget().setParent(None)
+            else:
+                self.removeWidgets(item)
+                item.layout().setParent(None)
 
     def getArticleName(self, name):
         # cut away .html
@@ -371,6 +435,25 @@ class MainWindow(qtw.QWidget):
         }
         #downloadTitle {
             font-size: 20px;
+        }
+        #toggleTrue {
+            color: black;
+        }
+        #toggleFalse {
+            color: lightgrey;
+        }
+        #bacButton {
+            color: white;
+            background-color: black;
+            border-radius: 3px;
+            border-style: none;
+        }
+        #bacButton:pressed {
+            color: black;
+            background-color: white;
+            border-style: solid;
+            border-width: 1px;
+            border-color: black;
         }"""
         return stylesheet
 
