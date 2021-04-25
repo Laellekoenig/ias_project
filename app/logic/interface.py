@@ -22,6 +22,7 @@ class LogicInterface:
         for article in articles:
             if article is not None:
                 save_article(article)
+        print("finished downloading")
         self.is_updating = False
 
     def get_articles(self):
@@ -29,6 +30,11 @@ class LogicInterface:
 
     def get_article_titles(self):
         return get_article_titles()
+
+    def get_article_html_by_title1(self, title):
+        for article in self.get_articles():
+            if article.title_1 == title:
+                return article.get_html()
 
     def mark_as_deleted(self, article):
         mark_as_deleted(article)

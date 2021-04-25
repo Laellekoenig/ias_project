@@ -4,6 +4,7 @@ from PyQt5 import QtGui as qtg
 from PyQt5 import QtCore as qtc
 import qtawesome as qta
 from gui.interface import Interface
+from logic.interface import LogicInterface as Logic
 import gui.utils as utils
 import gui.style as style
 
@@ -15,6 +16,7 @@ class MainWindow(qtw.QWidget):
 
         # for interacting with other parts of program
         self.interface = Interface(self)
+        self.logic = Logic()
 
         # load app icons
         utils.load_app_icons(app)
@@ -121,7 +123,7 @@ class MainWindow(qtw.QWidget):
         self.selector = selector
         selector.setWordWrap(True)
         # read articles from /data/articles folder
-        entries = self.interface.get_downloaded_articles()
+        entries = self.logic.get_article_titles()
         selector.addItems(entries)
         # add event for user input
         selector.itemSelectionChanged.connect(self.selected_article_changed)
@@ -137,7 +139,7 @@ class MainWindow(qtw.QWidget):
 
     # downloading and sharing section of app
     def set_downloading_section(self):
-        if self.interface.is_downloading:
+        if self.logic.is_updating:
             self.set_loading_screen_section()
             return
 
@@ -171,7 +173,7 @@ class MainWindow(qtw.QWidget):
 
         srfB = qtw.QPushButton(text="SRF")
         srfB.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
-        srfB.clicked.connect(self.interface.threaded_download)
+        srfB.clicked.connect(self.handle_download)
         srfB.setObjectName("srfButton")
 
         blueB = qtw.QPushButton(text="bluetooth")
@@ -206,12 +208,16 @@ class MainWindow(qtw.QWidget):
 
         #new widgets
         layout = qtw.QVBoxLayout()
+        centering_layout = qtw.QHBoxLayout()
 
-        gif_path = os.getcwd() + "/data/images/loading_light.gif"
+        if self.light:
+            gif_path = os.getcwd() + "/data/images/loading_light.gif"
+        else:
+            gif_path = os.getcwd() + "/data/images/loading_dark.gif"
         loading = qtg.QMovie(gif_path)
 
         loading_label = qtw.QLabel()
-        loading_label.setGeometry(qtc.QRect(0, 0, 250, 250))
+        loading_label.setObjectName("gif")
         loading_label.setMovie(loading)
         loading.start()
 
@@ -219,7 +225,11 @@ class MainWindow(qtw.QWidget):
         layout.addWidget(loading_label)
         layout.addStretch()
 
-        self.main.addLayout(layout, 0, 0)
+        centering_layout.addStretch()
+        centering_layout.addWidget(loading_label)
+        centering_layout.addStretch()
+
+        self.main.addLayout(centering_layout, 0, 0)
 
     # archive section of app
     def set_archiving_section(self):
@@ -236,7 +246,7 @@ class MainWindow(qtw.QWidget):
     def selected_article_changed(self):
         # change displayed article in UI on selection
         selectedArticle = self.selector.currentItem().text()
-        html = self.interface.get_article_html_by_title(selectedArticle)
+        html = self.logic.get_article_html_by_title1(selectedArticle)
         self.article.clear()
         self.article.insertHtml(html)
         #fileName = utils.get_file_name(selectedArticle)
@@ -259,6 +269,9 @@ class MainWindow(qtw.QWidget):
 
         # update colors of menu bar
         self.set_selected_menu_button(self.selected)
+
+        if self.selected == self.b2 and self.logic.is_updating:
+            self.set_loading_screen_section()
 
     def set_selected_menu_button(self, button):
         self.selected = button
@@ -307,3 +320,7 @@ class MainWindow(qtw.QWidget):
         print(self.selected)
         if self.selected == self.b2:
             self.set_downloading_section()
+
+    def handle_download(self):
+        self.logic.download_new_articles()
+        self.set_loading_screen_section()
