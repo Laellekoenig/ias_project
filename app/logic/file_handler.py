@@ -7,7 +7,7 @@ from logic.article import Article, NewsSource
 DIR_MAIN = str(Path.home()) + '/NewsTest'
 DIR_ARTICLES = DIR_MAIN + '/Articles'
 
-def store_files():
+def make_dirs():
     if not os.path.exists(DIR_ARTICLES):
         os.makedirs(DIR_ARTICLES)
 
@@ -20,6 +20,7 @@ def get_new_articles():
     pass
 
 def save_article(article):
+    make_dirs()
     source = article.news_source
     title = article.title_0
     file_path = None
