@@ -4,6 +4,7 @@ from PyQt5 import QtGui as qtg
 from PyQt5 import QtCore as qtc
 import qtawesome as qta
 from gui.interface import Interface
+from logic.interface import LogicInterface as Logic
 import gui.utils as utils
 import gui.style as style
 
@@ -15,6 +16,7 @@ class MainWindow(qtw.QWidget):
 
         # for interacting with other parts of program
         self.interface = Interface(self)
+        self.logic = Logic()
 
         # load app icons
         utils.load_app_icons(app)
@@ -121,7 +123,7 @@ class MainWindow(qtw.QWidget):
         self.selector = selector
         selector.setWordWrap(True)
         # read articles from /data/articles folder
-        entries = self.interface.get_downloaded_articles()
+        entries = self.logic.get_article_titles()
         selector.addItems(entries)
         # add event for user input
         selector.itemSelectionChanged.connect(self.selected_article_changed)
@@ -137,7 +139,7 @@ class MainWindow(qtw.QWidget):
 
     # downloading and sharing section of app
     def set_downloading_section(self):
-        if self.interface.is_downloading:
+        if self.logic.is_updating:
             self.set_loading_screen_section()
             return
 
@@ -171,7 +173,7 @@ class MainWindow(qtw.QWidget):
 
         srfB = qtw.QPushButton(text="SRF")
         srfB.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
-        srfB.clicked.connect(self.interface.threaded_download)
+        srfB.clicked.connect(self.handle_download)
         srfB.setObjectName("srfButton")
 
         blueB = qtw.QPushButton(text="bluetooth")
@@ -236,7 +238,7 @@ class MainWindow(qtw.QWidget):
     def selected_article_changed(self):
         # change displayed article in UI on selection
         selectedArticle = self.selector.currentItem().text()
-        html = self.interface.get_article_html_by_title(selectedArticle)
+        html = self.logic.get_article_html_by_title1(selectedArticle)
         self.article.clear()
         self.article.insertHtml(html)
         #fileName = utils.get_file_name(selectedArticle)
@@ -307,3 +309,7 @@ class MainWindow(qtw.QWidget):
         print(self.selected)
         if self.selected == self.b2:
             self.set_downloading_section()
+
+    def handle_download(self):
+        self.logic.download_new_articles()
+        self.set_loading_screen_section()
