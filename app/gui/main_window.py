@@ -207,7 +207,7 @@ class MainWindow(qtw.QWidget):
         #new widgets
         layout = qtw.QVBoxLayout()
 
-        gif_path = os.getcwd() + "/data/images/loading2.gif"
+        gif_path = os.getcwd() + "/data/images/loading_light.gif"
         loading = qtg.QMovie(gif_path)
 
         loading_label = qtw.QLabel()

@@ -50,10 +50,10 @@ def getLightStyleSheet():
         line-height: 2;
         border-style: none;
         spacing: 10;
-        padding-left: 10px;
     }
     QListWidget::Item {
-        margin: 10px;
+        padding-top: 5px;
+        padding-bottom: 5px;  
     }
     QListWidget::Item:selected {
         color: #f7f7f7;
