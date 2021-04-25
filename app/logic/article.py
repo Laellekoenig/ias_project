@@ -34,6 +34,7 @@ class Article:
         self.date_and_time_modified = ""
         self.bookmarked = False
         self.opened = False
+        self.deleted = False
 
         self.title_0 = ""
         self.title_1 = ""
@@ -84,6 +85,7 @@ class Article:
         self.date_and_time_modified = data['date_and_time_modified']
         self.bookmarked = data['bookmarked']
         self.opened = data['opened']
+        self.deleted = data['deleted']
 
         self.title_0 = data['title_0']
         self.title_1 = data['title_1']
@@ -104,6 +106,7 @@ class Article:
         data['date_and_time_modified'] = self.date_and_time_modified
         data['bookmarked'] = self.bookmarked
         data['opened'] = self.opened
+        data['deleted'] = self.deleted
 
         data['title_0'] = self.title_0
         data['title_1'] = self.title_1

@@ -5,7 +5,12 @@ from PyQt5 import QtWidgets as qtw
 from logic.interface import LogicInterface
 
 li = LogicInterface()
-articles = li.get_articles()
+#li.download_new_articles()
+# articles = li.get_articles()
+# a = articles[1]
+# li.mark_as_opened(a)
+# li.bookmark_article(a)
+# li.mark_as_deleted(a)
 #li.download_new_articles()
 #for a in li.get_articles():
 #    print(a.title_0)

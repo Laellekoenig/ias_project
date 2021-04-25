@@ -2,7 +2,7 @@
 from logic.file_handler import get_articles
 from logic.file_handler import save_article
 from logic.file_handler import get_article_titles
-from logic.file_handler import delete_article
+from logic.file_handler import mark_as_deleted
 from logic.article import Article
 from scraper.srf_scraper import getSRFArticles
 import threading
@@ -30,8 +30,13 @@ class LogicInterface:
     def get_article_titles(self):
         return get_article_titles()
 
-    # deletes every article in the given article list
-    def delete_articles(self, articles):
-        for article in articles:
-            delete_article(article)
+    def mark_as_deleted(self, article):
+        mark_as_deleted(article)
     
+    def mark_as_opened(self, article):
+        article.opened = True
+        save_article(article)
+
+    def bookmark_article(self, article):
+        article.bookmarked = True
+        save_article(article)
