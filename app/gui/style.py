@@ -127,6 +127,9 @@ def getLightStyleSheet():
         border-style: solid;
         border-width: 1px;
         border-color: black;
+    }
+    #gif {
+        margin-bottom: 100px;
     }"""
     return stylesheet
 
@@ -243,5 +246,8 @@ def getDarkStyleSheet():
         border-style: solid;
         border-width: 1px;
         border-color: #f7f7f7;
+    }
+    #gif {
+        margin-bottom: 100px;
     }"""
     return stylesheet
