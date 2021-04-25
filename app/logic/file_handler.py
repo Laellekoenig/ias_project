@@ -29,6 +29,7 @@ def save_article(article):
 def get_article_by_path(path):
     article = Article(os.path.split(path)[1].split(' - ')[0]) # get News Source
     file = open(path, 'r')
+    article.path = path
     article.fill_article_from_json_file(file)
     file.close()
     return article
@@ -48,8 +49,11 @@ def get_article_titles():
 #def read_article():
     
 # private method only. Do not access from outside
-def __delete_articles():
-    todo
+def delete_article(article):
+    if type(article) is Article:
+        os.remove(article.path)
+    else:
+        print("article '" + article + "' could not be removed")
 
 store_files()
 article_test = Article(NewsSource.SRF)

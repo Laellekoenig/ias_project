@@ -4,7 +4,8 @@ from scraper.srf_scraper import getSRFArticles
 from PyQt5 import QtWidgets as qtw
 from logic.interface import LogicInterface
 
-#li = LogicInterface()
+li = LogicInterface()
+articles = li.get_articles()
 #li.download_new_articles()
 #for a in li.get_articles():
 #    print(a.title_0)

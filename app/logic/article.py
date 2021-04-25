@@ -27,6 +27,7 @@ class Category(str, Enum):
 
 class Article:
     def __init__(self, news_source):
+        self.path = ""
         self.news_source = news_source
         self.category = Category.OTHER
         self.tags = []
