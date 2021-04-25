@@ -29,7 +29,8 @@ class LogicInterface:
         return get_articles()
 
     def get_article_titles(self):
-        return get_article_titles()
+        list = get_article_titles()
+        return [x.title_1 for x in list]
 
     def get_article_html_by_title1(self, title):
         for article in self.get_articles():
