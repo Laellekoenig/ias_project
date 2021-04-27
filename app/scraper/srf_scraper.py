@@ -3,8 +3,10 @@ import requests
 import re
 from logic.article import Article
 
+import time
 
-def getURLsfromRSS():
+# old_articles_infos are the titles, published- and modified dates from the articles that already have been saved before
+def getURLsfromRSS(old_article_infos):
     src = requests.get("https://www.srf.ch/news/bnf/rss/1646")
 
     #html content stored in scr
@@ -12,13 +14,23 @@ def getURLsfromRSS():
 
     items = BeautifulSoup(html, 'html.parser').find_all('item')
 
+    rss_titles = list()
     urls = list()
     for item in items:
-        url = item.contents[2]
-        urls.append(url)
+        title = item.contents[0]
+        if title not in rss_titles: # not a duplicate title in rss feed
+            rss_titles.append(title)
+            if title not in old_article_infos[0]:
+                url = item.contents[2]
+                urls.append(url)
+            else:
+                pass    # TODO? would be implemented when updating articles is considered (currently not working with published- and modified date, would have to scrap whole html for this)
+        #else:
+        #    print(title)
 
     return urls
 
+# get the one article found at the given url (only working for srf articles)
 def getArticleFromURL(url):
     src = requests.get(url)
     html = src.content
@@ -30,7 +42,7 @@ def getArticleFromURL(url):
     mainCategory = re.search(categoryPattern, url).group(1) # get 2 categories, for example 'news' and 'schweiz' or 'sport' and 'fussball'
     secondaryCategory = re.search(categoryPattern, url).group(2)
 
-    overtitle = htmlParsed.find('span', class_='article-title__overline').text   #overline title of article
+    overtitle = htmlParsed.find('span', class_='article-title__overline').text   # overline title of article
     title = htmlParsed.find('span', class_='article-title__text').text   # title of article
 
     content = htmlParsed.find('div', class_='article-content')  # all the content of the article-content class
@@ -38,16 +50,19 @@ def getArticleFromURL(url):
     if content.find(class_ = "ticker-item") is None:    # only take article if it has no live ticker, otherwise ignore it
 
         # get the date the article got published and last modified (if there, otherwise let it be empty strings)
+        publishedDate = None
+        modifiedDate = None
         if htmlParsed.find(class_='article-author__date') is not None:
             dates = str(htmlParsed.find(class_='article-author__date'))
             datePattern = '(\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d).*(\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d)'
             publishedDate = re.search(datePattern, dates).group(1)
             modifiedDate = re.search(datePattern, dates).group(2)
 
-        else:
-            publishedDate = ""
-            modifiedDate = ""
-
+        if publishedDate is None:
+            publishedDate = "0000-01-01T01:01:00+02.00"
+        if modifiedDate is None:
+            modifiedDate = "0000-01-01T01:01:00+02.00"
+            
         # get rid of polls
         if content.find(class_="poll__title") is not None:
             content.find(class_="poll__title").decompose()
@@ -86,7 +101,7 @@ def getArticleFromURL(url):
         for text in content:
             strText = str(text)
             if re.search("<li>", strText):
-                print()
+                pass
                 #newArticle.add_li(text.text) not yet available method
             elif re.search("<p>", strText):
                 newArticle.add_paragraph(text.text)
@@ -98,22 +113,46 @@ def getArticleFromURL(url):
         return newArticle
 
     else:
+        #print(title)
         return None
        
-def getSRFArticles():
+# old_articles are the articles saved before (with the last time articles got downloaded)
+def getSRFArticles(old_articles):
     articleList = list()
-    urls = getURLsfromRSS()
+    infos = get_article_infos(old_articles)
+
+    urls = getURLsfromRSS(infos)
+    
+
+    print("#URLs: " + str(len(urls)))
 
     for url in urls:
         if url is not None:
             article = getArticleFromURL(url)
-            articleList.append(article)
+            if article is not None:
+                articleList.append(article)
 
     return articleList
+
+def get_article_infos(articles): # articles is a list of articles
+    infos = [[], [], []] # save title, published- and modified date of articles
+    for article in articles:
+        title = article.title_1
+        published_date = article.date_and_time
+        modified_date = article.date_and_time_modified
+        if title is not None and published_date is not None and modified_date is not None:
+            infos[0].append(title)
+            infos[1].append(published_date)
+            infos[2].append(modified_date)
+
+    return infos    
     
 def main():
     
-    getSRFArticles()
+    start = time.time()
+    articles = getSRFArticles([])
+    print("#Articles: " + str(len(articles)))
+    print(time.time() - start)
 
 if __name__ == "__main__":
     main()
