@@ -5,6 +5,7 @@ from logic.file_handler import get_article_titles
 from logic.file_handler import mark_as_deleted
 from logic.article import Article
 from scraper.srf_scraper import getSRFArticles
+from scraper.scraper_manager import get_new_articles_from_web
 import threading
 class LogicInterface:
     def __init__(self):
@@ -18,7 +19,7 @@ class LogicInterface:
             thread.start()
 
     def start_scraping(self):
-        articles = getSRFArticles()
+        articles = get_new_articles_from_web()
         for article in articles:
             if article is not None:
                 save_article(article)
