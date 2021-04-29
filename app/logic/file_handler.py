@@ -3,6 +3,7 @@ import os
 import glob
 from pathlib import Path
 from logic.article import Article, NewsSource
+import re
 
 DIR_MAIN = str(Path.home()) + '/NewsTest'
 DIR_ARTICLES = DIR_MAIN + '/Articles'
@@ -22,15 +23,20 @@ def get_new_articles():
 def save_article(article):
     make_dirs()
     source = article.news_source
-    title = article.title_0
+    title = article.title_1
+
     file_path = None
     if not article.path:
-        file_path = DIR_ARTICLES + '/' + source + ' - ' + title + '.json'
+        file_path = DIR_ARTICLES + '/' + source + ' - ' + remove_incompatible_chars(title) + '.json'
     else:
         file_path = article.path
     file = open(file_path, 'w')
     file.write(article.get_json())
     file.close()
+
+def remove_incompatible_chars(title):
+    title = re.sub('[/\?%*:|"<>.,;=]', '', title)
+    return title
 
 def get_article_by_path(path):
     article = Article(os.path.split(path)[1].split(' - ')[0]) # get News Source
