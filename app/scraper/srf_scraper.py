@@ -16,17 +16,28 @@ def getURLsfromRSS(old_article_infos):
 
     rss_titles = list()
     urls = list()
+    numberNew = 0
+    numberNew2 = 0
+    numberArticles = 0
     for item in items:
+        numberArticles = numberArticles + 1
         title = item.contents[0]
         if title not in rss_titles: # not a duplicate title in rss feed
             rss_titles.append(title)
-            if title not in old_article_infos[0]:
+            numberNew = numberNew + 1
+            if title.text not in old_article_infos[0]: # a new title, not an article that has been saved before
+                #for art in old_article_infos[0]:
+                    #print("title: " + str(title) + "old: " + art)
+                #print(title)
                 url = item.contents[2]
                 urls.append(url)
+                numberNew2 = numberNew2 + 1
             else:
                 pass    # TODO? would be implemented when updating articles is considered (currently not working with published- and modified date, would have to scrap whole html for this)
         #else:
         #    print(title)
+
+    print("#Articles found: " + str(numberArticles) + ", no duplicate: "  + str(numberNew) + ", not already saved: " + str(numberNew2))
 
     return urls
 
@@ -120,7 +131,8 @@ def getArticleFromURL(url):
 def getSRFArticles(old_articles):
     articleList = list()
     infos = get_article_infos(old_articles)
-
+    #for art in old_articles:
+        #print(art.title_1)
     urls = getURLsfromRSS(infos)
     
 
