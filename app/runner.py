@@ -3,6 +3,11 @@ from gui.main_window import MainWindow
 from scraper.srf_scraper import getSRFArticles
 from PyQt5 import QtWidgets as qtw
 from logic.interface import LogicInterface
+from transfer.network_test import scan
+from transfer.network_test import display_result
+
+scanned_output = scan('192.168.1.1/24')
+display_result(scanned_output)
 
 li = LogicInterface()
 #li.download_new_articles()
