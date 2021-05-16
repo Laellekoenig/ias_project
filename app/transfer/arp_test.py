@@ -2,11 +2,11 @@ import os
 import re
 import socket
 import sys
-import select
-import queue
+import threading
 
-default_port = 55111
+DEFAULT_PORT = 55111
 BUFFER_SIZE = 1024
+SERVER_TIMEOUT = 10
 
 def get_devices():
     with os.popen('arp -a') as f:
@@ -28,7 +28,7 @@ def print_devices(result):
 
 def get_files_from_server(ip):
 
-    server_addr = (ip, default_port)
+    server_addr = (ip, DEFAULT_PORT)
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     # any client ip and port
     client_addr = ('', 0)
@@ -36,58 +36,75 @@ def get_files_from_server(ip):
     client_socket.bind(client_addr)
     # connect to server
     print("trying to connect to server: {}".format(server_addr))
-    client_socket.connect(server_addr)
+    try:
+        client_socket.connect(server_addr)
 
-    inputs = [client_socket]
-    outputs = []
-
-    client_socket.send("0".encode())
-    file = open("received_file.zip", 'wb')
-    while True:
-        data = client_socket.recv(BUFFER_SIZE)
-        print(data)
-        if not data:
-            break
-        file.write(data)
-    file.close()
-    print("file written")
-    client_socket.close()
+        client_socket.send("0".encode()) ### send time last updated
+        try:
+            file = open("received_data.zip", 'wb')
+        except Exception:
+            print("Failed to create zip file for received data.")
+        while True:
+            data = client_socket.recv(BUFFER_SIZE)
+            print(data)
+            if not data:
+                break
+            file.write(data)
+        file.close()
+        print("file written")
+        client_socket.close()
+    except socket.error as exc:
+        print("Socket exception: %s" % exc)
 
 def start_server():
 
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket.settimeout(SERVER_TIMEOUT)
     # get default address and bind
-    server_addr = (socket.gethostbyname(socket.gethostname()), default_port)
+    server_addr = (socket.gethostbyname(socket.gethostname()), DEFAULT_PORT)
     server_socket.bind(server_addr)
 
     # makes socket ready for accepting connections (max 1)
     server_socket.listen(1)
     print("server waiting on socket: {}".format(server_socket.getsockname()))
 
-    (client_socket, client_addr) = server_socket.accept()
-    print("client {} connected".format(client_addr))
-    msg = client_socket.recv(4096)
-    if msg.decode() == "0": # change this to check if it is an actual time
-        print(msg.decode())
-        # compress correct files to zip and send
-        file = open('file_name.zip', 'rb')
-        while True:
-            data = file.read(BUFFER_SIZE)
-            if not data:
-                break
-            client_socket.send(data)
+    try:
+        (client_socket, client_addr) = server_socket.accept()
+        print("client {} connected".format(client_addr))
+        msg = client_socket.recv(4096)
+        if msg.decode() == "0": ### change this to check if it is an actual time
+            ### compress correct files to zip and send
+            try:
+                file = open('file_name.zip', 'rb')
+            except Exception:
+                print("Failed to open or compress files for sending to client.")
+                return
+            while True:
+                data = file.read(BUFFER_SIZE)
+                if not data:
+                    break
+                client_socket.send(data)
+            file.close()
+            print("File sent succesfully: closing server")
+            server_socket.close()
+            
 
-    else:
-        print("no time received")
+        else:
+            print("no time received")
+    except socket.timeout:
+        print("No connection to server: closing server.")
+        server_socket.close()
+    except Exception:
+        print("An error occurred while listening to client.")
+        server_socket.close()
 
-    file.close()
-    server_socket.close()
-    print("server closed")
-    
+def start_server_threaded():
+    thread = threading.Thread(target=start_server)
+    thread.start()
 
 # test ----------------------------------------------
 if sys.argv[1] == "server":
-    start_server()
+    start_server_threaded()
 else:
     devices = get_devices()
     print_devices(devices)
