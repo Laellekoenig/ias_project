@@ -8,18 +8,16 @@ def scan(ip):
     answered_list = scapy.srp(broadcast_ether_arp_req_frame, timeout = 1, verbose = False)[0]
     result = []
 
-    print(len(answered_list))
     for i in range(0, len(answered_list)):
         device_name = ""
         try:
+            # get device names with ip address
             hostname = socket.gethostbyaddr(answered_list[i][1].psrc)
             device_name += hostname[0]
-            for h in hostname:
-                print(h)
         except socket.herror:
             # failed to resolve
             pass
-
+        # contains (ip, mac, device name)
         client_dict = {"ip" : answered_list[i][1].psrc, "mac" : answered_list[i][1].hwsrc, "name" : device_name}
         result.append(client_dict)
 
