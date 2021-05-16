@@ -7,6 +7,7 @@ import threading
 DEFAULT_PORT = 55111
 BUFFER_SIZE = 1024
 SERVER_TIMEOUT = 10
+CLIENT_TIMEOUT = 5
 
 def get_devices():
     with os.popen('arp -a') as f:
@@ -17,19 +18,22 @@ def get_devices():
         parts = line.split(' ')
         if len(parts) >= 4:
             device = { "name" : parts[0], "ip" : re.sub('[()]', '', parts[1]), "mac" : parts[3] }
+            if device["ip"] == '224.0.0.251' or device["ip"].split('.')[-1] == '1':
+                continue
             devices.append(device)
         
     return devices
 
 def print_devices(result):
-    print("-----------------------------------\nIP Address\t\tMAC Address\t\tDevice Name\n-----------------------------------")
+    print("----------------------------------------------------------------------\nIP Address\t\tMAC Address\t\tDevice Name\n----------------------------------------------------------------------")
     for i in result:
-        print("{}\t\t{}\t\t({})".format(i["ip"], i["mac"], i["name"]))
+        print("{}\t\t{}\t({})".format(i["ip"], i["mac"], i["name"]))
 
 def get_files_from_server(ip):
 
     server_addr = (ip, DEFAULT_PORT)
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    client_socket.settimeout(CLIENT_TIMEOUT)
     # any client ip and port
     client_addr = ('', 0)
     # bind server address to port
@@ -59,6 +63,7 @@ def get_files_from_server(ip):
 def start_server():
 
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    # closes server after timeout if no client connected
     server_socket.settimeout(SERVER_TIMEOUT)
     # get default address and bind
     server_addr = (socket.gethostbyname(socket.gethostname()), DEFAULT_PORT)
