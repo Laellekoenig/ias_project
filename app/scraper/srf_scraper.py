@@ -49,9 +49,13 @@ def getArticleFromURL(url):
     #parse src (often called soup)
     htmlParsed = BeautifulSoup(html, 'html.parser')
 
-    categoryPattern = 'ch/(.+?)/(.+?)/'
-    mainCategory = re.search(categoryPattern, url).group(1) # get 2 categories, for example 'news' and 'schweiz' or 'sport' and 'fussball'
-    secondaryCategory = re.search(categoryPattern, url).group(2)
+    main_category_pattern = 'ch/(.+?)/'
+    second_category_pattern = 'ch/(.+?)/(.+?)/'
+    mainCategory = re.search(main_category_pattern, url).group(1) # get 2 categories, for example 'news' and 'schweiz' or 'sport' and 'fussball'
+    if re.search(second_category_pattern, url) is None: #no second title, e.g. "Kultur" has none
+        secondaryCategory = ""
+    else:
+        secondaryCategory = re.search(second_category_pattern, url).group(2)
 
     overtitle = htmlParsed.find('span', class_='article-title__overline').text   # overline title of article
     title = htmlParsed.find('span', class_='article-title__text').text   # title of article
@@ -81,7 +85,8 @@ def getArticleFromURL(url):
             while pollAnswer is not None:
                 content.find(class_="poll-option poll-option--poll").decompose()
                 pollAnswer = content.find(class_="poll-option poll-option--poll")
-            content.find(class_="js-poll_taken_text h-element--hide").decompose()
+            if content.find(class_="js-poll_taken_text h-element--hide") is not None:
+                content.find(class_="js-poll_taken_text h-element--hide").decompose()
         
         # details of a person in the article, is removed
         if content.find('p', class_='person-details__name') is not None:
