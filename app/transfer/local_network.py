@@ -31,7 +31,7 @@ def print_devices(result):
     for i in result:
         print("{}\t\t{}\t({})".format(i["ip"], i["mac"], i["name"]))
 
-def get_files_from_server(ip):
+def start_client(ip):
 
     server_addr = (ip, DEFAULT_PORT)
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -71,6 +71,10 @@ def get_files_from_server(ip):
         client_socket.close()
     except Exception:
         print("Something went wrong sending newest date_time")
+
+def start_client_threaded(ip):
+    thread = threading.Thread(target=start_client(ip))
+    thread.start()
 
 def start_server():
 
@@ -138,6 +142,6 @@ if sys.argv[1] == "server":
 else:
     devices = get_devices()
     print_devices(devices)
-    get_files_from_server('192.168.1.22')
+    start_client_threaded('192.168.1.22')
 
 #get_files_from_server(devices[0]["ip"])

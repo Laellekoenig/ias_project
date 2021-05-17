@@ -94,7 +94,7 @@ def delete_article(article):
         print("article '" + article + "' could not be removed")
 
 # takes an argument of type 'datetime' or string in iso format
-# creates a zip file containing all articles that are newer than the given time or the current time - delta time
+# creates a zip file containing all articles that are newer than the given time or the (current time - delta time)
 # (whichever is later) in the export directory
 # if no article is in specified time frame, no zip file is created
 # returns path to created zip file or None
@@ -103,7 +103,6 @@ def zip_articles(date_time):
         date_time = datetime.fromisoformat(date_time)
     make_dirs()
     list_to_zip = []
-    date_time = date_time - DELTA_TIME_OLDEST_ARTICLES
     # if newest update of client is older than the specified deltatime, only newer articles than deltatime will be sent
     if date_time < datetime.fromtimestamp(time.time()) - DELTA_TIME_OLDEST_ARTICLES:
         date_time = datetime.fromtimestamp(time.time()) - DELTA_TIME_OLDEST_ARTICLES

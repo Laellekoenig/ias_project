@@ -6,7 +6,7 @@ from logic.interface import LogicInterface
 from logic.file_handler import zip_articles
 from logic.file_handler import get_newest_datetime
 from datetime import datetime
-from transfer.local_network import start_server_threaded
+#from transfer.local_network import start_server_threaded
 
 #start_server_threaded()
 
