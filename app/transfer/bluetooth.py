@@ -25,10 +25,6 @@ def start_server():
         print("Your device is currently not supported (you cannot start a bluetooth server)")
         exit(0)
 
-    if not os.path.exists(str(Path.home()) + "/NewsTest/Articles"): # no folder with articles found
-        print("couldn't find any articles to share...")
-        exit(0)
-
     print("your bluetooth server is starting now \n")
     print (mac_address)
     print("this is the address somebody else has to type in to receive the articles you have \n")
@@ -159,6 +155,6 @@ def start_client():
 
 def main():
     start_server()
-    
+
 if __name__ == "__main__":
     main()
