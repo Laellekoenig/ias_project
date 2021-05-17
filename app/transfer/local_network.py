@@ -3,8 +3,7 @@ import re
 import socket
 import sys
 import threading
-from logic.file_handler import get_newest_datetime
-from logic.file_handler import zip_articles
+from logic.file_handler import get_newest_datetime, zip_articles, unzip_articles, DIR_TRANSFER
 from datetime import datetime
 
 DEFAULT_PORT = 55111
@@ -46,9 +45,15 @@ def get_files_from_server(ip):
     try:
         client_socket.connect(server_addr)
 
-        client_socket.send(get_newest_datetime().isoformat().encode()) ### send time last updated
+        client_socket.send(get_newest_datetime().isoformat().encode())
         try:
-            file = open("received_articles.zip", 'wb')
+            data = client_socket.recv(BUFFER_SIZE)
+            if not data:
+                print("User does not have new articles.")
+                client_socket.close()
+                return
+            file = open(DIR_TRANSFER + "/received_articles.zip", 'wb')
+            file.write(data)
         except Exception:
             print("Failed to create zip file for received data.")
         while True:
@@ -58,11 +63,14 @@ def get_files_from_server(ip):
                 break
             file.write(data)
         file.close()
-        print("file written")
+        print("Articles successfully received.")
+        unzip_articles(DIR_TRANSFER + "/received_articles.zip")
         client_socket.close()
     except socket.error as exc:
         print("Socket exception: %s" % exc)
         client_socket.close()
+    except Exception:
+        print("Something went wrong sending newest date_time")
 
 def start_server():
 

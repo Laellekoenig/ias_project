@@ -11,14 +11,14 @@ import time
 
 DIR_MAIN = str(Path.home()) + '/NewsTest'
 DIR_ARTICLES = DIR_MAIN + '/Articles'
-DIR_EXPORT = DIR_MAIN + '/Export'
+DIR_TRANSFER = DIR_MAIN + '/Export'
 DELTA_TIME_OLDEST_ARTICLES = timedelta(days = 10)
 
 def make_dirs():
     if not os.path.exists(DIR_ARTICLES):
         os.makedirs(DIR_ARTICLES)
-    if not os.path.exists(DIR_EXPORT):
-        os.makedirs(DIR_EXPORT)
+    if not os.path.exists(DIR_TRANSFER):
+        os.makedirs(DIR_TRANSFER)
 
 def get_stored_articles():
     #todo
@@ -73,9 +73,17 @@ def get_article_titles():
     return list
 
 #def read_article():
+
+def mark_as_opened(article, mark=True):
+    article.opened = mark
+    save_article(article)
     
-def mark_as_deleted(article):
-    article.deleted = True
+def mark_as_bookmarked(article, mark=True):
+    article.bookmarked = mark
+    save_article(article)
+
+def mark_as_deleted(article, mark=True):
+    article.deleted = mark
     save_article(article)
 
 # private method only. Do not access from outside
@@ -95,6 +103,7 @@ def zip_articles(date_time):
         date_time = datetime.fromisoformat(date_time)
     make_dirs()
     list_to_zip = []
+    date_time = date_time - DELTA_TIME_OLDEST_ARTICLES
     # if newest update of client is older than the specified deltatime, only newer articles than deltatime will be sent
     if date_time < datetime.fromtimestamp(time.time()) - DELTA_TIME_OLDEST_ARTICLES:
         date_time = datetime.fromtimestamp(time.time()) - DELTA_TIME_OLDEST_ARTICLES
@@ -103,17 +112,40 @@ def zip_articles(date_time):
         if '+' in article[0].date_and_time:
             continue
         if datetime.fromisoformat(article[0].date_and_time) > date_time:
+            # reset unwanted metadata
+            article[0].bookmarked = False
+            article[0].opened = False
             list_to_zip.append(article)
 
     if len(list_to_zip) == 0:
         print("No articles in specified time found.")
         return None
-    zip_path = DIR_EXPORT + '/' + get_newest_datetime().isoformat() + '.zip'
+    zip_path = DIR_TRANSFER + '/' + get_newest_datetime().isoformat() + '.zip'
     with zipfile.ZipFile(zip_path, 'w') as zipF:
         ### only zip files not folder hyrarchy
         for article in list_to_zip:
             zipF.write(article[1], article[1].split('/')[-1], compress_type=zipfile.ZIP_DEFLATED)
     return zip_path
+
+# unzips articles into article directory
+# if an article already exists, it does not get overwritten (MAYBE CHANGE THIS?)
+# metadata of new articles is reset
+def unzip_articles(zip_path):
+    try:
+        with zipfile.ZipFile(zip_path) as z:
+            for file in z.namelist():
+                if file.endswith('.json'):
+                    path = DIR_ARTICLES + '/' + file
+                    if os.path.exists(path):
+                        # prevents replacing already existing articles and its metadata
+                        continue
+                    z.extract(file, path=DIR_ARTICLES)
+                    article = get_article_by_path(path)
+                    mark_as_opened(article, False)
+                    mark_as_bookmarked(article, False)
+                    mark_as_deleted(article, False)
+    except Exception:
+        print("Unzipping failed.")
 
 # returns the date and time of the newest article as 'datetime' type
 def get_newest_datetime():

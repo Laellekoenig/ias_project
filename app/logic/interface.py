@@ -2,7 +2,6 @@
 from logic.file_handler import get_articles
 from logic.file_handler import save_article
 from logic.file_handler import get_article_titles
-from logic.file_handler import mark_as_deleted
 from logic.article import Article
 from scraper.srf_scraper import getSRFArticles
 from scraper.scraper_manager import get_new_articles_from_web
@@ -39,7 +38,8 @@ class LogicInterface:
                 return article.get_html()
 
     def mark_as_deleted(self, article):
-        mark_as_deleted(article)
+        article.deleted = True
+        save_article(article)
     
     def mark_as_opened(self, article):
         article.opened = True
