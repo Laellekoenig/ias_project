@@ -1,4 +1,5 @@
 from enum import Enum
+from datetime import datetime
 import json
 
 class NewsSource(str, Enum):

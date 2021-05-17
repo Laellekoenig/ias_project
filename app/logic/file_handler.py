@@ -4,13 +4,18 @@ import glob
 from pathlib import Path
 from logic.article import Article, NewsSource
 import re
+import zipfile
+from datetime import datetime
 
 DIR_MAIN = str(Path.home()) + '/NewsTest'
 DIR_ARTICLES = DIR_MAIN + '/Articles'
+DIR_EXPORT = DIR_MAIN + '/Export'
 
 def make_dirs():
     if not os.path.exists(DIR_ARTICLES):
         os.makedirs(DIR_ARTICLES)
+    if not os.path.exists(DIR_EXPORT):
+        os.makedirs(DIR_EXPORT)
 
 def get_stored_articles():
     #todo
@@ -52,6 +57,12 @@ def get_articles():
         articles.append(get_article_by_path(path))
     return articles
 
+def get_articles_with_paths():
+    articles = []
+    for path in glob.glob(DIR_ARTICLES + '/*.json'):
+        articles.append((get_article_by_path(path), path))
+    return articles
+
 def get_article_titles():
     list = []
     for a in get_articles():
@@ -70,6 +81,37 @@ def delete_article(article):
         os.remove(article.path)
     else:
         print("article '" + article + "' could not be removed")
+
+# takes an argument of type 'datetime' or string in iso format
+def zip_articles(date_time):
+    if type(date_time) is str:
+        date_time = datetime.fromisoformat(date_time)
+    make_dirs()
+    list_to_zip = []
+    for article in get_articles_with_paths():
+        ### handle articles with strange time stamp
+        if '+' in article[0].date_and_time:
+            continue
+        if datetime.fromisoformat(article[0].date_and_time) > date_time:
+            list_to_zip.append(article)
+
+    with zipfile.ZipFile(DIR_EXPORT + '/test.zip', 'w') as zipF:
+        ### only zip files not folder hyrarchy
+        for article in list_to_zip:
+            zipF.write(article[1], article[1].split('/')[-1], compress_type=zipfile.ZIP_DEFLATED)
+
+# returns the date and time of the newest article as 'datetime' type
+def get_newest_datetime():
+    date_time = None
+    for article in get_articles():
+        if '+' in article.date_and_time:
+            continue
+        if date_time == None:
+            date_time = datetime.fromisoformat(article.date_and_time)
+        elif datetime.fromisoformat(article.date_and_time) > date_time:
+            date_time = datetime.fromisoformat(article.date_and_time)
+    return date_time
+
 
 #print(article_test.get_html())
 #print(get_article_list())

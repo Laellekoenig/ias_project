@@ -3,12 +3,12 @@ from gui.main_window import MainWindow
 from scraper.srf_scraper import getSRFArticles
 from PyQt5 import QtWidgets as qtw
 from logic.interface import LogicInterface
-from transfer.network_test import scan
-from transfer.network_test import display_result
+from logic.file_handler import zip_articles
+from logic.file_handler import get_newest_datetime
+from datetime import datetime
 
-scanned_output = scan('192.168.1.1/24')
-display_result(scanned_output)
-
+zip_articles('2021-04-17T08:42:00')
+#print(get_newest_datetime().isoformat())
 li = LogicInterface()
 #li.download_new_articles()
 # articles = li.get_articles()

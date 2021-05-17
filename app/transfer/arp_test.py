@@ -59,6 +59,7 @@ def get_files_from_server(ip):
         client_socket.close()
     except socket.error as exc:
         print("Socket exception: %s" % exc)
+        client_socket.close()
 
 def start_server():
 
@@ -80,7 +81,7 @@ def start_server():
         if msg.decode() == "0": ### change this to check if it is an actual time
             ### compress correct files to zip and send
             try:
-                file = open('file_name.zip', 'rb')
+                file = open('test.zip', 'rb')
             except Exception:
                 print("Failed to open or compress files for sending to client.")
                 return
@@ -99,6 +100,9 @@ def start_server():
     except socket.timeout:
         print("No connection to server: closing server.")
         server_socket.close()
+    except socket.error as exc:
+        print("Socket exception: %s" % exc)
+        server_socket.close()
     except Exception:
         print("An error occurred while listening to client.")
         server_socket.close()
@@ -108,10 +112,12 @@ def start_server_threaded():
     thread.start()
 
 # test ----------------------------------------------
+
 if sys.argv[1] == "server":
     start_server_threaded()
 else:
     devices = get_devices()
     print_devices(devices)
-    get_files_from_server('192.168.2.3')
+    get_files_from_server('192.168.1.22')
+
 #get_files_from_server(devices[0]["ip"])
