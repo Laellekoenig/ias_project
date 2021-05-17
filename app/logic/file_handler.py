@@ -6,10 +6,13 @@ from logic.article import Article, NewsSource
 import re
 import zipfile
 from datetime import datetime
+from datetime import timedelta
+import time
 
 DIR_MAIN = str(Path.home()) + '/NewsTest'
 DIR_ARTICLES = DIR_MAIN + '/Articles'
 DIR_EXPORT = DIR_MAIN + '/Export'
+DELTA_TIME_OLDEST_ARTICLES = timedelta(days = 10)
 
 def make_dirs():
     if not os.path.exists(DIR_ARTICLES):
@@ -83,11 +86,18 @@ def delete_article(article):
         print("article '" + article + "' could not be removed")
 
 # takes an argument of type 'datetime' or string in iso format
+# creates a zip file containing all articles that are newer than the given time or the current time - delta time
+# (whichever is later) in the export directory
+# if no article is in specified time frame, no zip file is created
+# returns path to created zip file or None
 def zip_articles(date_time):
     if type(date_time) is str:
         date_time = datetime.fromisoformat(date_time)
     make_dirs()
     list_to_zip = []
+    # if newest update of client is older than the specified deltatime, only newer articles than deltatime will be sent
+    if date_time < datetime.fromtimestamp(time.time()) - DELTA_TIME_OLDEST_ARTICLES:
+        date_time = datetime.fromtimestamp(time.time()) - DELTA_TIME_OLDEST_ARTICLES
     for article in get_articles_with_paths():
         ### handle articles with strange time stamp
         if '+' in article[0].date_and_time:
@@ -95,10 +105,15 @@ def zip_articles(date_time):
         if datetime.fromisoformat(article[0].date_and_time) > date_time:
             list_to_zip.append(article)
 
-    with zipfile.ZipFile(DIR_EXPORT + '/test.zip', 'w') as zipF:
+    if len(list_to_zip) == 0:
+        print("No articles in specified time found.")
+        return None
+    zip_path = DIR_EXPORT + '/' + get_newest_datetime().isoformat() + '.zip'
+    with zipfile.ZipFile(zip_path, 'w') as zipF:
         ### only zip files not folder hyrarchy
         for article in list_to_zip:
             zipF.write(article[1], article[1].split('/')[-1], compress_type=zipfile.ZIP_DEFLATED)
+    return zip_path
 
 # returns the date and time of the newest article as 'datetime' type
 def get_newest_datetime():

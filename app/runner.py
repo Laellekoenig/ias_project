@@ -6,8 +6,11 @@ from logic.interface import LogicInterface
 from logic.file_handler import zip_articles
 from logic.file_handler import get_newest_datetime
 from datetime import datetime
+#from transfer.local_network import start_server_threaded
 
-zip_articles('2021-04-17T08:42:00')
+#start_server_threaded()
+
+#zip_articles('2021-04-17T08:42:00')
 #print(get_newest_datetime().isoformat())
 li = LogicInterface()
 #li.download_new_articles()

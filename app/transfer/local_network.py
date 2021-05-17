@@ -3,6 +3,9 @@ import re
 import socket
 import sys
 import threading
+from logic.file_handler import get_newest_datetime
+from logic.file_handler import zip_articles
+from datetime import datetime
 
 DEFAULT_PORT = 55111
 BUFFER_SIZE = 1024
@@ -43,9 +46,9 @@ def get_files_from_server(ip):
     try:
         client_socket.connect(server_addr)
 
-        client_socket.send("0".encode()) ### send time last updated
+        client_socket.send(get_newest_datetime().isoformat().encode()) ### send time last updated
         try:
-            file = open("received_data.zip", 'wb')
+            file = open("received_articles.zip", 'wb')
         except Exception:
             print("Failed to create zip file for received data.")
         while True:
@@ -78,25 +81,34 @@ def start_server():
         (client_socket, client_addr) = server_socket.accept()
         print("client {} connected".format(client_addr))
         msg = client_socket.recv(4096)
-        if msg.decode() == "0": ### change this to check if it is an actual time
-            ### compress correct files to zip and send
-            try:
-                file = open('test.zip', 'rb')
-            except Exception:
-                print("Failed to open or compress files for sending to client.")
-                return
-            while True:
-                data = file.read(BUFFER_SIZE)
-                if not data:
-                    break
-                client_socket.send(data)
-            file.close()
-            print("File sent succesfully: closing server")
+        try:
+            date_time = datetime.fromisoformat(msg.decode())
+            print("Received time " + date_time.isoformat())
+        except Exception:
+            print("Received time is not in iso format.")
             server_socket.close()
+            return
+        #msg.decode() == "0": ### change this to check if it is an actual time
+            ### compress correct files to zip and send
+        try:
+            path = zip_articles(date_time)
+            if path == None:
+                server_socket.close()
+                return
+            else:
+                file = open(path, 'rb')
+        except Exception:
+            print("Failed to open or compress files for sending to client.")
+            return
+        while True:
+            data = file.read(BUFFER_SIZE)
+            if not data:
+                break
+            client_socket.send(data)
+        file.close()
+        print("File sent succesfully: closing server")
+        server_socket.close()
             
-
-        else:
-            print("no time received")
     except socket.timeout:
         print("No connection to server: closing server.")
         server_socket.close()
