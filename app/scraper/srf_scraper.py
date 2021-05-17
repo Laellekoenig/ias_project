@@ -2,6 +2,8 @@ from bs4 import BeautifulSoup
 import requests
 import re
 from logic.article import Article
+import time
+from datetime import datetime
 
 import time
 
@@ -74,9 +76,9 @@ def getArticleFromURL(url):
             modifiedDate = re.search(datePattern, dates).group(2)
 
         if publishedDate is None:
-            publishedDate = "0000-01-01T01:01:00+02.00"
+            publishedDate = datetime.fromtimestamp(time.time()).isoformat() #"0000-01-01T01:01:00+02.00"
         if modifiedDate is None:
-            modifiedDate = "0000-01-01T01:01:00+02.00"
+            modifiedDate = datetime.fromtimestamp(time.time()).isoformat() #"0000-01-01T01:01:00+02.00"
             
         # get rid of polls
         if content.find(class_="poll__title") is not None:
