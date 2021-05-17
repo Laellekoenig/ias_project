@@ -5,8 +5,6 @@ from logic.article import Article
 import time
 from datetime import datetime
 
-import time
-
 # old_articles_infos are the titles, published- and modified dates from the articles that already have been saved before
 def getURLsfromRSS(old_article_infos):
     src = requests.get("https://www.srf.ch/news/bnf/rss/1646")
