@@ -100,7 +100,10 @@ def delete_article(article):
 # returns path to created zip file or None
 def zip_articles(date_time):
     if type(date_time) is str:
-        date_time = datetime.fromisoformat(date_time)
+        if date_time == "None":
+            date_time = datetime.fromtimestamp(time.time()) - DELTA_TIME_OLDEST_ARTICLES
+        else:
+            date_time = datetime.fromisoformat(date_time)
     make_dirs()
     list_to_zip = []
     # if newest update of client is older than the specified deltatime, only newer articles than deltatime will be sent

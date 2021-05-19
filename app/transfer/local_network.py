@@ -44,8 +44,11 @@ def start_client(ip):
     print("trying to connect to server: {}".format(server_addr))
     try:
         client_socket.connect(server_addr)
-
-        client_socket.send(get_newest_datetime().isoformat().encode())
+        newest_datetime = get_newest_datetime()
+        if not newest_datetime:
+            client_socket.send("None".encode())
+        else:
+            client_socket.send(get_newest_datetime().isoformat().encode())
         try:
             data = client_socket.recv(BUFFER_SIZE)
             if not data:
@@ -93,13 +96,16 @@ def start_server():
         (client_socket, client_addr) = server_socket.accept()
         print("client {} connected".format(client_addr))
         msg = client_socket.recv(4096)
-        try:
-            date_time = datetime.fromisoformat(msg.decode())
-            print("Received time " + date_time.isoformat())
-        except Exception:
-            print("Received time is not in iso format.")
-            server_socket.close()
-            return
+        if msg.decode() == "None":
+            date_time = "None"
+        else:
+            try:
+                date_time = datetime.fromisoformat(msg.decode())
+                print("Received time " + date_time.isoformat())
+            except Exception:
+                print("Received time is not in iso format.")
+                server_socket.close()
+                return
         #msg.decode() == "0": ### change this to check if it is an actual time
             ### compress correct files to zip and send
         try:
@@ -142,6 +148,6 @@ if sys.argv[1] == "server":
 else:
     devices = get_devices()
     print_devices(devices)
-    start_client_threaded('192.168.1.22')
+    start_client_threaded('192.168.2.3')
 
 #get_files_from_server(devices[0]["ip"])
