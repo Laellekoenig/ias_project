@@ -99,11 +99,10 @@ def delete_article(article):
 # if no article is in specified time frame, no zip file is created
 # returns path to created zip file or None
 def zip_articles(date_time):
-    if type(date_time) is str:
-        if date_time == "None":
-            date_time = datetime.fromtimestamp(time.time()) - DELTA_TIME_OLDEST_ARTICLES
-        else:
-            date_time = datetime.fromisoformat(date_time)
+    if not date_time:
+        date_time = datetime.fromtimestamp(time.time()) - DELTA_TIME_OLDEST_ARTICLES
+    elif type(date_time) is str:
+        date_time = datetime.fromisoformat(date_time)
     make_dirs()
     list_to_zip = []
     # if newest update of client is older than the specified deltatime, only newer articles than deltatime will be sent
@@ -122,7 +121,7 @@ def zip_articles(date_time):
     if len(list_to_zip) == 0:
         print("No articles in specified time found.")
         return None
-    zip_path = DIR_TRANSFER + '/' + get_newest_datetime().isoformat() + '.zip'
+    zip_path = DIR_TRANSFER + '/' + get_newest_datetime().isoformat().split('T')[0] + '.zip'
     with zipfile.ZipFile(zip_path, 'w') as zipF:
         ### only zip files not folder hyrarchy
         for article in list_to_zip:

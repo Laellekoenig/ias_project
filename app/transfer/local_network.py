@@ -3,13 +3,13 @@ import re
 import socket
 import sys
 import threading
-from logic.file_handler import get_newest_datetime, zip_articles, unzip_articles, DIR_TRANSFER
+from logic.file_handler import make_dirs, get_newest_datetime, zip_articles, unzip_articles, DIR_TRANSFER
 from datetime import datetime
 
 DEFAULT_PORT = 55111
 BUFFER_SIZE = 1024
-SERVER_TIMEOUT = 10
-CLIENT_TIMEOUT = 5
+SERVER_TIMEOUT = 15
+CLIENT_TIMEOUT = 10
 
 def get_devices():
     with os.popen('arp -a') as f:
@@ -55,6 +55,7 @@ def start_client(ip):
                 print("User does not have new articles.")
                 client_socket.close()
                 return
+            make_dirs()
             file = open(DIR_TRANSFER + "/received_articles.zip", 'wb')
             file.write(data)
         except Exception:
@@ -96,12 +97,12 @@ def start_server():
         (client_socket, client_addr) = server_socket.accept()
         print("client {} connected".format(client_addr))
         msg = client_socket.recv(4096)
+        print("Received time " + msg.decode())
         if msg.decode() == "None":
-            date_time = "None"
+            date_time = None
         else:
             try:
                 date_time = datetime.fromisoformat(msg.decode())
-                print("Received time " + date_time.isoformat())
             except Exception:
                 print("Received time is not in iso format.")
                 server_socket.close()
