@@ -11,19 +11,26 @@ import platform
 def start_server():
     try: #try to get bluetooth MAC-address of device, if it fails, exit program
         deviceOs = platform.system()
-        if (deviceOs == "Windows"):
-            proc = subprocess.check_output("ipconfig /all").decode(encoding="437")
+        if deviceOs.lower() == "windows":
+            output = subprocess.check_output("ipconfig /all").decode(encoding="437")
             pattern = '(.*)(bluetooth|Bluetooth)((.|\s)*)'
-            bluetooth_part = re.search(pattern, proc).group(3)
+            bluetooth_part = re.search(pattern, output).group(3)
             mac_address_pattern = '[0-9a-fA-F][0-9a-fA-F]-[0-9a-fA-F][0-9a-fA-F]-[0-9a-fA-F][0-9a-fA-F]-[0-9a-fA-F][0-9a-fA-F]-[0-9a-fA-F][0-9a-fA-F]-[0-9a-fA-F][0-9a-fA-F]'
             mac_address = re.search(mac_address_pattern, bluetooth_part).group(0) # if it doesnt work, end program, didnt find bluetooth mac address on windows!
             mac_address = mac_address.replace("-", ":") # MAC-address needs to have ':' between the numbers, not '-'
-        else: 
+        elif deviceOs.lower() == "darwin":
+            output = subprocess.check_output("system_profiler SPBluetoothDataType").decode(encoding="437")
+            pattern = '(bluetooth|Bluetooth:)((.|\s)*)'
+            bluetooth_part = re.search(pattern, output).group(2)
+            mac_address_pattern = '[0-9a-fA-F][0-9a-fA-F]-[0-9a-fA-F][0-9a-fA-F]-[0-9a-fA-F][0-9a-fA-F]-[0-9a-fA-F][0-9a-fA-F]-[0-9a-fA-F][0-9a-fA-F]-[0-9a-fA-F][0-9a-fA-F]'
+            mac_address = re.search(mac_address_pattern, bluetooth_part).group(0)
+            mac_address = mac_address.replace("-", ":")
+        else:
             status, output = subprocess.getstatusoutput("hciconfig")
             mac_address = output.split("{}:".format("hci0"))[1].split("BD Address: ")[1].split(" ")[0].strip()
     except:
         print("Your device is currently not supported (you cannot start a bluetooth server)")
-        exit(0)
+        return
 
     print("your bluetooth server is starting now \n")
     print (mac_address)
@@ -54,7 +61,7 @@ def start_server():
         print("try to turn on your bluetooth and try again")
         client.close()
         s.close()
-        exit(0)
+        return
 
     try:
         path = zip_articles(date_time)
@@ -115,7 +122,7 @@ def start_client():
                     print("something went wrong, please try again")
                     address = input("Write quit to leave or enter the xx:xx:xx:xx:xx:xx address of the device you'd like to get your articles from: ")
                     if address == quit:
-                        exit(0)
+                        return
                     print("trying to connect...")
     try:
         s.send(get_newest_datetime().isoformat().encode())
