@@ -49,6 +49,10 @@ def start_server():
         client, address = s.accept()
         print("client {} connected to your server and is receiving your articles now".format(address))
 
+    except Exception:
+        print("Socket creation exception")
+        return
+    try:
         date_time_msg = client.recv(4096)
         date_time = datetime.fromisoformat(date_time_msg.decode())
     except socket.timeout:
