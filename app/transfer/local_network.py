@@ -149,6 +149,6 @@ if sys.argv[1] == "server":
 else:
     devices = get_devices()
     print_devices(devices)
-    start_client_threaded('192.168.2.3')
+    start_client_threaded('127.0.0.1')
 
 #get_files_from_server(devices[0]["ip"])

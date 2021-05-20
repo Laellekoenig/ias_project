@@ -103,6 +103,7 @@ def zip_articles(date_time):
         date_time = datetime.fromtimestamp(time.time()) - DELTA_TIME_OLDEST_ARTICLES
     elif type(date_time) is str:
         date_time = datetime.fromisoformat(date_time)
+    date_time = date_time - DELTA_TIME_OLDEST_ARTICLES
     make_dirs()
     list_to_zip = []
     # if newest update of client is older than the specified deltatime, only newer articles than deltatime will be sent
@@ -125,7 +126,7 @@ def zip_articles(date_time):
     with zipfile.ZipFile(zip_path, 'w') as zipF:
         ### only zip files not folder hyrarchy
         for article in list_to_zip:
-            zipF.write(article[1], article[1].split('/')[-1], compress_type=zipfile.ZIP_DEFLATED)
+            zipF.write(article[1], article[1].split('/')[-1].split('\\')[-1], compress_type=zipfile.ZIP_DEFLATED)
     return zip_path
 
 # unzips articles into article directory
