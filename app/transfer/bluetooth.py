@@ -19,7 +19,7 @@ def start_server():
             mac_address = re.search(mac_address_pattern, bluetooth_part).group(0) # if it doesnt work, end program, didnt find bluetooth mac address on windows!
             mac_address = mac_address.replace("-", ":") # MAC-address needs to have ':' between the numbers, not '-'
         elif deviceOs.lower() == "darwin":
-            output = subprocess.check_output("system_profiler SPBluetoothDataType").decode(encoding="437")
+            status, output = subprocess.getstatusoutput("system_profiler SPBluetoothDataType")
             pattern = '(bluetooth|Bluetooth:)((.|\s)*)'
             bluetooth_part = re.search(pattern, output).group(2)
             mac_address_pattern = '[0-9a-fA-F][0-9a-fA-F]-[0-9a-fA-F][0-9a-fA-F]-[0-9a-fA-F][0-9a-fA-F]-[0-9a-fA-F][0-9a-fA-F]-[0-9a-fA-F][0-9a-fA-F]-[0-9a-fA-F][0-9a-fA-F]'
