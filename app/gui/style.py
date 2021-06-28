@@ -110,10 +110,10 @@ def getLightStyleSheet():
         font-size: 20px;
     }
     #toggleTrue {
-        color: black;
+        color: grey;
     }
     #toggleFalse {
-        color: grey;
+        color: black;
     }
     #bacButton {
         color: white;

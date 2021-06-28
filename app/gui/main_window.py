@@ -157,7 +157,7 @@ class MainWindow(qtw.QWidget):
         toggle.setCheckable(True)
         toggle.setChecked(True)
         toggle.clicked.connect(self.toggle_download)
-        toggle.setObjectName("toggleActive")
+        toggle.setObjectName("toggleTrue")
         self.toggle = toggle
 
         toggle2 = qtw.QPushButton(text="share")
@@ -290,11 +290,11 @@ class MainWindow(qtw.QWidget):
             self.toggle2.setChecked(False)
             self.toggle2.setObjectName("toggleFalse")
             if self.light:
-                self.toggle.setStyleSheet("color: black;")
-                self.toggle2.setStyleSheet("color: grey;")
+                self.toggle.setStyleSheet("color: grey;")
+                self.toggle2.setStyleSheet("color: black;")
             else:
                 self.toggle.setStyleSheet("color: #f7f7f7;")
-                self.toggle2.setStyleSheet("color: grey;")
+                self.toggle2.setStyleSheet("color: black;")
         else:
             self.toggle.setChecked(True)
 
@@ -304,11 +304,11 @@ class MainWindow(qtw.QWidget):
             self.toggle.setChecked(False)
             self.toggle.setObjectName("toggleFalse")
             if self.light:
-                self.toggle2.setStyleSheet("color: black;")
-                self.toggle.setStyleSheet("color: grey;")
+                self.toggle2.setStyleSheet("color: grey;")
+                self.toggle.setStyleSheet("color: black;")
             else:
                 self.toggle2.setStyleSheet("color: #f7f7f7;")
-                self.toggle.setStyleSheet("color: grey;")
+                self.toggle.setStyleSheet("color: black;")
         else:
             self.toggle2.setChecked(True)
 
