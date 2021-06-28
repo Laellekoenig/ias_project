@@ -1,0 +1,9 @@
+- [ ] BAC net integration
+- [ ] bluetooth article transmission
+- [ ] local network article transmission
+- [x] download articles
+- [x] loading animation when scraping
+- [ ] only download new articles
+- [x] logic interface for GUI
+- [ ] option to stop server
+- [ ] stop loading animation when done downloading

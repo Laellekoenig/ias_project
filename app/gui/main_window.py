@@ -338,6 +338,8 @@ class MainWindow(qtw.QWidget):
 
         title = qtw.QLabel(text="Server")
 
+        net.start_server_threaded()
+
         lanLayout = qtw.QVBoxLayout()
         lanLayout.addWidget(title)
 
