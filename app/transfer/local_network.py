@@ -147,11 +147,11 @@ def start_server_threaded():
 
 # test ----------------------------------------------
 
-if sys.argv[1] == "server":
-    start_server_threaded()
-else:
-    devices = get_devices()
-    print_devices(devices)
-    start_client_threaded('127.0.0.1')
+#if sys.argv[1] == "server":
+#    start_server_threaded()
+#else:
+#    devices = get_devices()
+#    print_devices(devices)
+#    start_client_threaded('127.0.0.1')
 
 #get_files_from_server(devices[0]["ip"])

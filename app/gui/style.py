@@ -54,6 +54,7 @@ def getLightStyleSheet():
     QListWidget::Item {
         padding-top: 5px;
         padding-bottom: 5px;  
+        border-bottom: 1px solid lightgrey;  
     }
     QListWidget::Item:selected {
         color: #f7f7f7;
@@ -130,6 +131,19 @@ def getLightStyleSheet():
     }
     #gif {
         margin-bottom: 100px;
+    }
+    #connectButton {
+        background-color: black;
+        color: white;
+        border-radius: 5px;
+        padding: 5px;
+    }
+    #connectButton:pressed {
+        background-color: white;
+        border-style: solid;
+        border-radius: 1px;
+        border-color: black;
+        color: black;
     }"""
     return stylesheet
 
@@ -162,7 +176,7 @@ def getDarkStyleSheet():
     }
     QPushButton {
         font-weight: light;
-        font-size: 16px;
+        font-size: 15px;
     }
     QListWidget {
         font-family: Assistant;
@@ -171,10 +185,11 @@ def getDarkStyleSheet():
         line-height: 2;
         border-style: none;
         spacing: 10;
-        padding-left: 10px;
     }
     QListWidget::Item {
-        margin: 10px;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        border-bottom: 1px solid lightgrey;  
     }
     QListWidget::Item:selected {
         color: #282828;
@@ -193,12 +208,15 @@ def getDarkStyleSheet():
         border-style: none;
         font-family: Assistant;
         font-weight: 500;
-        font-size 18px;
+        font-size 16px;
     }
     #main {
     }
     #container {
         border-bottom: 1px solid lightgrey;
+    }
+    #selected {
+        color: red;
     }
     #srfButton {
         background-color: #f7f7f7;
@@ -229,10 +247,10 @@ def getDarkStyleSheet():
         font-size: 20px;
     }
     #toggleTrue {
-        color: #f7f7f7;
+        color: grey;
     }
     #toggleFalse {
-        color: grey;
+        color: #f7f7f7;
     }
     #bacButton {
         color: #282828;

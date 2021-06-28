@@ -7,6 +7,7 @@ from gui.interface import Interface
 from logic.interface import LogicInterface as Logic
 import gui.utils as utils
 import gui.style as style
+import transfer.local_network as net
 
 class MainWindow(qtw.QWidget):
 
@@ -188,7 +189,7 @@ class MainWindow(qtw.QWidget):
 
         localB = qtw.QPushButton(text="local network")
         localB.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
-        # localB.clicked.connect()
+        localB.clicked.connect(self.switch_wlan)
         localB.setObjectName("bacButton")
 
         # add to download layout
@@ -293,8 +294,8 @@ class MainWindow(qtw.QWidget):
                 self.toggle.setStyleSheet("color: grey;")
                 self.toggle2.setStyleSheet("color: black;")
             else:
-                self.toggle.setStyleSheet("color: #f7f7f7;")
-                self.toggle2.setStyleSheet("color: black;")
+                self.toggle.setStyleSheet("color: grey;")
+                self.toggle2.setStyleSheet("color: #f7f7f7;")
         else:
             self.toggle.setChecked(True)
 
@@ -307,8 +308,8 @@ class MainWindow(qtw.QWidget):
                 self.toggle2.setStyleSheet("color: grey;")
                 self.toggle.setStyleSheet("color: black;")
             else:
-                self.toggle2.setStyleSheet("color: #f7f7f7;")
-                self.toggle.setStyleSheet("color: black;")
+                self.toggle2.setStyleSheet("color: grey;")
+                self.toggle.setStyleSheet("color: #f7f7f7;")
         else:
             self.toggle2.setChecked(True)
 
@@ -324,3 +325,54 @@ class MainWindow(qtw.QWidget):
     def handle_download(self):
         self.logic.download_new_articles()
         self.set_loading_screen_section()
+
+    def switch_wlan(self):
+        if self.toggle.isChecked():
+            self.set_wlan_client_section()
+        else:
+            self.set_wlan_server_section()
+
+    def set_wlan_server_section(self):
+        utils.remove_widgets(self.main)
+        self.set_selected_menu_button(self.b1)
+
+        title = qtw.QLabel(text="Server")
+
+        lanLayout = qtw.QVBoxLayout()
+        lanLayout.addWidget(title)
+
+        self.main.addLayout(lanLayout, 0, 0)
+
+    def set_wlan_client_section(self):
+        utils.remove_widgets(self.main)
+        self.set_selected_menu_button(self.b1)
+
+        title = qtw.QLabel(text="Server selection:")
+        title.setObjectName("lan-title")
+
+        devices = net.get_devices()
+        ip = []
+        for d in devices:
+            ip_addr = d["ip"]
+            name = d["name"]
+            entry = ip_addr + "\t" + name
+            ip.append(entry)
+
+        lst = qtw.QListWidget()
+        lst.addItems(ip)
+        lst.setCurrentRow(0)
+
+        connect_btn = qtw.QPushButton(text="connect")
+        connect_btn.setObjectName("bacButton")
+        connect_btn.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
+        # connect_btn.clicked.connect()
+
+        btns = qtw.QHBoxLayout()
+        btns.addWidget(connect_btn)
+
+        lanLayout = qtw.QVBoxLayout()
+        lanLayout.addWidget(title)
+        lanLayout.addWidget(lst)
+        lanLayout.addLayout(btns)
+
+        self.main.addLayout(lanLayout, 0, 0)
