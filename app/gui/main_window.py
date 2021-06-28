@@ -1,4 +1,5 @@
 import os
+import socket
 from PyQt5 import QtWidgets as qtw
 from PyQt5 import QtGui as qtg
 from PyQt5 import QtCore as qtc
@@ -334,20 +335,44 @@ class MainWindow(qtw.QWidget):
 
     def set_wlan_server_section(self):
         utils.remove_widgets(self.main)
-        self.set_selected_menu_button(self.b1)
-
-        title = qtw.QLabel(text="Server")
+        self.set_selected_menu_button(self.b2)
 
         net.start_server_threaded()
 
-        lanLayout = qtw.QVBoxLayout()
-        lanLayout.addWidget(title)
+        s1 = "Started server on"
+        t1 = qtw.QLabel(s1)
+        t1.setObjectName("server-text")
 
-        self.main.addLayout(lanLayout, 0, 0)
+        s2 = socket.gethostbyname(socket.gethostname())
+        t2 = qtw.QLabel(s1 + " " + s2)
+        t2.setObjectName("server-text")
+
+        s3 = "with port number"
+        t3 = qtw.QLabel(s3)
+        t3.setObjectName("server-text")
+
+        s4 = "55111" + "."
+        t4 = qtw.QLabel(s3 + " " + s4)
+        t4.setObjectName("server-text")
+
+        lanLayout = qtw.QVBoxLayout()
+        lanLayout.addStretch()
+        #lanLayout.addWidget(t1)
+        lanLayout.addWidget(t2)
+        #lanLayout.addWidget(t3)
+        lanLayout.addWidget(t4)
+        lanLayout.addStretch()
+
+        horizontalLayout = qtw.QHBoxLayout()
+        horizontalLayout.addStretch()
+        horizontalLayout.addLayout(lanLayout)
+        horizontalLayout.addStretch()
+
+        self.main.addLayout(horizontalLayout, 0, 0)
 
     def set_wlan_client_section(self):
         utils.remove_widgets(self.main)
-        self.set_selected_menu_button(self.b1)
+        self.set_selected_menu_button(self.b2)
 
         title = qtw.QLabel(text="Server selection:")
         title.setObjectName("lan-title")
