@@ -144,6 +144,12 @@ def getLightStyleSheet():
         border-radius: 1px;
         border-color: black;
         color: black;
+    }
+    #lan-title {
+        font-family: Assistant;
+        font-size: 20px;
+        margin-bottom: 10px;
+        margin-top: 5px;
     }"""
     return stylesheet
 
@@ -267,5 +273,11 @@ def getDarkStyleSheet():
     }
     #gif {
         margin-bottom: 100px;
+    }
+    #lan-title {
+        font-family: Assistant;
+        font-size: 20px;
+        margin-bottom: 10px;
+        margin-top: 5px;
     }"""
     return stylesheet
