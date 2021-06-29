@@ -9,6 +9,7 @@ from logic.interface import LogicInterface as Logic
 import gui.utils as utils
 import gui.style as style
 import transfer.local_network as net
+import transfer.bluetooth as tooth
 
 class MainWindow(qtw.QWidget):
 
@@ -180,7 +181,7 @@ class MainWindow(qtw.QWidget):
 
         blueB = qtw.QPushButton(text="bluetooth")
         blueB.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
-        #blueB.clicked.connect()
+        blueB.clicked.connect(self.switch_blue)
         blueB.setObjectName("blueButton")
 
         bacB = qtw.QPushButton(text="BAC-Net")
@@ -333,6 +334,12 @@ class MainWindow(qtw.QWidget):
         else:
             self.set_wlan_server_section()
 
+    def switch_blue(self):
+        if self.toggle.isChecked():
+            self.set_blue_client_section()
+        else:
+            self.set_blue_server_section()
+
     def set_wlan_server_section(self):
         utils.remove_widgets(self.main)
         self.set_selected_menu_button(self.b2)
@@ -410,3 +417,25 @@ class MainWindow(qtw.QWidget):
         ip = ip.split("\t")[0]
         print("trying to connect to " + ip)
         net.start_client_threaded(ip)
+
+    def set_blue_server_section(self):
+
+        text = qtw.QLabel("server")
+
+        layout = qtw.QVBoxLayout()
+        layout.addWidget(text)
+
+        self.main.addLayout(layout, 0, 0)
+
+        tooth.start_server()
+
+    def set_blue_client_section(self):
+
+        text = qtw.QLabel("client")
+
+        layout = qtw.QVBoxLayout()
+        layout.addWidget(text)
+
+        self.main.addLayout(layout, 0, 0)
+
+        tooth.start_client()
