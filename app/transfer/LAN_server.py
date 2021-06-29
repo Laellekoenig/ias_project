@@ -20,5 +20,48 @@ class LANServer:
         self.socket.bind(address)
         self.socket.listen(1)
 
-        #TODO
+        try:
+            (client_socket, client_addr) = self.socket.accept()
+            msg = client_socket.recv(4096)
 
+            if msg.decode() == "None":
+                date_time = None
+            else:
+                try:
+                    date_time = datetime.fromisoformat(msg.decode())
+                except Exception:
+                    print("Received time is not in iso format.")
+                    self.socket.close()
+                    return
+
+            try:
+                path = zip_articles(date_time)
+                if path == None:
+                    self.socket.close()
+                    return
+                else:
+                    file = open(path, 'rb')
+            except Exception:
+                print("Failed to open or compress files for sending to client.")
+                return
+            while True:
+                data = file.read(self.buff_size)
+                if not data:
+                    break
+                client_socket.send(data)
+            file.close()
+            self.socket.close()
+
+        except socket.timeout:
+            print("No connection to server: closing server.")
+            self.socket.close()
+        except socket.error as exc:
+            print("Socket exception: %s" % exc)
+            self.socket.close()
+        except Exception:
+            print("An error occurred while listening to client.")
+            self.socket.close()
+
+    def start_server_threaded(self):
+        thread = threading.Thread(target=self.start_server)
+        thread.start()
