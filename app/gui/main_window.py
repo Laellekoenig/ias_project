@@ -407,5 +407,6 @@ class MainWindow(qtw.QWidget):
 
     def connect(self):
         ip = self.serverLst.currentItem().text()
+        ip = ip.split("\t")[0]
         print("trying to connect to " + ip)
         net.start_client_threaded(ip)
