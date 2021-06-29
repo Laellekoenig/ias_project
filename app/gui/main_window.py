@@ -388,11 +388,12 @@ class MainWindow(qtw.QWidget):
         lst = qtw.QListWidget()
         lst.addItems(ip)
         lst.setCurrentRow(0)
+        self.serverLst = lst
 
         connect_btn = qtw.QPushButton(text="connect")
         connect_btn.setObjectName("bacButton")
         connect_btn.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
-        # connect_btn.clicked.connect()
+        connect_btn.clicked.connect(self.connect)
 
         btns = qtw.QHBoxLayout()
         btns.addWidget(connect_btn)
@@ -403,3 +404,8 @@ class MainWindow(qtw.QWidget):
         lanLayout.addLayout(btns)
 
         self.main.addLayout(lanLayout, 0, 0)
+
+    def connect(self):
+        ip = self.serverLst.currentItem().text()
+        print("trying to connect to " + ip)
+        net.start_client_threaded(ip)
