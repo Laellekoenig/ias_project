@@ -301,5 +301,27 @@ def getDarkStyleSheet():
         font-size: 20px;
         margin-bottom: 10px;
         margin-top: 5px;
+    }
+    #server-text {
+        font-family: Assistant;
+        font-size: 50px;
+        margin-bottom: 40px;
+        text-align: center;
+    }
+    #filter-layout {
+        margin: 0px;
+        padding: 0px;
+    }
+    #filter-btn {
+        padding: 0px;
+        margin: 0px;
+        height: 20%;
+        color: #f7f7f7;
+    }
+    #filter-btn-selected {
+        padding: 0px;
+        margin: 0px;
+        height: 20%;
+        color: grey;
     }"""
     return stylesheet

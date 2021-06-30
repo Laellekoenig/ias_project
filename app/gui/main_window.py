@@ -18,6 +18,9 @@ class MainWindow(qtw.QWidget):
         # diverse inits
         self.server_socket = None
         self.active_article_filter = None
+        self.today_btn = None
+        self.week_btn = None
+        self.all_btn = None
 
         # initiate window
         super().__init__(windowTitle="IAS Project")
@@ -133,6 +136,7 @@ class MainWindow(qtw.QWidget):
         selector.setWordWrap(True)
         # read articles from /data/articles folder
         entries = self.logic.get_article_titles()
+        entries = self.filter_article_list(entries)
         selector.addItems(entries)
         # add event for user input
         selector.itemSelectionChanged.connect(self.selected_article_changed)
@@ -484,27 +488,50 @@ class MainWindow(qtw.QWidget):
 
     def switch_today(self):
         self.active_article_filter.setStyleSheet("color: black; height: 20%;")
+        if not self.light:
+            self.active_article_filter.setStyleSheet("color: #f7f7f7; height: 20%;")
         self.active_article_filter.setObjectName("filter-btn")
         self.active_article_filter = self.today_btn
         self.today_btn.setStyleSheet("color: grey; height: 20%;")
         self.today_btn.setObjectName("filter-btn-active")
+        self.update_article_list()
 
     def switch_week(self):
         self.active_article_filter.setStyleSheet("color: black; height: 20%;")
+        if not self.light:
+            self.active_article_filter.setStyleSheet("color: #f7f7f7; height: 20%;")
         self.active_article_filter.setObjectName("filter-btn")
         self.active_article_filter = self.week_btn
         self.week_btn.setStyleSheet("color: grey; height: 20%;")
         self.week_btn.setObjectName("filter-btn-active")
+        self.update_article_list()
 
     def switch_all(self):
         self.active_article_filter.setStyleSheet("color: black; height: 20%;")
+        if not self.light:
+            self.active_article_filter.setStyleSheet("color: #f7f7f7; height: 20%;")
         self.active_article_filter.setObjectName("filter-btn")
         self.active_article_filter = self.all_btn
         self.all_btn.setStyleSheet("color: grey; height: 20%;")
         self.all_btn.setObjectName("filter-btn-active")
+        self.update_article_list()
 
     def update_style(self):
         if self.light:
             self.setStyleSheet(style.getLightStyleSheet())
         else:
             self.setStyleSheet(style.getDarkStyleSheet())
+
+    def filter_article_list(self, list):
+        if self.active_article_filter == self.today_btn:
+            return []
+        if self.active_article_filter == self.week_btn:
+            return []
+        else:
+            return list
+
+    def update_article_list(self):
+        entries = self.logic.get_article_titles()
+        entries = self.filter_article_list(entries)
+        self.selector.clear()
+        self.selector.addItems(entries)

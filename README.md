@@ -25,3 +25,4 @@
 - [ ] remove srf button in share section
 - [ ] filter by category
 - [ ] format li elements
+- [ ] fix bugs with dark mode and switches
