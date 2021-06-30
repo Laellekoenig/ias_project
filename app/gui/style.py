@@ -10,6 +10,7 @@ def setArticleStyle(article):
         "h1 {font-weight: bold; font-style: italic;} "
         "h3 {color: lightgrey;}"
         "h2 {color: grey;}"
+        "li {color: red;}"
     )
     return
 
