@@ -12,13 +12,17 @@ class LANServer:
         self.buff_size = 1024
         self.server_timeout = 15
         self.running = False
+        self.address = (-1, -1)
+        self.socket = None
 
     def start_server(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         #self.socket.settimeout(self.server_timeout)
-        address = (socket.gethostbyname(socket.gethostname()), self.default_port)
-        self.socket.bind(address)
+        self.address = (socket.gethostbyname(socket.gethostname()), self.default_port)
+        self.socket.bind(self.address)
         self.socket.listen(1)
+        self.running = True
+        print("server running on " + self.get_IP())
 
         try:
             (client_socket, client_addr) = self.socket.accept()
@@ -32,12 +36,13 @@ class LANServer:
                 except Exception:
                     print("Received time is not in iso format.")
                     self.socket.close()
+                    self.running = False
                     return
-
             try:
                 path = zip_articles(date_time)
                 if path == None:
                     self.socket.close()
+                    self.running = False
                     return
                 else:
                     file = open(path, 'rb')
@@ -51,6 +56,7 @@ class LANServer:
                 client_socket.send(data)
             file.close()
             self.socket.close()
+            self.running = False
 
         except socket.timeout:
             print("No connection to server: closing server.")
@@ -63,5 +69,18 @@ class LANServer:
             self.socket.close()
 
     def start_server_threaded(self):
-        thread = threading.Thread(target=self.start_server)
-        thread.start()
+        self.thread = threading.Thread(target=self.start_server)
+        self.thread.start()
+
+    def stop_server(self):
+        if self.running:
+            if self.socket != None:
+                self.socket.close()
+                self.running = False
+        print("closed connection")
+
+    def get_IP(self):
+        return str(self.address[0])
+
+    def get_port(self):
+        return str(self.address[1])

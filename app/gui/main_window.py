@@ -10,10 +10,14 @@ import gui.utils as utils
 import gui.style as style
 import transfer.local_network as net
 import transfer.bluetooth as tooth
+import transfer.LAN_server as net1
 
 class MainWindow(qtw.QWidget):
 
     def __init__(self, app):
+        # diverse inits
+        self.server_socket = None
+
         # initiate window
         super().__init__(windowTitle="IAS Project")
 
@@ -111,6 +115,7 @@ class MainWindow(qtw.QWidget):
     def set_reading_section(self):
         # clear previous layout
         utils.remove_widgets(self.main)
+        self.close_connections()
 
         self.set_selected_menu_button(self.b1)
 
@@ -344,13 +349,17 @@ class MainWindow(qtw.QWidget):
         utils.remove_widgets(self.main)
         self.set_selected_menu_button(self.b2)
 
-        net.start_server_threaded()
+        self.server_socket = net1.LANServer()
+        self.server_socket.start_server_threaded()
+
+        while not self.server_socket.running:
+            pass
 
         s1 = "Started server on"
         t1 = qtw.QLabel(s1)
         t1.setObjectName("server-text")
 
-        s2 = socket.gethostbyname(socket.gethostname())
+        s2 = self.server_socket.get_IP()
         t2 = qtw.QLabel(s1 + " " + s2)
         t2.setObjectName("server-text")
 
@@ -358,7 +367,7 @@ class MainWindow(qtw.QWidget):
         t3 = qtw.QLabel(s3)
         t3.setObjectName("server-text")
 
-        s4 = "55111" + "."
+        s4 = self.server_socket.get_port() + "."
         t4 = qtw.QLabel(s3 + " " + s4)
         t4.setObjectName("server-text")
 
@@ -439,3 +448,8 @@ class MainWindow(qtw.QWidget):
         self.main.addLayout(layout, 0, 0)
 
         tooth.start_client()
+
+    def close_connections(self):
+        if self.server_socket != None:
+            self.server_socket.stop_server()
+            self.server_socket = None
