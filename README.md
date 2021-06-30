@@ -3,7 +3,22 @@
 - [ ] local network article transmission
 - [x] download articles
 - [x] loading animation when scraping
-- [ ] only download new articles
+- [x] only download new articles
 - [x] logic interface for GUI
 - [ ] option to stop server
+
+## Simon
+- [ ] implement lan server as class
+- [ ] 
+
+## Philipp
+
+## Max
 - [ ] stop loading animation when done downloading
+- [ ] implement archive section
+- [ ] read indication
+- [ ] article filter in read section
+- [ ] sort article by date
+- [ ] bookmark articles in reader, display in archive
+- [ ] remove srf button in share section
+- [ ] filter by category
