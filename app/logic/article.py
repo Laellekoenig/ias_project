@@ -79,7 +79,7 @@ class Article:
         self.content_index.append("paragraph")
         self.content.append(paragraph)
 
-    def add_list_elem(self list_elem):
+    def add_list_elem(self, list_elem):
         self.content_index.append("list_elem")
         self.content.append(list_elem)
 
