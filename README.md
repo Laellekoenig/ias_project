@@ -9,9 +9,11 @@
 
 ## Simon
 - [ ] implement lan server as class
-- [ ] 
+- [ ] implment lan client as class
 
 ## Philipp
+- [ ] implement bluetooth server as class
+- [ ] implment bluetooth client as class
 
 ## Max
 - [ ] stop loading animation when done downloading
@@ -22,3 +24,4 @@
 - [ ] bookmark articles in reader, display in archive
 - [ ] remove srf button in share section
 - [ ] filter by category
+- [ ] format li elements
