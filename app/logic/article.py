@@ -15,6 +15,7 @@ class HTMLTag(str, Enum):
     DATE_AND_TIME = 'h4'
     TAGLINE = 'h2'
     PARAGRAPH = 'p'
+    LIST_ELEM = 'li'
 
 class Category(str, Enum):
     POLITICS = 'politics'
@@ -23,6 +24,7 @@ class Category(str, Enum):
     CULTURE = 'culture'
     TECHNOLOGY = 'technology'
     WEATHER = 'weather'
+    NEWS = 'news'
     OTHER = 'other'
 
 
@@ -76,6 +78,10 @@ class Article:
     def add_paragraph(self, paragraph):
         self.content_index.append("paragraph")
         self.content.append(paragraph)
+
+    def add_list_elem(self list_elem):
+        self.content_index.append("list_elem")
+        self.content.append(list_elem)
 
     def fill_article_from_json_file(self, file):
         data = json.load(file)
@@ -134,6 +140,8 @@ class Article:
                 html += self.get_tagged_string(HTMLTag.TAGLINE, self.content[i])
             elif c == 'paragraph':
                 html += self.get_tagged_string(HTMLTag.PARAGRAPH, self.content[i])
+            elif c == 'list_elem':
+                html += self.get_tagged_string(HTMLTag.LIST_ELEM, self.content[i])
             i += 1
         html += "</body>\n</qt>"
         return html

@@ -135,8 +135,7 @@ def getArticleFromURL(url):
         for text in content:
             strText = str(text)
             if re.search("<li>", strText):
-                pass
-                #newArticle.add_li(text.text) not yet available method
+                newArticle.add_list_elem(text.text)
             elif re.search("<p>", strText):
                 newArticle.add_paragraph(text.text)
             elif re.search("<h2>", strText):
