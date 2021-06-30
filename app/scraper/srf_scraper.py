@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup
 import requests
 import re
 from logic.article import Article
+from logic.article import Category
 import time
 from datetime import datetime
 
@@ -130,6 +131,16 @@ def getArticleFromURL(url):
         newArticle.set_title_0(overtitle)
         newArticle.set_title_1(title)
         newArticle.set_date_and_time(publishedDate)
+
+        if mainCategory == "news":
+            newArticle.set_category = Category.NEWS
+        elif mainCategory == "sport":
+            newArticle.set_category = Category.SPORTS
+        elif mainCategory == "meteo":
+            newArticle.set_category = Category.WEATHER
+        elif mainCategory == "kultur":
+            newArticle.set_category = Category.CULTURE
+        # else do nothing
         #newArticle.set_date_and_time_updated(modifiedDate) not yet available
         
         for text in content:
