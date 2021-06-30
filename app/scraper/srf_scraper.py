@@ -133,14 +133,15 @@ def getArticleFromURL(url):
         newArticle.set_date_and_time(publishedDate)
 
         if mainCategory == "news":
-            newArticle.set_category = Category.NEWS
+            newArticle.set_category(Category.NEWS)
         elif mainCategory == "sport":
-            newArticle.set_category = Category.SPORTS
+            newArticle.set_category(Category.SPORTS)
         elif mainCategory == "meteo":
-            newArticle.set_category = Category.WEATHER
+            newArticle.set_category(Category.WEATHER)
         elif mainCategory == "kultur":
-            newArticle.set_category = Category.CULTURE
+            newArticle.set_category(Category.CULTURE)
         # else do nothing
+
         #newArticle.set_date_and_time_updated(modifiedDate) not yet available
         
         for text in content:
