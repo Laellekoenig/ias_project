@@ -17,6 +17,7 @@ class MainWindow(qtw.QWidget):
     def __init__(self, app):
         # diverse inits
         self.server_socket = None
+        self.active_article_filter = None
 
         # initiate window
         super().__init__(windowTitle="IAS Project")
@@ -140,8 +141,35 @@ class MainWindow(qtw.QWidget):
         # move cursor to start of text
         text.moveCursor(qtg.QTextCursor.Start)
 
+        #article filters
+        self.today_btn = qtw.QPushButton(text="today")
+        self.today_btn.setObjectName("filter-btn-selected")
+        self.today_btn.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
+        self.today_btn.clicked.connect(self.switch_today)
+        self.active_article_filter = self.today_btn
+
+        self.week_btn = qtw.QPushButton(text="week")
+        self.week_btn.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
+        self.week_btn.clicked.connect(self.switch_week)
+        self.week_btn.setObjectName("filter-btn")
+
+        self.all_btn = qtw.QPushButton(text = "all")
+        self.all_btn.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
+        self.all_btn.clicked.connect(self.switch_all)
+        self.all_btn.setObjectName("filter-btn")
+
+        filter_layout = qtw.QHBoxLayout()
+        filter_layout.setObjectName("filter-layout")
+        filter_layout.addWidget(self.today_btn)
+        filter_layout.addWidget(self.week_btn)
+        filter_layout.addWidget(self.all_btn)
+
+        lhs_layout = qtw.QVBoxLayout()
+        lhs_layout.addLayout(filter_layout)
+        lhs_layout.addWidget(selector)
+
         # article selector 20% of content
-        self.main.addWidget(selector, 0, 0, 10, 2)
+        self.main.addLayout(lhs_layout, 0, 0, 10, 2)
         # article 80% of content
         self.main.addWidget(text, 0, 3, 10, 8)
 
@@ -453,3 +481,30 @@ class MainWindow(qtw.QWidget):
         if self.server_socket != None:
             self.server_socket.stop_server()
             self.server_socket = None
+
+    def switch_today(self):
+        self.active_article_filter.setStyleSheet("color: black; height: 20%;")
+        self.active_article_filter.setObjectName("filter-btn")
+        self.active_article_filter = self.today_btn
+        self.today_btn.setStyleSheet("color: grey; height: 20%;")
+        self.today_btn.setObjectName("filter-btn-active")
+
+    def switch_week(self):
+        self.active_article_filter.setStyleSheet("color: black; height: 20%;")
+        self.active_article_filter.setObjectName("filter-btn")
+        self.active_article_filter = self.week_btn
+        self.week_btn.setStyleSheet("color: grey; height: 20%;")
+        self.week_btn.setObjectName("filter-btn-active")
+
+    def switch_all(self):
+        self.active_article_filter.setStyleSheet("color: black; height: 20%;")
+        self.active_article_filter.setObjectName("filter-btn")
+        self.active_article_filter = self.all_btn
+        self.all_btn.setStyleSheet("color: grey; height: 20%;")
+        self.all_btn.setObjectName("filter-btn-active")
+
+    def update_style(self):
+        if self.light:
+            self.setStyleSheet(style.getLightStyleSheet())
+        else:
+            self.setStyleSheet(style.getDarkStyleSheet())
