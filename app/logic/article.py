@@ -47,8 +47,8 @@ class Article:
         self.content_index = []
         self.content = []
 
-    def set_category(self, main_category):
-        self.main_category = main_category
+    def set_category(self, category):
+        self.category = category
 
     def add_tag(self, tag):
         self.tags.append(tag)
