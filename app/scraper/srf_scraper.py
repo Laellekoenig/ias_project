@@ -66,6 +66,12 @@ def getArticleFromURL(url):
         overtitle = "title not found"
         title = "title not found"
         
+    article_lead = htmlParsed.find('p', class_='article-lead')  # look for the text before the actual article (the article lead)
+    if article_lead is not None:
+        article_lead = article_lead.text
+    else:
+        article_lead = ""
+
     content = htmlParsed.find('section', class_='article-content')  # all the content of the article-content class
     if content is None:
         print(url) # can be removed after bugfixing
@@ -131,6 +137,7 @@ def getArticleFromURL(url):
         newArticle.set_title_0(overtitle)
         newArticle.set_title_1(title)
         newArticle.set_date_and_time(publishedDate)
+        newArticle.set_lead(article_lead)
 
         if mainCategory == "news":
             newArticle.set_category(Category.NEWS)

@@ -6,6 +6,19 @@ from logic.interface import LogicInterface
 from logic.file_handler import zip_articles
 from logic.file_handler import get_newest_datetime
 from datetime import datetime
+
+# ---------------------- client server test: --------------------------
+#from transfer.LAN_client import LANClient
+#from transfer.LAN_server import LANServer
+#if sys.argv[1] == "server":
+#    s = LANServer()
+#    s.start_server()
+#else:
+#    c = LANClient()
+#    c.start_client_threaded("192.168.2.3")
+
+# ---------------------------------------------------------------------
+
 #from transfer.local_network import start_server_threaded
 #from transfer.bluetooth import start_server, start_client
 #start_server()
