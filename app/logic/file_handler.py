@@ -9,7 +9,7 @@ from datetime import datetime
 from datetime import timedelta
 import time
 
-DIR_MAIN = str(Path.home()) + '/NewsTest'
+DIR_MAIN = str(Path.home()) + '/BACNews'
 DIR_ARTICLES = DIR_MAIN + '/Articles'
 DIR_TRANSFER = DIR_MAIN + '/Export'
 DELTA_TIME_OLDEST_ARTICLES = timedelta(days = 10)
