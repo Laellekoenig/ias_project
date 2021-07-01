@@ -22,7 +22,7 @@
 - [x] article filter in read section
 - [x] sort article by date
 - [ ] bookmark articles in reader, display in archive
-- [ ] remove srf button in share section
+- [x] remove srf button in share section
 - [ ] filter by category
 - [x] format li elements
 - [ ] fix bugs with dark mode and switches

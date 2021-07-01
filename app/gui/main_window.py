@@ -21,6 +21,8 @@ class MainWindow(qtw.QWidget):
         self.today_btn = None
         self.week_btn = None
         self.all_btn = None
+        self.downLayout = None
+        self.srfBtn = None
 
         # initiate window
         super().__init__(windowTitle="IAS Project")
@@ -238,6 +240,9 @@ class MainWindow(qtw.QWidget):
         downLayout.addWidget(localB)
         downLayout.addStretch()
 
+        self.downLayout = downLayout
+        self.srfBtn = srfB
+
         # add to layout
         self.main.addLayout(downLayout, 0, 0)
 
@@ -337,6 +342,8 @@ class MainWindow(qtw.QWidget):
         else:
             self.toggle.setChecked(True)
 
+        self.downLayout.insertWidget(1, self.srfBtn)
+
     def toggle2_download(self):
         if self.toggle2.isChecked():
             self.toggle2.setObjectName("toggleTrue")
@@ -350,6 +357,7 @@ class MainWindow(qtw.QWidget):
                 self.toggle.setStyleSheet("color: #f7f7f7;")
         else:
             self.toggle2.setChecked(True)
+        self.downLayout.removeWidget(self.srfBtn)
 
     def switch_to_loading(self):
         if self.selected == self.b2:
