@@ -10,7 +10,8 @@ def setArticleStyle(article):
         "h1 {font-weight: bold; font-style: italic;} "
         "h3 {color: lightgrey;}"
         "h2 {color: grey;}"
-        "li {color: red;}"
+        "ul {text-indent: 0px; margin-left: 0px; padding-left: 0px;}"
+        "li {list-style-type: disc; font-size: 16px; line-height: 1.5; font-style: italic; margin-left: 0px; padding-left: 0px;}"
     )
     return
 

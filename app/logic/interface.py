@@ -31,7 +31,12 @@ class LogicInterface:
 
     def get_article_titles(self):
         list = get_article_titles()
-        return [x.title_1 for x in list]
+        titles = [x.title_1 for x in list]
+
+        # sort alphabetically
+        titles.sort()
+
+        return titles
 
     def get_article_titles_today(self):
         dt = datetime.datetime.today()
@@ -48,6 +53,9 @@ class LogicInterface:
 
             if today == article_date:
                 filtered_lst.append(article.title_1)
+
+        # sort alphabetically
+        filtered_lst.sort()
 
         return filtered_lst
 
@@ -66,6 +74,9 @@ class LogicInterface:
             delta = today - article_day
             if delta.days <= 7:
                 filtered_lst.append(article.title_1)
+
+        # sort alphabetically
+        filtered_lst.sort()
 
         return filtered_lst
 

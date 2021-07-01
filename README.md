@@ -19,10 +19,10 @@
 - [ ] stop loading animation when done downloading
 - [ ] implement archive section
 - [ ] read indication
-- [ ] article filter in read section
-- [ ] sort article by date
+- [x] article filter in read section
+- [x] sort article by date
 - [ ] bookmark articles in reader, display in archive
 - [ ] remove srf button in share section
 - [ ] filter by category
-- [ ] format li elements
+- [x] format li elements
 - [ ] fix bugs with dark mode and switches
