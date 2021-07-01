@@ -2,6 +2,7 @@ import os
 import socket
 import threading
 
+import PyQt5.QtCore
 from PyQt5 import QtWidgets as qtw
 from PyQt5 import QtGui as qtg
 from PyQt5 import QtCore as qtc
@@ -13,6 +14,12 @@ import gui.style as style
 import transfer.local_network as net
 import transfer.bluetooth as tooth
 import transfer.LAN_server as net1
+
+class imageLabel(qtw.QLabel):
+    clicked = qtc.pyqtSignal()
+    def mouseReleaseEvent(self, ev):
+        if ev.button() == qtc.Qt.LeftButton:
+            self.clicked.emit()
 
 class MainWindow(qtw.QWidget):
 
@@ -131,20 +138,20 @@ class MainWindow(qtw.QWidget):
         self.set_selected_menu_button(self.b1)
 
         # bookmark button before text to avoid errors when opening app
-        bookmark = qtw.QPushButton()
-        bookmark.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
-        bookmark.setObjectName("bookmark")
-        bookmark.clicked.connect(self.play_bookmark)
+        #bookmark = qtw.QPushButton()
+        #bookmark.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
+        #bookmark.setObjectName("bookmark")
+        #bookmark.clicked.connect(self.play_bookmark)
 
-        bookmark_gif = qtg.QMovie(os.getcwd() + "/data/images/bookmark-animated.gif")
-        bookmark_gif.jumpToFrame(0)
-        bookmark_gif.frameChanged.connect(self.update_bookmark)
-        pixmap = bookmark_gif.currentPixmap()
-        bookmark.setIcon(qtg.QIcon(pixmap))
-        bookmark.setIconSize(qtc.QSize(40, 40))
+        #bookmark_gif = qtg.QMovie(os.getcwd() + "/data/images/bookmark-animated.gif")
+        #bookmark_gif.jumpToFrame(0)
+        #bookmark_gif.frameChanged.connect(self.update_bookmark)
+        #pixmap = bookmark_gif.currentPixmap()
+        #bookmark.setIcon(qtg.QIcon(pixmap))
+        #bookmark.setIconSize(qtc.QSize(40, 40))
 
-        self.bookmark = bookmark
-        self.bookmark_gif = bookmark_gif
+        #self.bookmark = bookmark
+        #self.bookmark_gif = bookmark_gif
 
         # main article box, HTML reader
         text = qtw.QTextBrowser()
@@ -166,6 +173,14 @@ class MainWindow(qtw.QWidget):
         selector.setCurrentRow(0)
         # move cursor to start of text
         text.moveCursor(qtg.QTextCursor.Start)
+
+        bookmark = imageLabel()
+        self.bookmark = bookmark
+        bookmark.setFixedSize(50, 50)
+        bookmark.setObjectName("bookmark")
+        bookmark.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
+        bookmark.clicked.connect(self.update_bookmark)
+        self.update_bookmark()
 
         #article filters
         self.today_btn = qtw.QPushButton(text="today")
@@ -196,6 +211,7 @@ class MainWindow(qtw.QWidget):
 
         rhs_layout = qtw.QVBoxLayout()
         rhs_layout.addWidget(bookmark)
+        #rhs_layout.addWidget(test)
         rhs_layout.addStretch()
 
         # article selector 20% of content
@@ -321,7 +337,6 @@ class MainWindow(qtw.QWidget):
         self.article.clear()
         self.article.insertHtml(html)
         is_bookmarked = self.logic.is_article_bookmarked(selectedArticle)
-        print(is_bookmarked)
         if is_bookmarked:
             self.set_bookmark()
         else:
@@ -583,43 +598,22 @@ class MainWindow(qtw.QWidget):
         self.selector.clear()
         self.selector.addItems(entries)
 
-    def play_bookmark(self):
-        current_title = self.selector.currentItem().text()
-        if not self.bookmark_active:
-            self.bookmark_active = True
-            self.logic.bookmark_article(current_title)
-            self.bookmark_gif.start()
-            thread = threading.Thread(target=self.wait_end_animation)
-            thread.start()
-        else:
-            self.bookmark_active = False
-            self.logic.remove_bookmark_article(current_title)
-            self.bookmark_gif.jumpToFrame(self.bookmark_gif.frameCount() / 2)
-            self.bookmark_gif.start()
-            thread = threading.Thread(target=self.wait_start_animation)
-            thread.start()
-
-    def wait_end_animation(self):
-        end_frame = self.bookmark_gif.frameCount()
-        end_frame /= 2
-        while (self.bookmark_gif.currentFrameNumber() < end_frame - 1):
-            pass
-        self.bookmark_gif.stop()
-
-    def wait_start_animation(self):
-        while (self.bookmark_gif.currentFrameNumber() != 0):
-            pass
-        self.bookmark_gif.stop()
-
     def set_bookmark(self):
-        self.bookmark_active = True
-        #TODO set book mark icon
+        if self.bookmark == None:
+            return
+        self.bookmark.setPixmap(qtg.QPixmap(os.getcwd() + "/data/images/bookmark-filled.png"))
 
     def remove_bookmark(self):
-        self.bookmark_active = False
-        #TODO remove book mark icon
+        if self.bookmark == None:
+            return
+        self.bookmark.setPixmap(qtg.QPixmap(os.getcwd() + "/data/images/bookmark-empty.png"))
 
     def update_bookmark(self):
-        pixmap = self.bookmark_gif.currentPixmap()
-        icon = qtg.QIcon(pixmap)
-        self.bookmark.setIcon(icon)
+        title = self.selector.currentItem().text()
+        active = self.logic.is_article_bookmarked(title)
+        if active:
+            self.logic.remove_bookmark_article(title)
+            self.remove_bookmark()
+        else:
+            self.logic.bookmark_article(title)
+            self.set_bookmark()

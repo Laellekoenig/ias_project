@@ -98,7 +98,6 @@ class LogicInterface:
             if article.title_1 == title:
                 article.bookmarked = True
                 save_article(article)
-                print(title)
 
     def remove_bookmark_article(self, title):
         for article in self.get_articles():
