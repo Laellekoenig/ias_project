@@ -518,6 +518,7 @@ class MainWindow(qtw.QWidget):
         self.selector.setCurrentRow(0)
 
     def switch_all(self):
+        active_item = self.selector.currentItem()
         self.active_article_filter.setStyleSheet("color: black; height: 20%;")
         if not self.light:
             self.active_article_filter.setStyleSheet("color: #f7f7f7; height: 20%;")
