@@ -27,6 +27,7 @@ class MainWindow(qtw.QWidget):
         self.srfBtn = None
         self.bookmark = None
         self.bookmark_gif = None
+        self.bookmark_active = False
 
         # initiate window
         super().__init__(windowTitle="IAS Project")
@@ -188,7 +189,6 @@ class MainWindow(qtw.QWidget):
         pixmap = bookmark_gif.currentPixmap()
         bookmark.setIcon(qtg.QIcon(pixmap))
         bookmark.setIconSize(qtc.QSize(40, 40))
-
 
         self.bookmark = bookmark
         self.bookmark_gif = bookmark_gif
@@ -577,9 +577,17 @@ class MainWindow(qtw.QWidget):
         self.selector.addItems(entries)
 
     def play_bookmark(self):
-        self.bookmark_gif.start()
-        thread = threading.Thread(target=self.wait_end_animation)
-        thread.start()
+        if not self.bookmark_active:
+            self.bookmark_active = True
+            self.bookmark_gif.start()
+            thread = threading.Thread(target=self.wait_end_animation)
+            thread.start()
+        else:
+            self.bookmark_active = False
+            self.bookmark_gif.jumpToFrame(self.bookmark_gif.frameCount() / 2)
+            self.bookmark_gif.start()
+            thread = threading.Thread(target=self.wait_start_animation)
+            thread.start()
 
     def wait_end_animation(self):
         end_frame = self.bookmark_gif.frameCount()
@@ -588,7 +596,21 @@ class MainWindow(qtw.QWidget):
             pass
         self.bookmark_gif.stop()
 
+    def wait_start_animation(self):
+        while (self.bookmark_gif.currentFrameNumber() != 0):
+            pass
+        self.bookmark_gif.stop()
+
+    def set_bookmark(self):
+        self.bookmark_active = True
+        self.bookmark_gif.jumpToFrame(self.bookmark_gif.frameCount() / 2)
+
+    def remove_bookmark(self):
+        self.bookmark_active = False
+        self.bookmark_gif.jumpToFrame(0)
+
     def update_bookmark(self):
         pixmap = self.bookmark_gif.currentPixmap()
         icon = qtg.QIcon(pixmap)
         self.bookmark.setIcon(icon)
+        
