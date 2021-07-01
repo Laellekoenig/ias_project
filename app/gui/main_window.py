@@ -386,6 +386,7 @@ class MainWindow(qtw.QWidget):
 
     def set_wlan_server_section(self):
         utils.remove_widgets(self.main)
+        self.srfBtn = None
         self.set_selected_menu_button(self.b2)
 
         self.server_socket = net1.LANServer()

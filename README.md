@@ -26,4 +26,4 @@
 - [ ] filter by category
 - [x] format li elements
 - [ ] fix bugs with dark mode and switches
-- [ ] fix srf button in server section
+- [x] fix srf button in server section
