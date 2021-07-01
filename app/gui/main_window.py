@@ -39,6 +39,10 @@ class MainWindow(qtw.QWidget):
         # initiate window
         super().__init__(windowTitle="IAS Project")
 
+        # shortcuts
+        self.shortcut_book = qtw.QShortcut(qtg.QKeySequence("Ctrl+B"), self)
+        self.shortcut_book.activated.connect(self.update_bookmark)
+
         # for interacting with other parts of program
         self.interface = Interface(self)
         self.logic = Logic()
