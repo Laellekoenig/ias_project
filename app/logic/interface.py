@@ -93,6 +93,21 @@ class LogicInterface:
         article.opened = True
         save_article(article)
 
-    def bookmark_article(self, article):
-        article.bookmarked = True
-        save_article(article)
+    def bookmark_article(self, title):
+        for article in self.get_articles():
+            if article.title_1 == title:
+                article.bookmarked = True
+                save_article(article)
+                print(title)
+
+    def remove_bookmark_article(self, title):
+        for article in self.get_articles():
+            if article.title_1 == title:
+                article.bookmarked = False
+                save_article(article)
+                print(title)
+
+    def is_article_bookmarked(self, title):
+        for article in self.get_articles():
+            if article.title_1 == title:
+                return article.bookmarked

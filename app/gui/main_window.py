@@ -130,6 +130,22 @@ class MainWindow(qtw.QWidget):
 
         self.set_selected_menu_button(self.b1)
 
+        # bookmark button before text to avoid errors when opening app
+        bookmark = qtw.QPushButton()
+        bookmark.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
+        bookmark.setObjectName("bookmark")
+        bookmark.clicked.connect(self.play_bookmark)
+
+        bookmark_gif = qtg.QMovie(os.getcwd() + "/data/images/bookmark-animated.gif")
+        bookmark_gif.jumpToFrame(0)
+        bookmark_gif.frameChanged.connect(self.update_bookmark)
+        pixmap = bookmark_gif.currentPixmap()
+        bookmark.setIcon(qtg.QIcon(pixmap))
+        bookmark.setIconSize(qtc.QSize(40, 40))
+
+        self.bookmark = bookmark
+        self.bookmark_gif = bookmark_gif
+
         # main article box, HTML reader
         text = qtw.QTextBrowser()
         self.article = text
@@ -177,21 +193,6 @@ class MainWindow(qtw.QWidget):
         lhs_layout = qtw.QVBoxLayout()
         lhs_layout.addLayout(filter_layout)
         lhs_layout.addWidget(selector)
-
-        bookmark = qtw.QPushButton()
-        bookmark.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
-        bookmark.setObjectName("bookmark")
-        bookmark.clicked.connect(self.play_bookmark)
-
-        bookmark_gif = qtg.QMovie(os.getcwd() + "/data/images/bookmark-animated.gif")
-        bookmark_gif.jumpToFrame(0)
-        bookmark_gif.frameChanged.connect(self.update_bookmark)
-        pixmap = bookmark_gif.currentPixmap()
-        bookmark.setIcon(qtg.QIcon(pixmap))
-        bookmark.setIconSize(qtc.QSize(40, 40))
-
-        self.bookmark = bookmark
-        self.bookmark_gif = bookmark_gif
 
         rhs_layout = qtw.QVBoxLayout()
         rhs_layout.addWidget(bookmark)
@@ -319,6 +320,12 @@ class MainWindow(qtw.QWidget):
         html = self.logic.get_article_html_by_title1(selectedArticle)
         self.article.clear()
         self.article.insertHtml(html)
+        is_bookmarked = self.logic.is_article_bookmarked(selectedArticle)
+        print(is_bookmarked)
+        if is_bookmarked:
+            self.set_bookmark()
+        else:
+            self.remove_bookmark()
         #fileName = utils.get_file_name(selectedArticle)
         #location = "data/articles/" + fileName
         #with open(location, "r") as html:
@@ -577,13 +584,16 @@ class MainWindow(qtw.QWidget):
         self.selector.addItems(entries)
 
     def play_bookmark(self):
+        current_title = self.selector.currentItem().text()
         if not self.bookmark_active:
             self.bookmark_active = True
+            self.logic.bookmark_article(current_title)
             self.bookmark_gif.start()
             thread = threading.Thread(target=self.wait_end_animation)
             thread.start()
         else:
             self.bookmark_active = False
+            self.logic.remove_bookmark_article(current_title)
             self.bookmark_gif.jumpToFrame(self.bookmark_gif.frameCount() / 2)
             self.bookmark_gif.start()
             thread = threading.Thread(target=self.wait_start_animation)
@@ -603,14 +613,13 @@ class MainWindow(qtw.QWidget):
 
     def set_bookmark(self):
         self.bookmark_active = True
-        self.bookmark_gif.jumpToFrame(self.bookmark_gif.frameCount() / 2)
+        #TODO set book mark icon
 
     def remove_bookmark(self):
         self.bookmark_active = False
-        self.bookmark_gif.jumpToFrame(0)
+        #TODO remove book mark icon
 
     def update_bookmark(self):
         pixmap = self.bookmark_gif.currentPixmap()
         icon = qtg.QIcon(pixmap)
         self.bookmark.setIcon(icon)
-        
