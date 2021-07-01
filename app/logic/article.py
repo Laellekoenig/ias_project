@@ -10,7 +10,7 @@ class NewsSource(str, Enum):
 class HTMLTag(str, Enum):
     TITLE_0 = 'h3'
     TITLE_1 = 'h1'
-    SUBTITLE = 'h2'
+    LEAD = 'h2'
     AUTHOR = 'h3'
     DATE_AND_TIME = 'h4'
     TAGLINE = 'h2'
@@ -41,7 +41,7 @@ class Article:
 
         self.title_0 = ""
         self.title_1 = ""
-        self.subtitle = ""
+        self.lead = ""
         self.author = ""
         self.date_and_time = ""
         self.content_index = []
@@ -59,8 +59,8 @@ class Article:
     def set_title_1(self, title_1):
         self.title_1 = title_1
 
-    def set_subtitle(self, subtitle):
-        self.subtitle = subtitle
+    def set_lead(self, lead):
+        self.lead = lead
 
     def set_author(self, author):
         self.author = author
@@ -96,7 +96,7 @@ class Article:
 
         self.title_0 = data['title_0']
         self.title_1 = data['title_1']
-        self.subtitle = data['subtitle']
+        self.lead = data['lead']
         self.author = data['author']
         self.date_and_time = data['date_and_time']
         self.content_index = data['content_index']
@@ -117,7 +117,7 @@ class Article:
 
         data['title_0'] = self.title_0
         data['title_1'] = self.title_1
-        data['subtitle'] = self.subtitle
+        data['lead'] = self.lead
         data['author'] = self.author
         data['date_and_time'] = self.date_and_time
         data['content_index'] = self.content_index
@@ -130,7 +130,7 @@ class Article:
         html = "<qt>\n<body>\n"
         html += self.get_tagged_string(HTMLTag.TITLE_0, self.title_0)
         html += self.get_tagged_string(HTMLTag.TITLE_1, self.title_1)
-        html += self.get_tagged_string(HTMLTag.SUBTITLE, self.subtitle)
+        html += self.get_tagged_string(HTMLTag.LEAD, self.lead)
         html += self.get_tagged_string(HTMLTag.AUTHOR, self.author)
         html += self.get_tagged_string(HTMLTag.DATE_AND_TIME, self.date_and_time)
 
