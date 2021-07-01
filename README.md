@@ -18,14 +18,21 @@
 - [ ] implment bluetooth client as class
 
 ## Max
+- [x] article filter in read section
+- [x] sort article by date
+- [x] bookmark articles in reader
+- [x] remove srf button in share section
+- [x] format li elements
+- [x] fix srf button in server section
 - [ ] stop loading animation when done downloading
 - [ ] implement archive section
 - [ ] read indication
-- [x] article filter in read section
-- [x] sort article by date
-- [ ] bookmark articles in reader, display in archive
-- [x] remove srf button in share section
+- [ ] display bookmarked articles in archive
 - [ ] filter by category
-- [x] format li elements
 - [ ] fix bugs with dark mode and switches
-- [x] fix srf button in server section
+- [ ] more shortcuts
+- [ ] code refactoring
+- [ ] implement gui for lan server
+- [ ] implement gui for lan client
+- [ ] implement gui for bluetooth server
+- [ ] implement gui for bluetooth client
