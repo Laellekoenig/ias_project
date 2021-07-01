@@ -1,5 +1,7 @@
 import os
 import socket
+import threading
+
 from PyQt5 import QtWidgets as qtw
 from PyQt5 import QtGui as qtg
 from PyQt5 import QtCore as qtc
@@ -23,6 +25,9 @@ class MainWindow(qtw.QWidget):
         self.all_btn = None
         self.downLayout = None
         self.srfBtn = None
+        self.bookmark = None
+        self.bookmark_gif = None
+        self.bookmark_active = False
 
         # initiate window
         super().__init__(windowTitle="IAS Project")
@@ -173,10 +178,31 @@ class MainWindow(qtw.QWidget):
         lhs_layout.addLayout(filter_layout)
         lhs_layout.addWidget(selector)
 
+        bookmark = qtw.QPushButton()
+        bookmark.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
+        bookmark.setObjectName("bookmark")
+        bookmark.clicked.connect(self.play_bookmark)
+
+        bookmark_gif = qtg.QMovie(os.getcwd() + "/data/images/bookmark-animated.gif")
+        bookmark_gif.jumpToFrame(0)
+        bookmark_gif.frameChanged.connect(self.update_bookmark)
+        pixmap = bookmark_gif.currentPixmap()
+        bookmark.setIcon(qtg.QIcon(pixmap))
+        bookmark.setIconSize(qtc.QSize(40, 40))
+
+        self.bookmark = bookmark
+        self.bookmark_gif = bookmark_gif
+
+        rhs_layout = qtw.QVBoxLayout()
+        rhs_layout.addWidget(bookmark)
+        rhs_layout.addStretch()
+
         # article selector 20% of content
-        self.main.addLayout(lhs_layout, 0, 0, 10, 2)
+        self.main.addLayout(lhs_layout, 0, 0, 100, 20)
         # article 80% of content
-        self.main.addWidget(text, 0, 3, 10, 8)
+        self.main.addWidget(text, 0, 20, 100, 75)
+        # bookmarks etc.
+        self.main.addLayout(rhs_layout, 0, 95, 100, 5)
 
     # downloading and sharing section of app
     def set_downloading_section(self):
@@ -549,3 +575,42 @@ class MainWindow(qtw.QWidget):
         entries = self.get_article_lst()
         self.selector.clear()
         self.selector.addItems(entries)
+
+    def play_bookmark(self):
+        if not self.bookmark_active:
+            self.bookmark_active = True
+            self.bookmark_gif.start()
+            thread = threading.Thread(target=self.wait_end_animation)
+            thread.start()
+        else:
+            self.bookmark_active = False
+            self.bookmark_gif.jumpToFrame(self.bookmark_gif.frameCount() / 2)
+            self.bookmark_gif.start()
+            thread = threading.Thread(target=self.wait_start_animation)
+            thread.start()
+
+    def wait_end_animation(self):
+        end_frame = self.bookmark_gif.frameCount()
+        end_frame /= 2
+        while (self.bookmark_gif.currentFrameNumber() < end_frame - 1):
+            pass
+        self.bookmark_gif.stop()
+
+    def wait_start_animation(self):
+        while (self.bookmark_gif.currentFrameNumber() != 0):
+            pass
+        self.bookmark_gif.stop()
+
+    def set_bookmark(self):
+        self.bookmark_active = True
+        self.bookmark_gif.jumpToFrame(self.bookmark_gif.frameCount() / 2)
+
+    def remove_bookmark(self):
+        self.bookmark_active = False
+        self.bookmark_gif.jumpToFrame(0)
+
+    def update_bookmark(self):
+        pixmap = self.bookmark_gif.currentPixmap()
+        icon = qtg.QIcon(pixmap)
+        self.bookmark.setIcon(icon)
+        
