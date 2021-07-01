@@ -7,6 +7,8 @@
 - [x] logic interface for GUI
 - [ ] option to stop server
 
+## GLOBAL TODO
+
 ## Simon
 - [ ] implement lan server as class
 - [ ] implment lan client as class
