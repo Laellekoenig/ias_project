@@ -135,8 +135,7 @@ class MainWindow(qtw.QWidget):
         self.selector = selector
         selector.setWordWrap(True)
         # read articles from /data/articles folder
-        entries = self.logic.get_article_titles()
-        entries = self.filter_article_list(entries)
+        entries = self.get_article_lst()
         selector.addItems(entries)
         # add event for user input
         selector.itemSelectionChanged.connect(self.selected_article_changed)
@@ -522,16 +521,15 @@ class MainWindow(qtw.QWidget):
         else:
             self.setStyleSheet(style.getDarkStyleSheet())
 
-    def filter_article_list(self, list):
+    def get_article_lst(self):
         if self.active_article_filter == self.today_btn:
-            return []
+            return self.logic.get_article_titles_today()
         if self.active_article_filter == self.week_btn:
-            return []
+            return self.logic.get_article_titles_week()
         else:
-            return list
+            return self.logic.get_article_titles()
 
     def update_article_list(self):
-        entries = self.logic.get_article_titles()
-        entries = self.filter_article_list(entries)
+        entries = self.get_article_lst()
         self.selector.clear()
         self.selector.addItems(entries)

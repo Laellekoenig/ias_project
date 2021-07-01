@@ -148,3 +148,6 @@ class Article:
 
     def get_tagged_string(self, HTMLTag, str):
         return '<' + HTMLTag + '>' + str + '</' + HTMLTag + '>\n'
+
+    def get_date(self):
+        return self.date_and_time[:10]
