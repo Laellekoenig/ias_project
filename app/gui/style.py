@@ -32,6 +32,7 @@ def getLightStyleSheet():
         padding-right: 100px;
         padding-left: 50px;
         padding-top: 10px;
+        margin-right: 0px;
     }
     QTextBrowser QScrollBar {
         height: 0px;
@@ -57,6 +58,7 @@ def getLightStyleSheet():
         padding-top: 5px;
         padding-bottom: 5px;  
         border-bottom: 1px solid lightgrey;  
+        border-radius: 3px;
     }
     QListWidget::Item:selected {
         color: #f7f7f7;
@@ -173,6 +175,12 @@ def getLightStyleSheet():
         margin: 0px;
         height: 20%;
         color: grey;
+    }
+    #bookmark {
+        padding: 0px;
+        margin: 0px;
+        font-size: 100px;
+        height: 40px;
     }"""
     return stylesheet
 
