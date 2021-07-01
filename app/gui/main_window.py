@@ -219,7 +219,7 @@ class MainWindow(qtw.QWidget):
 
         blueB = qtw.QPushButton(text="bluetooth")
         blueB.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
-        blueB.clicked.connect(self.switch_blue)
+        #blueB.clicked.connect(self.switch_blue)
         blueB.setObjectName("blueButton")
 
         bacB = qtw.QPushButton(text="BAC-Net")
@@ -503,6 +503,8 @@ class MainWindow(qtw.QWidget):
         self.today_btn.setObjectName("filter-btn-active")
         self.update_article_list()
 
+        self.selector.setCurrentRow(0)
+
     def switch_week(self):
         self.active_article_filter.setStyleSheet("color: black; height: 20%;")
         if not self.light:
@@ -513,6 +515,8 @@ class MainWindow(qtw.QWidget):
         self.week_btn.setObjectName("filter-btn-active")
         self.update_article_list()
 
+        self.selector.setCurrentRow(0)
+
     def switch_all(self):
         self.active_article_filter.setStyleSheet("color: black; height: 20%;")
         if not self.light:
@@ -522,6 +526,8 @@ class MainWindow(qtw.QWidget):
         self.all_btn.setStyleSheet("color: grey; height: 20%;")
         self.all_btn.setObjectName("filter-btn-active")
         self.update_article_list()
+
+        self.selector.setCurrentRow(0)
 
     def update_style(self):
         if self.light:
