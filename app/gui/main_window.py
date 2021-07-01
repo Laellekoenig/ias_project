@@ -21,6 +21,8 @@ class MainWindow(qtw.QWidget):
         self.today_btn = None
         self.week_btn = None
         self.all_btn = None
+        self.downLayout = None
+        self.srfBtn = None
 
         # initiate window
         super().__init__(windowTitle="IAS Project")
@@ -135,8 +137,7 @@ class MainWindow(qtw.QWidget):
         self.selector = selector
         selector.setWordWrap(True)
         # read articles from /data/articles folder
-        entries = self.logic.get_article_titles()
-        entries = self.filter_article_list(entries)
+        entries = self.get_article_lst()
         selector.addItems(entries)
         # add event for user input
         selector.itemSelectionChanged.connect(self.selected_article_changed)
@@ -218,7 +219,7 @@ class MainWindow(qtw.QWidget):
 
         blueB = qtw.QPushButton(text="bluetooth")
         blueB.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
-        blueB.clicked.connect(self.switch_blue)
+        #blueB.clicked.connect(self.switch_blue)
         blueB.setObjectName("blueButton")
 
         bacB = qtw.QPushButton(text="BAC-Net")
@@ -238,6 +239,9 @@ class MainWindow(qtw.QWidget):
         downLayout.addWidget(blueB)
         downLayout.addWidget(localB)
         downLayout.addStretch()
+
+        self.downLayout = downLayout
+        self.srfBtn = srfB
 
         # add to layout
         self.main.addLayout(downLayout, 0, 0)
@@ -338,6 +342,8 @@ class MainWindow(qtw.QWidget):
         else:
             self.toggle.setChecked(True)
 
+        self.downLayout.insertWidget(1, self.srfBtn)
+
     def toggle2_download(self):
         if self.toggle2.isChecked():
             self.toggle2.setObjectName("toggleTrue")
@@ -351,6 +357,7 @@ class MainWindow(qtw.QWidget):
                 self.toggle.setStyleSheet("color: #f7f7f7;")
         else:
             self.toggle2.setChecked(True)
+        self.downLayout.removeWidget(self.srfBtn)
 
     def switch_to_loading(self):
         if self.selected == self.b2:
@@ -379,6 +386,7 @@ class MainWindow(qtw.QWidget):
 
     def set_wlan_server_section(self):
         utils.remove_widgets(self.main)
+        self.srfBtn = None
         self.set_selected_menu_button(self.b2)
 
         self.server_socket = net1.LANServer()
@@ -496,6 +504,8 @@ class MainWindow(qtw.QWidget):
         self.today_btn.setObjectName("filter-btn-active")
         self.update_article_list()
 
+        self.selector.setCurrentRow(0)
+
     def switch_week(self):
         self.active_article_filter.setStyleSheet("color: black; height: 20%;")
         if not self.light:
@@ -506,7 +516,10 @@ class MainWindow(qtw.QWidget):
         self.week_btn.setObjectName("filter-btn-active")
         self.update_article_list()
 
+        self.selector.setCurrentRow(0)
+
     def switch_all(self):
+        active_item = self.selector.currentItem()
         self.active_article_filter.setStyleSheet("color: black; height: 20%;")
         if not self.light:
             self.active_article_filter.setStyleSheet("color: #f7f7f7; height: 20%;")
@@ -516,22 +529,23 @@ class MainWindow(qtw.QWidget):
         self.all_btn.setObjectName("filter-btn-active")
         self.update_article_list()
 
+        self.selector.setCurrentRow(0)
+
     def update_style(self):
         if self.light:
             self.setStyleSheet(style.getLightStyleSheet())
         else:
             self.setStyleSheet(style.getDarkStyleSheet())
 
-    def filter_article_list(self, list):
+    def get_article_lst(self):
         if self.active_article_filter == self.today_btn:
-            return []
+            return self.logic.get_article_titles_today()
         if self.active_article_filter == self.week_btn:
-            return []
+            return self.logic.get_article_titles_week()
         else:
-            return list
+            return self.logic.get_article_titles()
 
     def update_article_list(self):
-        entries = self.logic.get_article_titles()
-        entries = self.filter_article_list(entries)
+        entries = self.get_article_lst()
         self.selector.clear()
         self.selector.addItems(entries)

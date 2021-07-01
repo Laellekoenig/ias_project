@@ -141,10 +141,13 @@ class Article:
             elif c == 'paragraph':
                 html += self.get_tagged_string(HTMLTag.PARAGRAPH, self.content[i])
             elif c == 'list_elem':
-                html += self.get_tagged_string(HTMLTag.LIST_ELEM, self.content[i])
+                html += "<ul> " + self.get_tagged_string(HTMLTag.LIST_ELEM, self.content[i]) + "</ul>"
             i += 1
         html += "</body>\n</qt>"
         return html
 
     def get_tagged_string(self, HTMLTag, str):
         return '<' + HTMLTag + '>' + str + '</' + HTMLTag + '>\n'
+
+    def get_date(self):
+        return self.date_and_time[:10]

@@ -6,6 +6,7 @@ from logic.article import Article
 from scraper.srf_scraper import getSRFArticles
 from scraper.scraper_manager import get_new_articles_from_web
 import threading
+import datetime
 class LogicInterface:
     def __init__(self):
         self.is_updating = False
@@ -30,7 +31,54 @@ class LogicInterface:
 
     def get_article_titles(self):
         list = get_article_titles()
-        return [x.title_1 for x in list]
+        titles = [x.title_1 for x in list]
+
+        # sort alphabetically
+        titles.sort()
+
+        return titles
+
+    def get_article_titles_today(self):
+        dt = datetime.datetime.today()
+        today = datetime.date(dt.year, dt.month, dt.day)
+        filtered_lst = []
+
+        articles = get_article_titles()
+        for article in articles:
+            article_dt = article.get_date()
+            article_month = int(article_dt[5:7])
+            article_day = int(article_dt[-2:])
+            article_year = int(article_dt[:4])
+            article_date = datetime.date(article_year, article_month, article_day)
+
+            if today == article_date:
+                filtered_lst.append(article.title_1)
+
+        # sort alphabetically
+        filtered_lst.sort()
+
+        return filtered_lst
+
+    def get_article_titles_week(self):
+        today = datetime.date.today()
+        filtered_lst = []
+
+        articles = get_article_titles()
+        for article in articles:
+            article_dt = article.get_date()
+            article_month = int(article_dt[5:7])
+            article_day = int(article_dt[-2:])
+            article_year = int(article_dt[:4])
+            article_day = datetime.date(article_year, article_month, article_day)
+
+            delta = today - article_day
+            if delta.days <= 7:
+                filtered_lst.append(article.title_1)
+
+        # sort alphabetically
+        filtered_lst.sort()
+
+        return filtered_lst
 
     def get_article_html_by_title1(self, title):
         for article in self.get_articles():
