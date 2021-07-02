@@ -132,7 +132,7 @@ class Article:
         html += self.get_tagged_string(HTMLTag.TITLE_1, self.title_1)
         html += self.get_tagged_string(HTMLTag.LEAD, self.lead)
         html += self.get_tagged_string(HTMLTag.AUTHOR, self.author)
-        html += self.get_tagged_string(HTMLTag.DATE_AND_TIME, self.date_and_time)
+        html += self.get_tagged_string(HTMLTag.DATE_AND_TIME, datetime.fromisoformat(self.date_and_time).strftime("%m.%d.%Y, %H:%M:%S"))
 
         i = 0
         for c in self.content_index:
