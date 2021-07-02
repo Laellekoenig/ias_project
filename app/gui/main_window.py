@@ -36,6 +36,7 @@ class MainWindow(qtw.QWidget):
         self.bookmark_gif = None
         self.bookmark_active = False
         self.archive_selector = None
+        self.archive_reader = None
 
         # initiate window
         super().__init__(windowTitle="IAS Project")
@@ -332,13 +333,14 @@ class MainWindow(qtw.QWidget):
         text = qtw.QTextBrowser()
         style.setArticleStyle(text)
         text.setOpenExternalLinks(True)
+        self.archive_reader = text
 
         selector = qtw.QListWidget()
         self.archive_selector = selector
         selector.setWordWrap(True)
         entries = self.get_bookmarked_article_lst()
         selector.addItems(entries)
-        #TODO selector.itemSelectionChanged.connect()
+        selector.itemSelectionChanged.connect(self.archive_article_changed)
         selector.setCurrentRow(0)
         text.moveCursor(qtg.QTextCursor.Start)
 
@@ -356,11 +358,13 @@ class MainWindow(qtw.QWidget):
             self.set_bookmark()
         else:
             self.remove_bookmark()
-        #fileName = utils.get_file_name(selectedArticle)
-        #location = "data/articles/" + fileName
-        #with open(location, "r") as html:
-            #self.article.clear()
-            #self.article.insertHtml(html.read())
+
+    def archive_article_changed(self):
+        selectedArticle = self.archive_selector.currentItem().text()
+        html = self.logic.get_article_html_by_title1(selectedArticle)
+        self.archive_reader.clear()
+        self.archive_reader.insertHtml(html)
+        #TODO bookmarks
 
     def switch(self):
         # switch from dark to light or vice versa
