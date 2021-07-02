@@ -183,6 +183,29 @@ def getLightStyleSheet():
         height: 40px;
     }
     #bookmark-btn {
+    }
+    #combo {
+        margin-bottom: 5px;
+    }
+    QComboBox {
+        color: white;
+        background-color: black;
+        border-radius: 3px;
+        padding: 10px;
+        font-family: Assistant;
+        font-size: 16px;
+    }
+    QComboBox::down-arrow {
+    }
+    QComboBox::drop-down {
+        border-radius: 3px;
+    }
+    QComboBox QAbstractItemView {
+        background-color: black;
+    }
+    QComboBox QAbstractItemView::hover {
+        background-color: white;
+        color: black;
     }"""
     return stylesheet
 

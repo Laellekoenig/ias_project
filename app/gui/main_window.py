@@ -223,8 +223,21 @@ class MainWindow(qtw.QWidget):
         filter_layout.addWidget(self.week_btn)
         filter_layout.addWidget(self.all_btn)
 
+        # category chooser
+        combo = qtw.QComboBox()
+        combo.setObjectName("combo")
+        combo.addItem("All Categories")
+        combo.addItem("Switzerland")
+        combo.addItem("International")
+        combo.addItem("Economics")
+        combo.addItem("Culture")
+        combo.addItem("Sports")
+        combo.addItem("Meteo")
+        combo.addItem("Panorama")
+
         lhs_layout = qtw.QVBoxLayout()
         lhs_layout.addLayout(filter_layout)
+        lhs_layout.addWidget(combo)
         lhs_layout.addWidget(selector)
 
         rhs_layout = qtw.QVBoxLayout()
