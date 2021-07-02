@@ -35,6 +35,7 @@ class MainWindow(qtw.QWidget):
         self.bookmark = None
         self.bookmark_gif = None
         self.bookmark_active = False
+        self.archive_selector = None
 
         # initiate window
         super().__init__(windowTitle="IAS Project")
@@ -184,7 +185,7 @@ class MainWindow(qtw.QWidget):
         bookmark.setObjectName("bookmark")
         bookmark.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
         bookmark.clicked.connect(self.update_bookmark)
-        self.update_bookmark()
+        self.draw_bookmark()
 
         #article filters
         self.today_btn = qtw.QPushButton(text="today")
@@ -328,11 +329,21 @@ class MainWindow(qtw.QWidget):
         utils.remove_widgets(self.main)
         self.set_selected_menu_button(self.b3)
 
-        # new widgets
-        title = qtw.QLabel(text="archive")
+        text = qtw.QTextBrowser()
+        style.setArticleStyle(text)
+        text.setOpenExternalLinks(True)
 
-        # add to layout
-        self.main.addWidget(title)
+        selector = qtw.QListWidget()
+        self.archive_selector = selector
+        selector.setWordWrap(True)
+        entries = self.get_bookmarked_article_lst()
+        selector.addItems(entries)
+        #TODO selector.itemSelectionChanged.connect()
+        selector.setCurrentRow(0)
+        text.moveCursor(qtg.QTextCursor.Start)
+
+        self.main.addWidget(selector, 0, 0, 100, 20)
+        self.main.addWidget(text, 0, 20, 100, 80)
 
     def selected_article_changed(self):
         # change displayed article in UI on selection
@@ -597,6 +608,10 @@ class MainWindow(qtw.QWidget):
         else:
             return self.logic.get_article_titles()
 
+    def get_bookmarked_article_lst(self):
+        lst = self.logic.get_bookmarked_article_titles()
+        return lst
+
     def update_article_list(self):
         entries = self.get_article_lst()
         self.selector.clear()
@@ -613,6 +628,8 @@ class MainWindow(qtw.QWidget):
         self.bookmark.setPixmap(qtg.QPixmap(os.getcwd() + "/data/images/bookmark-empty.png"))
 
     def update_bookmark(self):
+        if self.selector.currentItem() == None:
+            return
         title = self.selector.currentItem().text()
         active = self.logic.is_article_bookmarked(title)
         if active:
@@ -621,3 +638,13 @@ class MainWindow(qtw.QWidget):
         else:
             self.logic.bookmark_article(title)
             self.set_bookmark()
+
+    def draw_bookmark(self):
+        if self.selector.currentItem() == None:
+            return
+        title = self.selector.currentItem().text()
+        active = self.logic.is_article_bookmarked(title)
+        if active:
+            self.set_bookmark()
+        else:
+            self.remove_bookmark()
