@@ -140,11 +140,20 @@ def getArticleFromURL(url):
         newArticle.set_lead(article_lead)
 
         if mainCategory == "news":
-            newArticle.set_category(Category.NEWS)
+            if secondaryCategory == "schweiz":
+                newArticle.set_category(Category.SWITZERLAND)
+            elif secondaryCategory == "international":
+                newArticle.set_category(Category.INTERNATIONAL)
+            elif secondaryCategory == "panorama":
+                newArticle.set_category(Category.PANORAMA)
+            elif secondaryCategory == "wirtschaft":
+                newArticle.set_category(Category.ECONOMICS)
+            else:
+                newArticle.set_category(Category.OTHER)
         elif mainCategory == "sport":
             newArticle.set_category(Category.SPORTS)
         elif mainCategory == "meteo":
-            newArticle.set_category(Category.WEATHER)
+            newArticle.set_category(Category.METEO)
         elif mainCategory == "kultur":
             newArticle.set_category(Category.CULTURE)
         # else do nothing
