@@ -130,6 +130,14 @@ def getArticleFromURL(url):
 
         for span in content.find_all('span'):
                 span.decompose()
+        
+        if content.find_all('div', class_='expandable-box') is not None:
+            for element in content.find_all('div', class_='expandable-box'):
+                element.decompose()
+
+        if content.find_all('div', class_='linkbox') is not None:
+            for element in content.find_all('div', class_='linkbox'):
+                element.decompose()
 
         content = content.find_all(['p', 'h2', 'h3', 'li']) # take all <p>, <h2>, <h3> and <li> tags in the article-content class (all the relevant text in the article)
 
