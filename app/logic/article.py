@@ -18,15 +18,14 @@ class HTMLTag(str, Enum):
     LIST_ELEM = 'li'
 
 class Category(str, Enum):
-    POLITICS = 'politics'
-    GEO_POLITICS = 'geo_politics'
     SPORTS = 'sports'
     CULTURE = 'culture'
-    TECHNOLOGY = 'technology'
-    WEATHER = 'weather'
-    NEWS = 'news'
+    METEO = 'meteo'
+    SWITZERLAND = 'switzerland'
+    INTERNATIONAL = 'international'
+    PANORAMA = 'panorama'
+    ECONOMICS = 'economics'
     OTHER = 'other'
-
 
 class Article:
     def __init__(self, news_source):
