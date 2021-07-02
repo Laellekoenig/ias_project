@@ -24,10 +24,10 @@
 - [x] remove srf button in share section
 - [x] format li elements
 - [x] fix srf button in server section
+- [x] display bookmarked articles in archive
 - [ ] stop loading animation when done downloading
 - [ ] implement archive section
 - [ ] read indication
-- [ ] display bookmarked articles in archive
 - [ ] filter by category
 - [ ] fix bugs with dark mode and switches
 - [ ] more shortcuts
