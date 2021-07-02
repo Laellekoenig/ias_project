@@ -31,7 +31,12 @@ class LogicInterface:
 
     def get_article_titles(self):
         list = get_article_titles()
-        titles = [x.title_1 for x in list]
+        titles = []
+        for item in list:
+            if item.opened:
+                titles.append(item.title_1)
+            else:
+                titles.append(item.title_1 + " \u2022")
 
         # sort alphabetically
         titles.sort()
@@ -52,7 +57,10 @@ class LogicInterface:
             article_date = datetime.date(article_year, article_month, article_day)
 
             if today == article_date:
-                filtered_lst.append(article.title_1)
+                if article.opened:
+                    filtered_lst.append(article.title_1)
+                else:
+                    filtered_lst.append(article.title_1 + " \u2022")
 
         # sort alphabetically
         filtered_lst.sort()
@@ -73,7 +81,10 @@ class LogicInterface:
 
             delta = today - article_day
             if delta.days <= 7:
-                filtered_lst.append(article.title_1)
+                if article.opened:
+                    filtered_lst.append(article.title_1)
+                else:
+                    filtered_lst.append(article.title_1 + " \u2022")
 
         # sort alphabetically
         filtered_lst.sort()
@@ -81,6 +92,7 @@ class LogicInterface:
         return filtered_lst
 
     def get_article_html_by_title1(self, title):
+        title = self.cut_title(title)
         for article in self.get_articles():
             if article.title_1 == title:
                 return article.get_html()
@@ -116,3 +128,16 @@ class LogicInterface:
         for article in self.get_articles():
             if article.title_1 == title:
                 return article.bookmarked
+
+    def mark_as_opened(self, title):
+        title = self.cut_title(title)
+        for article in self.get_articles():
+            if article.title_1 == title:
+                article.opened = True
+                save_article(article)
+
+    def cut_title(self, title):
+        if title.endswith("\u2022"):
+            return title[:-2]
+        else:
+            return title

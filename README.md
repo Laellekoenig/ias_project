@@ -25,9 +25,9 @@
 - [x] format li elements
 - [x] fix srf button in server section
 - [x] display bookmarked articles in archive
+- [x] read indication
 - [ ] stop loading animation when done downloading
 - [ ] implement archive section
-- [ ] read indication
 - [ ] filter by category
 - [ ] fix bugs with dark mode and switches
 - [ ] more shortcuts

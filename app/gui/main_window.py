@@ -362,6 +362,11 @@ class MainWindow(qtw.QWidget):
     def selected_article_changed(self):
         # change displayed article in UI on selection
         selectedArticle = self.selector.currentItem().text()
+        # remove new indication
+        if selectedArticle.endswith("\u2022"):
+            unmarked = selectedArticle[:-2]
+            self.selector.currentItem().setText(unmarked)
+
         html = self.logic.get_article_html_by_title1(selectedArticle)
         self.article.clear()
         self.article.insertHtml(html)
@@ -370,6 +375,8 @@ class MainWindow(qtw.QWidget):
             self.fill_mdi()
         else:
             self.draw_mdi_outline()
+        #mark as read
+        self.logic.mark_as_opened(selectedArticle)
 
     def archive_article_changed(self):
         selectedArticle = self.archive_selector.currentItem().text()
