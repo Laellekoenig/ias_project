@@ -181,6 +181,8 @@ def getLightStyleSheet():
         margin: 0px;
         font-size: 100px;
         height: 40px;
+    }
+    #bookmark-btn {
     }"""
     return stylesheet
 

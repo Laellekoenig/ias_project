@@ -37,6 +37,7 @@ class MainWindow(qtw.QWidget):
         self.bookmark_active = False
         self.archive_selector = None
         self.archive_reader = None
+        self.mdi_btn = None
 
         # initiate window
         super().__init__(windowTitle="IAS Project")
@@ -188,6 +189,17 @@ class MainWindow(qtw.QWidget):
         bookmark.clicked.connect(self.update_bookmark)
         self.draw_bookmark()
 
+        #test
+        mdi_book = qta.icon("mdi.bookmark-outline", color="black")
+        mdi_book_btn = qtw.QPushButton()
+        mdi_book_btn.setObjectName("bookmark-btn")
+        mdi_book_btn.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
+        mdi_book_btn.clicked.connect(self.update_bookmark)
+        mdi_book_btn.setIconSize(qtc.QSize(40, 40))
+        mdi_book_btn.setIcon(mdi_book)
+        self.mdi_btn = mdi_book_btn
+        self.draw_bookmark()
+
         #article filters
         self.today_btn = qtw.QPushButton(text="today")
         self.today_btn.setObjectName("filter-btn-selected")
@@ -216,8 +228,8 @@ class MainWindow(qtw.QWidget):
         lhs_layout.addWidget(selector)
 
         rhs_layout = qtw.QVBoxLayout()
-        rhs_layout.addWidget(bookmark)
-        #rhs_layout.addWidget(test)
+        #rhs_layout.addWidget(bookmark)
+        rhs_layout.addWidget(mdi_book_btn)
         rhs_layout.addStretch()
 
         # article selector 20% of content
@@ -355,9 +367,9 @@ class MainWindow(qtw.QWidget):
         self.article.insertHtml(html)
         is_bookmarked = self.logic.is_article_bookmarked(selectedArticle)
         if is_bookmarked:
-            self.set_bookmark()
+            self.fill_mdi()
         else:
-            self.remove_bookmark()
+            self.draw_mdi_outline()
 
     def archive_article_changed(self):
         selectedArticle = self.archive_selector.currentItem().text()
@@ -383,6 +395,9 @@ class MainWindow(qtw.QWidget):
 
         if self.selected == self.b2 and self.logic.is_updating:
             self.set_loading_screen_section()
+
+        #update bookmark color
+        self.draw_bookmark()
 
     def set_selected_menu_button(self, button):
         self.selected = button
@@ -638,10 +653,10 @@ class MainWindow(qtw.QWidget):
         active = self.logic.is_article_bookmarked(title)
         if active:
             self.logic.remove_bookmark_article(title)
-            self.remove_bookmark()
+            self.draw_mdi_outline()
         else:
             self.logic.bookmark_article(title)
-            self.set_bookmark()
+            self.fill_mdi()
 
     def draw_bookmark(self):
         if self.selector.currentItem() == None:
@@ -649,6 +664,24 @@ class MainWindow(qtw.QWidget):
         title = self.selector.currentItem().text()
         active = self.logic.is_article_bookmarked(title)
         if active:
-            self.set_bookmark()
+            self.fill_mdi()
         else:
-            self.remove_bookmark()
+            self.draw_mdi_outline()
+
+    def draw_mdi_outline(self):
+        if self.mdi_btn == None:
+            return
+        if self.light:
+            icon = qta.icon("mdi.bookmark-outline", color="black")
+        else:
+            icon = qta.icon("mdi.bookmark-outline", color="#f7f7f7")
+        self.mdi_btn.setIcon(icon)
+
+    def fill_mdi(self):
+        if self.mdi_btn == None:
+            return
+        if self.light:
+            icon = qta.icon("mdi.bookmark", color="black")
+        else:
+            icon = qta.icon("mdi.bookmark", color="#f7f7f7")
+        self.mdi_btn.setIcon(icon)
