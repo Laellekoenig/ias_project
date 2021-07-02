@@ -45,10 +45,10 @@ class LogicInterface:
 
         articles = get_article_titles()
         for article in articles:
-            article_dt = article.get_date()
-            article_month = int(article_dt[5:7])
-            article_day = int(article_dt[-2:])
-            article_year = int(article_dt[:4])
+            article_dt = datetime.datetime.fromisoformat(article.date_and_time)
+            article_month = int(article_dt.strftime("%m"))
+            article_day = int(article_dt.strftime("%d"))
+            article_year = int(article_dt.strftime("%Y"))
             article_date = datetime.date(article_year, article_month, article_day)
 
             if today == article_date:
@@ -65,10 +65,10 @@ class LogicInterface:
 
         articles = get_article_titles()
         for article in articles:
-            article_dt = article.get_date()
-            article_month = int(article_dt[5:7])
-            article_day = int(article_dt[-2:])
-            article_year = int(article_dt[:4])
+            article_dt = datetime.datetime.fromisoformat(article.date_and_time)
+            article_month = int(article_dt.strftime("%m"))
+            article_day = int(article_dt.strftime("%d"))
+            article_year = int(article_dt.strftime("%Y"))
             article_day = datetime.date(article_year, article_month, article_day)
 
             delta = today - article_day

@@ -18,15 +18,14 @@ class HTMLTag(str, Enum):
     LIST_ELEM = 'li'
 
 class Category(str, Enum):
-    POLITICS = 'politics'
-    GEO_POLITICS = 'geo_politics'
     SPORTS = 'sports'
     CULTURE = 'culture'
-    TECHNOLOGY = 'technology'
-    WEATHER = 'weather'
-    NEWS = 'news'
+    METEO = 'meteo'
+    SWITZERLAND = 'switzerland'
+    INTERNATIONAL = 'international'
+    PANORAMA = 'panorama'
+    ECONOMICS = 'economics'
     OTHER = 'other'
-
 
 class Article:
     def __init__(self, news_source):
@@ -132,7 +131,7 @@ class Article:
         html += self.get_tagged_string(HTMLTag.TITLE_1, self.title_1)
         html += self.get_tagged_string(HTMLTag.LEAD, self.lead)
         html += self.get_tagged_string(HTMLTag.AUTHOR, self.author)
-        html += self.get_tagged_string(HTMLTag.DATE_AND_TIME, self.date_and_time)
+        html += self.get_tagged_string(HTMLTag.DATE_AND_TIME, datetime.fromisoformat(self.date_and_time).strftime("%m.%d.%Y, %H:%M:%S"))
 
         i = 0
         for c in self.content_index:
