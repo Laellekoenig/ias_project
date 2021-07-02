@@ -36,3 +36,4 @@
 - [ ] implement gui for lan client
 - [ ] implement gui for bluetooth server
 - [ ] implement gui for bluetooth client
+- [ ] open article into own window
