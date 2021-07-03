@@ -89,3 +89,10 @@ def load_app_icons(app):
     app_icon.addFile(path + "48x48.png", qtc.QSize(48, 48))
     app_icon.addFile(path + "256x256.png", qtc.QSize(256, 256))
     app.setWindowIcon(app_icon)
+
+def get_items_from_list_widget(widget):
+    lst = []
+    for i in range(widget.count() - 1):
+        lst.append(widget.item(i).text())
+
+    return lst

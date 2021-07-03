@@ -2,6 +2,7 @@
 from logic.file_handler import get_articles
 from logic.file_handler import save_article
 from logic.file_handler import get_article_titles
+from logic.article import Category
 from logic.article import Article
 from scraper.srf_scraper import getSRFArticles
 from scraper.scraper_manager import get_new_articles_from_web
@@ -141,3 +142,40 @@ class LogicInterface:
             return title[:-2]
         else:
             return title
+
+    def filter_by_category(self, titles, category):
+        articles = self.prepare_titles_for_filter(titles)
+        if articles == None:
+            return []
+
+        filtered = []
+        for article in articles:
+            if article.category == category:
+                filtered.append(self.get_printing_title(article))
+        return filtered
+
+    def get_printing_title(self, article):
+        title = article.title_1
+        if article.opened:
+            return title
+        else:
+            return title + " \u2022"
+
+    def prepare_titles_for_filter(self, titles):
+        # get correct titles
+        cut_titles = []
+        for title in titles:
+            cut_titles.append(self.cut_title(title))
+
+        # get artciles from titles
+        articles = []
+        for title in cut_titles:
+            articles.append(self.get_article_from_title(title))
+
+        return articles
+
+    def get_article_from_title(self, title):
+        for article in get_articles():
+            if article.title_1 == title:
+                return article
+        return "Not found"

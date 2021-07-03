@@ -7,6 +7,7 @@ from PyQt5 import QtWidgets as qtw
 from PyQt5 import QtGui as qtg
 from PyQt5 import QtCore as qtc
 import qtawesome as qta
+from logic.article import Category
 from gui.interface import Interface
 from logic.interface import LogicInterface as Logic
 import gui.utils as utils
@@ -38,6 +39,7 @@ class MainWindow(qtw.QWidget):
         self.archive_selector = None
         self.archive_reader = None
         self.mdi_btn = None
+        self.combo = None
 
         # initiate window
         super().__init__(windowTitle="IAS Project")
@@ -235,7 +237,9 @@ class MainWindow(qtw.QWidget):
         combo.addItem("Sports")
         combo.addItem("Meteo")
         combo.addItem("Panorama")
+        combo.activated[str].connect(self.combo_selection_changed)
         self.combo = combo
+
 
         lhs_layout = qtw.QVBoxLayout()
         lhs_layout.addLayout(filter_layout)
@@ -608,6 +612,7 @@ class MainWindow(qtw.QWidget):
         self.today_btn.setObjectName("filter-btn-active")
         self.update_article_list()
 
+        self.combo_selection_changed(None)
         self.selector.setCurrentRow(0)
 
     def switch_week(self):
@@ -620,6 +625,7 @@ class MainWindow(qtw.QWidget):
         self.week_btn.setObjectName("filter-btn-active")
         self.update_article_list()
 
+        self.combo_selection_changed(None)
         self.selector.setCurrentRow(0)
 
     def switch_all(self):
@@ -633,6 +639,7 @@ class MainWindow(qtw.QWidget):
         self.all_btn.setObjectName("filter-btn-active")
         self.update_article_list()
 
+        self.combo_selection_changed(None)
         self.selector.setCurrentRow(0)
 
     def update_style(self):
@@ -707,3 +714,31 @@ class MainWindow(qtw.QWidget):
         else:
             icon = qta.icon("mdi.bookmark", color="#f7f7f7")
         self.mdi_btn.setIcon(icon)
+
+    def combo_selection_changed(self, category):
+        if category == None:
+            category = str(self.combo.currentText())
+            print(category)
+
+        titles = self.get_article_lst()
+
+        if category == "All Categories":
+            self.update_article_list()
+            return
+        elif category == "Switzerland":
+            new_lst = self.logic.filter_by_category(titles, Category.SWITZERLAND)
+        elif category == "International":
+            new_lst = self.logic.filter_by_category(titles, Category.INTERNATIONAL)
+        elif category == "Economics":
+            new_lst = self.logic.filter_by_category(titles, Category.ECONOMICS)
+        elif category == "Culture":
+            new_lst = self.logic.filter_by_category(titles, Category.CULTURE)
+        elif category == "Sports":
+            new_lst = self.logic.filter_by_category(titles, Category.SPORTS)
+        elif category == "Meteo":
+            new_lst = self.logic.filter_by_category(titles, Category.METEO)
+        elif category == "Panorama":
+            new_lst = self.logic.filter_by_category(titles, Category.PANORAMA)
+
+        self.selector.clear()
+        self.selector.addItems(new_lst)
