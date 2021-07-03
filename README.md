@@ -8,6 +8,7 @@
 - [ ] option to stop server
 
 ## GLOBAL TODO
+- [ ] add server timeouts in order to easily close servers
 
 ## Simon
 - [ ] implement lan server as class
@@ -29,7 +30,7 @@
 - [x] filter by category
 - [x] implement archive section
 - [x] fix bugs with dark mode and switches
-- [ ] implement gui for lan server
+- [x] implement gui for lan server
 - [ ] implement gui for lan client
   
 ---

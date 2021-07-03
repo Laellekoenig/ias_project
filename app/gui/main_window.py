@@ -14,7 +14,8 @@ import gui.utils as utils
 import gui.style as style
 import transfer.local_network as net
 import transfer.bluetooth as tooth
-import transfer.LAN_server as net1
+from transfer.LAN_server import LANServer
+from transfer.LAN_client import LANClient
 
 class imageLabel(qtw.QLabel):
     clicked = qtc.pyqtSignal()
@@ -52,6 +53,8 @@ class MainWindow(qtw.QWidget):
         # for interacting with other parts of program
         self.interface = Interface(self)
         self.logic = Logic()
+        self.LAN_client = LANClient()
+        self.LAN_server = LANServer()
 
         # load app icons
         utils.load_app_icons(app)
@@ -520,34 +523,24 @@ class MainWindow(qtw.QWidget):
         self.srfBtn = None
         self.set_selected_menu_button(self.b2)
 
-        self.server_socket = net1.LANServer()
-        self.server_socket.start_server_threaded()
+        self.LAN_server.start_server_threaded()
 
-        while not self.server_socket.running:
+        while not self.LAN_server.running:
             pass
 
-        s1 = "Started server on"
+        s1 = "Your IP address is: "
         t1 = qtw.QLabel(s1)
         t1.setObjectName("server-text")
 
         s2 = self.server_socket.get_IP()
-        t2 = qtw.QLabel(s1 + " " + s2)
+        t2 = qtw.QLabel(s1 + s2)
         t2.setObjectName("server-text")
-
-        s3 = "with port number"
-        t3 = qtw.QLabel(s3)
-        t3.setObjectName("server-text")
-
-        s4 = self.server_socket.get_port() + "."
-        t4 = qtw.QLabel(s3 + " " + s4)
-        t4.setObjectName("server-text")
 
         lanLayout = qtw.QVBoxLayout()
         lanLayout.addStretch()
         #lanLayout.addWidget(t1)
         lanLayout.addWidget(t2)
         #lanLayout.addWidget(t3)
-        lanLayout.addWidget(t4)
         lanLayout.addStretch()
 
         horizontalLayout = qtw.QHBoxLayout()
@@ -596,7 +589,7 @@ class MainWindow(qtw.QWidget):
         ip = self.serverLst.currentItem().text()
         ip = ip.split("\t")[0]
         print("trying to connect to " + ip)
-        net.start_client_threaded(ip)
+        self.LAN_client.start_client(ip)
 
     def set_blue_server_section(self):
 
