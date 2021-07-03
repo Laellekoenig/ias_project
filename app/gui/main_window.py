@@ -7,13 +7,15 @@ from PyQt5 import QtWidgets as qtw
 from PyQt5 import QtGui as qtg
 from PyQt5 import QtCore as qtc
 import qtawesome as qta
+from logic.article import Category
 from gui.interface import Interface
 from logic.interface import LogicInterface as Logic
 import gui.utils as utils
 import gui.style as style
 import transfer.local_network as net
 import transfer.bluetooth as tooth
-import transfer.LAN_server as net1
+from transfer.LAN_server import LANServer
+from transfer.LAN_client import LANClient
 
 class imageLabel(qtw.QLabel):
     clicked = qtc.pyqtSignal()
@@ -38,6 +40,8 @@ class MainWindow(qtw.QWidget):
         self.archive_selector = None
         self.archive_reader = None
         self.mdi_btn = None
+        self.combo = None
+        self.current_title = None
 
         # initiate window
         super().__init__(windowTitle="IAS Project")
@@ -49,6 +53,8 @@ class MainWindow(qtw.QWidget):
         # for interacting with other parts of program
         self.interface = Interface(self)
         self.logic = Logic()
+        self.LAN_client = LANClient()
+        self.LAN_server = LANServer()
 
         # load app icons
         utils.load_app_icons(app)
@@ -226,6 +232,7 @@ class MainWindow(qtw.QWidget):
         # category chooser
         combo = qtw.QComboBox()
         combo.setObjectName("combo")
+        combo.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
         combo.addItem("All Categories")
         combo.addItem("Switzerland")
         combo.addItem("International")
@@ -234,6 +241,8 @@ class MainWindow(qtw.QWidget):
         combo.addItem("Sports")
         combo.addItem("Meteo")
         combo.addItem("Panorama")
+        combo.activated[str].connect(self.combo_selection_changed)
+        self.combo = combo
 
         lhs_layout = qtw.QVBoxLayout()
         lhs_layout.addLayout(filter_layout)
@@ -361,7 +370,7 @@ class MainWindow(qtw.QWidget):
         self.archive_reader = text
 
         selector = qtw.QListWidget()
-        self.archive_selector = selector
+        self.selector = selector
         selector.setWordWrap(True)
         entries = self.get_bookmarked_article_lst()
         selector.addItems(entries)
@@ -369,8 +378,23 @@ class MainWindow(qtw.QWidget):
         selector.setCurrentRow(0)
         text.moveCursor(qtg.QTextCursor.Start)
 
+        mdi_book = qta.icon("mdi.bookmark-outline", color="black")
+        mdi_book_btn = qtw.QPushButton()
+        mdi_book_btn.setObjectName("bookmark-btn")
+        mdi_book_btn.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
+        mdi_book_btn.clicked.connect(self.update_bookmark)
+        mdi_book_btn.setIconSize(qtc.QSize(40, 40))
+        mdi_book_btn.setIcon(mdi_book)
+        self.mdi_btn = mdi_book_btn
+        self.draw_bookmark()
+
+        rhs_layout = qtw.QVBoxLayout()
+        rhs_layout.addWidget(mdi_book_btn)
+        rhs_layout.addStretch()
+
         self.main.addWidget(selector, 0, 0, 100, 20)
-        self.main.addWidget(text, 0, 20, 100, 80)
+        self.main.addWidget(text, 0, 20, 100, 75)
+        self.main.addLayout(rhs_layout, 0, 95, 100, 5)
 
     def selected_article_changed(self):
         # change displayed article in UI on selection
@@ -390,13 +414,20 @@ class MainWindow(qtw.QWidget):
             self.draw_mdi_outline()
         #mark as read
         self.logic.mark_as_opened(selectedArticle)
+        self.current_title = selectedArticle
 
     def archive_article_changed(self):
-        selectedArticle = self.archive_selector.currentItem().text()
+        selectedArticle = self.selector.currentItem().text()
+        self.current_title = selectedArticle
         html = self.logic.get_article_html_by_title1(selectedArticle)
         self.archive_reader.clear()
         self.archive_reader.insertHtml(html)
         #TODO bookmarks
+        is_bookmarked = self.logic.is_article_bookmarked(selectedArticle)
+        if is_bookmarked:
+            self.fill_mdi()
+        else:
+            self.draw_mdi_outline()
 
     def switch(self):
         # switch from dark to light or vice versa
@@ -418,6 +449,7 @@ class MainWindow(qtw.QWidget):
 
         #update bookmark color
         self.draw_bookmark()
+        self.update_switches()
 
     def set_selected_menu_button(self, button):
         self.selected = button
@@ -491,34 +523,24 @@ class MainWindow(qtw.QWidget):
         self.srfBtn = None
         self.set_selected_menu_button(self.b2)
 
-        self.server_socket = net1.LANServer()
-        self.server_socket.start_server_threaded()
+        self.LAN_server.start_server_threaded()
 
-        while not self.server_socket.running:
+        while not self.LAN_server.running:
             pass
 
-        s1 = "Started server on"
+        s1 = "Your IP address is: "
         t1 = qtw.QLabel(s1)
         t1.setObjectName("server-text")
 
-        s2 = self.server_socket.get_IP()
-        t2 = qtw.QLabel(s1 + " " + s2)
+        s2 = self.LAN_server.get_IP()
+        t2 = qtw.QLabel(s1 + s2)
         t2.setObjectName("server-text")
-
-        s3 = "with port number"
-        t3 = qtw.QLabel(s3)
-        t3.setObjectName("server-text")
-
-        s4 = self.server_socket.get_port() + "."
-        t4 = qtw.QLabel(s3 + " " + s4)
-        t4.setObjectName("server-text")
 
         lanLayout = qtw.QVBoxLayout()
         lanLayout.addStretch()
         #lanLayout.addWidget(t1)
         lanLayout.addWidget(t2)
         #lanLayout.addWidget(t3)
-        lanLayout.addWidget(t4)
         lanLayout.addStretch()
 
         horizontalLayout = qtw.QHBoxLayout()
@@ -567,7 +589,7 @@ class MainWindow(qtw.QWidget):
         ip = self.serverLst.currentItem().text()
         ip = ip.split("\t")[0]
         print("trying to connect to " + ip)
-        net.start_client_threaded(ip)
+        self.LAN_client.start_client(ip)
 
     def set_blue_server_section(self):
 
@@ -606,6 +628,7 @@ class MainWindow(qtw.QWidget):
         self.today_btn.setObjectName("filter-btn-active")
         self.update_article_list()
 
+        self.combo_selection_changed(None)
         self.selector.setCurrentRow(0)
 
     def switch_week(self):
@@ -618,6 +641,7 @@ class MainWindow(qtw.QWidget):
         self.week_btn.setObjectName("filter-btn-active")
         self.update_article_list()
 
+        self.combo_selection_changed(None)
         self.selector.setCurrentRow(0)
 
     def switch_all(self):
@@ -631,6 +655,7 @@ class MainWindow(qtw.QWidget):
         self.all_btn.setObjectName("filter-btn-active")
         self.update_article_list()
 
+        self.combo_selection_changed(None)
         self.selector.setCurrentRow(0)
 
     def update_style(self):
@@ -667,9 +692,12 @@ class MainWindow(qtw.QWidget):
         self.bookmark.setPixmap(qtg.QPixmap(os.getcwd() + "/data/images/bookmark-empty.png"))
 
     def update_bookmark(self):
-        if self.selector.currentItem() == None:
+        #if self.selector.currentItem() == None:
+        #    return
+        #title = self.selector.currentItem().text()
+        title = utils.remove_dot(self.current_title)
+        if title == None:
             return
-        title = self.selector.currentItem().text()
         active = self.logic.is_article_bookmarked(title)
         if active:
             self.logic.remove_bookmark_article(title)
@@ -677,6 +705,12 @@ class MainWindow(qtw.QWidget):
         else:
             self.logic.bookmark_article(title)
             self.fill_mdi()
+
+        #if in archive update selector
+        if self.selected == self.b3:
+            entries = self.get_bookmarked_article_lst()
+            self.selector.clear()
+            self.selector.addItems(entries)
 
     def draw_bookmark(self):
         if self.selector.currentItem() == None:
@@ -705,3 +739,58 @@ class MainWindow(qtw.QWidget):
         else:
             icon = qta.icon("mdi.bookmark", color="#f7f7f7")
         self.mdi_btn.setIcon(icon)
+
+    def combo_selection_changed(self, category):
+        if category == None:
+            category = str(self.combo.currentText())
+
+        titles = self.get_article_lst()
+
+        if category == "All Categories":
+            self.update_article_list()
+            return
+        elif category == "Switzerland":
+            new_lst = self.logic.filter_by_category(titles, Category.SWITZERLAND)
+        elif category == "International":
+            new_lst = self.logic.filter_by_category(titles, Category.INTERNATIONAL)
+        elif category == "Economics":
+            new_lst = self.logic.filter_by_category(titles, Category.ECONOMICS)
+        elif category == "Culture":
+            new_lst = self.logic.filter_by_category(titles, Category.CULTURE)
+        elif category == "Sports":
+            new_lst = self.logic.filter_by_category(titles, Category.SPORTS)
+        elif category == "Meteo":
+            new_lst = self.logic.filter_by_category(titles, Category.METEO)
+        elif category == "Panorama":
+            new_lst = self.logic.filter_by_category(titles, Category.PANORAMA)
+
+        self.selector.clear()
+        self.selector.addItems(new_lst)
+
+    def update_switches(self):
+        if self.light:
+            if self.active_article_filter == self.today_btn:
+                self.today_btn.setStyleSheet("color: grey; height: 20%;")
+                self.week_btn.setStyleSheet("color: black; height: 20%;")
+                self.all_btn.setStyleSheet("color: black; height: 20%;")
+            if self.active_article_filter == self.week_btn:
+                self.today_btn.setStyleSheet("color: black; height: 20%;")
+                self.week_btn.setStyleSheet("color: grey; height: 20%;")
+                self.all_btn.setStyleSheet("color: black; height: 20%;")
+            if self.active_article_filter == self.all_btn:
+                self.today_btn.setStyleSheet("color: black; height: 20%;")
+                self.week_btn.setStyleSheet("color: black; height: 20%;")
+                self.all_btn.setStyleSheet("color: grey; height: 20%;")
+        else:
+            if self.active_article_filter == self.today_btn:
+                self.today_btn.setStyleSheet("color: grey; height: 20%;")
+                self.week_btn.setStyleSheet("color: #f7f7f7; height: 20%;")
+                self.all_btn.setStyleSheet("color: #f7f7f7; height: 20%;")
+            if self.active_article_filter == self.week_btn:
+                self.today_btn.setStyleSheet("color: #f7f7f7; height: 20%;")
+                self.week_btn.setStyleSheet("color: grey; height: 20%;")
+                self.all_btn.setStyleSheet("color: #f7f7f7; height: 20%;")
+            if self.active_article_filter == self.all_btn:
+                self.today_btn.setStyleSheet("color: #f7f7f7; height: 20%;")
+                self.week_btn.setStyleSheet("color: #f7f7f7; height: 20%;")
+                self.all_btn.setStyleSheet("color: grey; height: 20%;")

@@ -8,6 +8,7 @@
 - [ ] option to stop server
 
 ## GLOBAL TODO
+- [ ] add server timeouts in order to easily close servers
 
 ## Simon
 - [ ] implement lan server as class
@@ -26,14 +27,17 @@
 - [x] fix srf button in server section
 - [x] display bookmarked articles in archive
 - [x] read indication
-- [ ] stop loading animation when done downloading
-- [ ] implement archive section
-- [ ] filter by category
-- [ ] fix bugs with dark mode and switches
-- [ ] more shortcuts
-- [ ] code refactoring
-- [ ] implement gui for lan server
-- [ ] implement gui for lan client
+- [x] filter by category
+- [x] implement archive section
+- [x] fix bugs with dark mode and switches
+- [x] implement gui for lan server
+- [x] implement gui for lan client
+  
+---
 - [ ] implement gui for bluetooth server
 - [ ] implement gui for bluetooth client
+- [ ] code refactoring
+- [ ] stop loading animation when done downloading
 - [ ] open article into own window
+- [ ] more shortcuts
+- [ ] improve category filter efficiency
