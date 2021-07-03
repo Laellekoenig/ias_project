@@ -26,9 +26,9 @@
 - [x] fix srf button in server section
 - [x] display bookmarked articles in archive
 - [x] read indication
+- [x] filter by category
 - [ ] stop loading animation when done downloading
 - [ ] implement archive section
-- [ ] filter by category
 - [ ] fix bugs with dark mode and switches
 - [ ] more shortcuts
 - [ ] code refactoring
@@ -37,3 +37,4 @@
 - [ ] implement gui for bluetooth server
 - [ ] implement gui for bluetooth client
 - [ ] open article into own window
+- [ ] improve category filter efficiency

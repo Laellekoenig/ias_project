@@ -718,7 +718,6 @@ class MainWindow(qtw.QWidget):
     def combo_selection_changed(self, category):
         if category == None:
             category = str(self.combo.currentText())
-            print(category)
 
         titles = self.get_article_lst()
 
