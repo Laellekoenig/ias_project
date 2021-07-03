@@ -96,3 +96,9 @@ def get_items_from_list_widget(widget):
         lst.append(widget.item(i).text())
 
     return lst
+
+def remove_dot(title):
+    if not title.endswith("\u2022"):
+        return title
+    else:
+        return title[:-2]
