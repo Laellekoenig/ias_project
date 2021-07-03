@@ -226,6 +226,7 @@ class MainWindow(qtw.QWidget):
         # category chooser
         combo = qtw.QComboBox()
         combo.setObjectName("combo")
+        combo.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
         combo.addItem("All Categories")
         combo.addItem("Switzerland")
         combo.addItem("International")
@@ -234,6 +235,7 @@ class MainWindow(qtw.QWidget):
         combo.addItem("Sports")
         combo.addItem("Meteo")
         combo.addItem("Panorama")
+        self.combo = combo
 
         lhs_layout = qtw.QVBoxLayout()
         lhs_layout.addLayout(filter_layout)

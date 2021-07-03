@@ -188,24 +188,26 @@ def getLightStyleSheet():
         margin-bottom: 5px;
     }
     QComboBox {
-        color: white;
+        color: #f7f7f7;
         background-color: black;
         border-radius: 3px;
         padding: 10px;
         font-family: Assistant;
         font-size: 16px;
     }
-    QComboBox::down-arrow {
+    QComboBox::Item {
+        background-color: black;
+        color: #f7f7f7;
+    }
+    QComboBox::Item:selected {
+        background-color: #f7f7f7;
+        color: black;
     }
     QComboBox::drop-down {
         border-radius: 3px;
     }
     QComboBox QAbstractItemView {
         background-color: black;
-    }
-    QComboBox QAbstractItemView::hover {
-        background-color: white;
-        color: black;
     }"""
     return stylesheet
 
@@ -357,5 +359,38 @@ def getDarkStyleSheet():
         margin: 0px;
         height: 20%;
         color: grey;
+    }
+    #bookmark {
+        padding: 0px;
+        margin: 0px;
+        font-size: 100px;
+        height: 40px;
+    }
+    #bookmark-btn {
+    }
+    #combo {
+        margin-bottom: 5px;
+    }
+    QComboBox {
+        color: #282828;
+        background-color: #f7f7f7;
+        border-radius: 3px;
+        padding: 10px;
+        font-family: Assistant;
+        font-size: 16px;
+    }
+    QComboBox::Item {
+        background-color: #f7f7f7;
+        color: #282828;
+    }
+    QComboBox::Item:selected {
+        background-color: #282828;
+        color: #f7f7f7;
+    }
+    QComboBox::drop-down {
+        border-radius: 3px;
+    }
+    QComboBox QAbstractItemView {
+        background-color: #f7f7f7;
     }"""
     return stylesheet
