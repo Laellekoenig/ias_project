@@ -31,7 +31,7 @@
 - [x] implement archive section
 - [x] fix bugs with dark mode and switches
 - [x] implement gui for lan server
-- [ ] implement gui for lan client
+- [x] implement gui for lan client
   
 ---
 - [ ] implement gui for bluetooth server
