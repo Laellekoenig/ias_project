@@ -446,6 +446,7 @@ class MainWindow(qtw.QWidget):
 
         #update bookmark color
         self.draw_bookmark()
+        self.update_switches()
 
     def set_selected_menu_button(self, button):
         self.selected = button
@@ -772,3 +773,31 @@ class MainWindow(qtw.QWidget):
 
         self.selector.clear()
         self.selector.addItems(new_lst)
+
+    def update_switches(self):
+        if self.light:
+            if self.active_article_filter == self.today_btn:
+                self.today_btn.setStyleSheet("color: grey; height: 20%;")
+                self.week_btn.setStyleSheet("color: black; height: 20%;")
+                self.all_btn.setStyleSheet("color: black; height: 20%;")
+            if self.active_article_filter == self.week_btn:
+                self.today_btn.setStyleSheet("color: black; height: 20%;")
+                self.week_btn.setStyleSheet("color: grey; height: 20%;")
+                self.all_btn.setStyleSheet("color: black; height: 20%;")
+            if self.active_article_filter == self.all_btn:
+                self.today_btn.setStyleSheet("color: black; height: 20%;")
+                self.week_btn.setStyleSheet("color: black; height: 20%;")
+                self.all_btn.setStyleSheet("color: grey; height: 20%;")
+        else:
+            if self.active_article_filter == self.today_btn:
+                self.today_btn.setStyleSheet("color: grey; height: 20%;")
+                self.week_btn.setStyleSheet("color: #f7f7f7; height: 20%;")
+                self.all_btn.setStyleSheet("color: #f7f7f7; height: 20%;")
+            if self.active_article_filter == self.week_btn:
+                self.today_btn.setStyleSheet("color: #f7f7f7; height: 20%;")
+                self.week_btn.setStyleSheet("color: grey; height: 20%;")
+                self.all_btn.setStyleSheet("color: #f7f7f7; height: 20%;")
+            if self.active_article_filter == self.all_btn:
+                self.today_btn.setStyleSheet("color: #f7f7f7; height: 20%;")
+                self.week_btn.setStyleSheet("color: #f7f7f7; height: 20%;")
+                self.all_btn.setStyleSheet("color: grey; height: 20%;")

@@ -27,14 +27,16 @@
 - [x] display bookmarked articles in archive
 - [x] read indication
 - [x] filter by category
-- [ ] stop loading animation when done downloading
-- [ ] implement archive section
-- [ ] fix bugs with dark mode and switches
-- [ ] more shortcuts
-- [ ] code refactoring
+- [x] implement archive section
+- [x] fix bugs with dark mode and switches
 - [ ] implement gui for lan server
 - [ ] implement gui for lan client
+  
+---
 - [ ] implement gui for bluetooth server
 - [ ] implement gui for bluetooth client
+- [ ] code refactoring
+- [ ] stop loading animation when done downloading
 - [ ] open article into own window
+- [ ] more shortcuts
 - [ ] improve category filter efficiency
