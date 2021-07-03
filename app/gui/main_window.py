@@ -532,7 +532,7 @@ class MainWindow(qtw.QWidget):
         t1 = qtw.QLabel(s1)
         t1.setObjectName("server-text")
 
-        s2 = self.server_socket.get_IP()
+        s2 = self.LAN_server.get_IP()
         t2 = qtw.QLabel(s1 + s2)
         t2.setObjectName("server-text")
 
