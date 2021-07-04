@@ -188,10 +188,11 @@ def getLightStyleSheet():
         margin-bottom: 5px;
     }
     QComboBox {
-        color: #f7f7f7;
-        background-color: black;
+        color: black;
+        background-color: #f7f7f7;
+        border: 1px solid black;
         border-radius: 3px;
-        padding: 10px;
+        padding: 5px;
         font-family: Assistant;
         font-size: 16px;
     }
@@ -408,10 +409,11 @@ def getDarkStyleSheet():
         margin-bottom: 5px;
     }
     QComboBox {
-        color: #282828;
-        background-color: #f7f7f7;
+        color: #f7f7f7;
+        background-color: #282828;
+        border: 1px solid #f7f7f7;
         border-radius: 3px;
-        padding: 10px;
+        padding: 5px;
         font-family: Assistant;
         font-size: 16px;
     }

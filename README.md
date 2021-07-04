@@ -41,4 +41,6 @@
 - [ ] stop loading animation when done downloading
 - [ ] open article into own window
 - [ ] more shortcuts
+- [ ] archive sort articles  
+- [ ] fix bookmark color in dark mode  
 - [ ] improve category filter efficiency
