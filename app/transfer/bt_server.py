@@ -139,3 +139,7 @@ class bt_server:
                 self.socket.close()
                 self.running = False
         print("closed connection")
+
+    def start_server_threaded(self):
+        self.thread = threading.Thread(target=self.start_server)
+        self.thread.start()
