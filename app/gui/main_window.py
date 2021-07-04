@@ -16,6 +16,8 @@ import transfer.local_network as net
 import transfer.bluetooth as tooth
 from transfer.LAN_server import LANServer
 from transfer.LAN_client import LANClient
+from transfer.bt_server import bt_server as BTServer
+from transfer.bt_client import bt_client as BTClient
 
 class imageLabel(qtw.QLabel):
     clicked = qtc.pyqtSignal()
@@ -55,6 +57,8 @@ class MainWindow(qtw.QWidget):
         self.logic = Logic()
         self.LAN_client = LANClient()
         self.LAN_server = LANServer()
+        self.BT_server = BTServer()
+        self.BT_client = BTClient()
 
         # load app icons
         utils.load_app_icons(app)
@@ -303,7 +307,7 @@ class MainWindow(qtw.QWidget):
 
         blueB = qtw.QPushButton(text="bluetooth")
         blueB.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
-        #blueB.clicked.connect(self.switch_blue)
+        blueB.clicked.connect(self.switch_blue)
         blueB.setObjectName("blueButton")
 
         bacB = qtw.QPushButton(text="BAC-Net")
@@ -522,16 +526,14 @@ class MainWindow(qtw.QWidget):
             self.set_blue_server_section()
 
     def set_wlan_server_section(self):
+        self.tab_changed()
         self.LAN_server.keep_alive()
         utils.remove_widgets(self.main)
         self.srfBtn = None
         self.set_selected_menu_button(self.b2)
 
         if not self.LAN_server.is_running():
-            print("opening new")
             self.LAN_server.start_server_threaded()
-        else:
-            print("keeping old")
 
         while not self.LAN_server.is_running():
             pass
@@ -601,25 +603,66 @@ class MainWindow(qtw.QWidget):
 
     def set_blue_server_section(self):
         self.tab_changed()
-        text = qtw.QLabel("server")
+        utils.remove_widgets(self.main)
+        self.srfBtn = None
+        self.set_selected_menu_button(self.b2)
 
-        layout = qtw.QVBoxLayout()
-        layout.addWidget(text)
+        if not self.BT_server.is_running():
+            #TODO threaded
+            self.BT_server.start_server()
 
-        self.main.addLayout(layout, 0, 0)
+        while not self.BT_server.is_running():
+            pass
 
-        tooth.start_server()
+        s1 = "Your MAC-address is: "
+        s2 = self.BT_server.get_mac_address()
+        label = qtw.QLabel(s1 + s2)
+        label.setObjectName("server-text")
+
+        BTLayout = qtw.QVBoxLayout()
+        BTLayout.addStretch()
+        BTLayout.addWidget(label)
+        BTLayout.addStretch()
+
+        horizontalLayout = qtw.QHBoxLayout()
+        horizontalLayout.addStretch()
+        horizontalLayout.addLayout(BTLayout)
+        horizontalLayout.addStretch()
+
+        self.main.addLayout(horizontalLayout, 0, 0)
 
     def set_blue_client_section(self):
         self.tab_changed()
-        text = qtw.QLabel("client")
+        utils.remove_widgets(self.main)
+        self.set_selected_menu_button(self.b2)
+
+        label = qtw.QLabel("Enter partner's MAC-address:")
+        label.setObjectName("client-text")
+
+        input = qtw.QLineEdit()
+        input.setAttribute(qtc.Qt.WA_MacShowFocusRect, 0)
+        regex = qtc.QRegExp("^([0-9A-Fa-f]{2}[-]){5}([0-9A-Fa-f]{2})$")
+        input.setValidator(qtg.QRegExpValidator(regex))
+        input.setAlignment(qtc.Qt.AlignCenter)
+
+        btn = qtw.QPushButton("connect")
+        btn.setObjectName("bt-client-btn")
+        btn.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
+        #btn.clicked.connect(TODO)
 
         layout = qtw.QVBoxLayout()
-        layout.addWidget(text)
+        layout.addStretch()
+        layout.addWidget(label)
+        layout.addWidget(input)
+        layout.addWidget(btn)
+        layout.addStretch()
 
-        self.main.addLayout(layout, 0, 0)
+        horizontal = qtw.QHBoxLayout()
+        horizontal.addStretch()
+        horizontal.addLayout(layout)
+        horizontal.addStretch()
 
-        tooth.start_client()
+        self.main.addLayout(horizontal, 0, 0)
 
     def close_connections(self):
         if self.server_socket != None:

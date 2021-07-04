@@ -102,7 +102,7 @@ class bt_server:
         client.close()
         self.socket.close()
         self.running = False
-    
+
     def get_device_os(self):
         try:
             return platform.system()
@@ -139,3 +139,10 @@ class bt_server:
                 self.socket.close()
                 self.running = False
         print("closed connection")
+
+    def is_running(self):
+        return self.running
+
+    def start_server_threaded(self):
+        self.thread = threading.Thread(target=self.start_server)
+        self.thread.start()

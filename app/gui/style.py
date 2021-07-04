@@ -188,10 +188,11 @@ def getLightStyleSheet():
         margin-bottom: 5px;
     }
     QComboBox {
-        color: #f7f7f7;
-        background-color: black;
+        color: black;
+        background-color: #f7f7f7;
+        border: 1px solid black;
         border-radius: 3px;
-        padding: 10px;
+        padding: 5px;
         font-family: Assistant;
         font-size: 16px;
     }
@@ -208,6 +209,42 @@ def getLightStyleSheet():
     }
     QComboBox QAbstractItemView {
         background-color: black;
+    }
+    #client-text {
+        font-family: Assistant;
+        font-size: 35px;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+    QLineEdit {
+        font-family: Assistant;
+        font-size: 25px;
+        border: 1px solid #f7f7f7;
+        background-color: black;
+        padding: 5px;
+        border-radius: 3px;
+    }
+    QLineEdit:focus {
+        background: #f7f7f7;
+        color: black;
+        border: 1px solid black;
+        outline: none;
+        show-decoration-selected: 0;
+    }   
+    #bt-client-btn {
+        color: #f7f7f7;
+        background-color: black;
+        border-radius: 3px;
+        border-style: none;
+        margin-top: 10px;
+        margin-bottom: 100px;
+    }
+    #bt-client-btn:pressed {
+        color: black;
+        background-color: #f7f7f7;
+        border: 1px solid black;
+        border-radius: 3px;
+        margin-top: 10px;
     }"""
     return stylesheet
 
@@ -372,10 +409,11 @@ def getDarkStyleSheet():
         margin-bottom: 5px;
     }
     QComboBox {
-        color: #282828;
-        background-color: #f7f7f7;
+        color: #f7f7f7;
+        background-color: #282828;
+        border: 1px solid #f7f7f7;
         border-radius: 3px;
-        padding: 10px;
+        padding: 5px;
         font-family: Assistant;
         font-size: 16px;
     }
@@ -392,5 +430,41 @@ def getDarkStyleSheet():
     }
     QComboBox QAbstractItemView {
         background-color: #f7f7f7;
+    }
+    #client-text {
+        font-family: Assistant;
+        font-size: 35px;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+    QLineEdit {
+        font-family: Assistant;
+        font-size: 25px;
+        border: 1px solid #282828;
+        background-color: #f7f7f7;
+        padding: 5px;
+        border-radius: 3px;
+    }
+    QLineEdit:focus {
+        background: #282828;
+        color: #f7f7f7;
+        border: 1px solid #f7f7f7;
+        outline: none;
+        show-decoration-selected: 0;
+    }   
+    #bt-client-btn {
+        color: #282828;
+        background-color: #f7f7f7;
+        border-radius: 3px;
+        border-style: none;
+        margin-top: 10px;
+        margin-bottom: 100px;
+    }
+    #bt-client-btn:pressed {
+        color: #f7f7f7;
+        background-color: #282828;
+        border: 1px solid #f7f7f7;
+        border-radius: 3px;
+        margin-top: 10px;
     }"""
     return stylesheet
