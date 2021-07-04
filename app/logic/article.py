@@ -127,7 +127,7 @@ class Article:
 
     def get_html(self):
         html = "<qt>\n<body>\n"
-        html += self.get_tagged_string(HTMLTag.TITLE_0, self.title_0)
+        html += self.get_tagged_string(HTMLTag.TITLE_0, self.title_0 + " [" + self.category + "]")
         html += self.get_tagged_string(HTMLTag.TITLE_1, self.title_1)
         html += self.get_tagged_string(HTMLTag.LEAD, self.lead)
         html += self.get_tagged_string(HTMLTag.AUTHOR, self.author)
