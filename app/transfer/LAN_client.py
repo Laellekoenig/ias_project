@@ -36,12 +36,13 @@ class LANClient:
                 if not data:
                     print("User does not have new articles.")
                     self.client_socket.close()
-                    return
+                    return 0
                 make_dirs()
                 file = open(DIR_TRANSFER + "/received_articles.zip", 'wb')
                 file.write(data)
             except Exception:
                 print("Failed to create zip file for received data.")
+                return 0
             while True:
                 data = self.client_socket.recv(self.buff_size)
                 print(data)
@@ -52,11 +53,14 @@ class LANClient:
             print("Articles successfully received.")
             unzip_articles(DIR_TRANSFER + "/received_articles.zip")
             self.client_socket.close()
+            return 1
         except socket.error as exc:
             print("Socket exception: %s" % exc)
             self.client_socket.close()
+            return 0
         except Exception:
             print("Something went wrong sending newest date_time")
+            return 0
 
     def start_client_threaded(self, ip):
         thread = threading.Thread(target=self.start_client(ip))
