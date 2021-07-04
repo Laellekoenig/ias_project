@@ -14,6 +14,7 @@ class LANServer:
         self.running = False
         self.address = (-1, -1)
         self.socket = None
+        self.thread_running = False
 
     def start_server(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -22,6 +23,7 @@ class LANServer:
         self.socket.bind(self.address)
         self.socket.listen(1)
         self.running = True
+        self.thread_running = True
         print("server running on " + self.get_IP())
 
         while self.running:
@@ -71,6 +73,7 @@ class LANServer:
                 self.socket.close()
                 break
         print("server closed")
+        self.thread_running = False
 
     def start_server_threaded(self):
         self.thread = threading.Thread(target=self.start_server)
@@ -84,8 +87,14 @@ class LANServer:
         print("closed connection")"""
         self.running = False
 
+    def keep_alive(self):
+        self.running = True
+
     def get_IP(self):
         return str(self.address[0])
 
     def get_port(self):
         return str(self.address[1])
+
+    def is_running(self):
+        return self.thread_running

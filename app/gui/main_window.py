@@ -146,7 +146,7 @@ class MainWindow(qtw.QWidget):
     def set_reading_section(self):
         # clear previous layout
         utils.remove_widgets(self.main)
-        self.close_connections()
+        self.tab_changed()
 
         self.set_selected_menu_button(self.b1)
 
@@ -266,6 +266,7 @@ class MainWindow(qtw.QWidget):
         if self.logic.is_updating:
             self.set_loading_screen_section()
             return
+        self.tab_changed()
 
         # clear main layout
         utils.remove_widgets(self.main)
@@ -332,6 +333,7 @@ class MainWindow(qtw.QWidget):
     def set_loading_screen_section(self):
         utils.remove_widgets(self.main)
         self.set_selected_menu_button(self.b2)
+        self.tab_changed()
 
         #new widgets
         layout = qtw.QVBoxLayout()
@@ -363,6 +365,7 @@ class MainWindow(qtw.QWidget):
         # clear main layout
         utils.remove_widgets(self.main)
         self.set_selected_menu_button(self.b3)
+        self.tab_changed()
 
         text = qtw.QTextBrowser()
         style.setArticleStyle(text)
@@ -519,13 +522,18 @@ class MainWindow(qtw.QWidget):
             self.set_blue_server_section()
 
     def set_wlan_server_section(self):
+        self.LAN_server.keep_alive()
         utils.remove_widgets(self.main)
         self.srfBtn = None
         self.set_selected_menu_button(self.b2)
 
-        self.LAN_server.start_server_threaded()
+        if not self.LAN_server.is_running():
+            print("opening new")
+            self.LAN_server.start_server_threaded()
+        else:
+            print("keeping old")
 
-        while not self.LAN_server.running:
+        while not self.LAN_server.is_running():
             pass
 
         s1 = "Your IP address is: "
@@ -553,7 +561,7 @@ class MainWindow(qtw.QWidget):
     def set_wlan_client_section(self):
         utils.remove_widgets(self.main)
         self.set_selected_menu_button(self.b2)
-
+        self.tab_changed()
         title = qtw.QLabel(text="Server selection:")
         title.setObjectName("lan-title")
 
@@ -592,7 +600,7 @@ class MainWindow(qtw.QWidget):
         self.LAN_client.start_client(ip)
 
     def set_blue_server_section(self):
-
+        self.tab_changed()
         text = qtw.QLabel("server")
 
         layout = qtw.QVBoxLayout()
@@ -603,7 +611,7 @@ class MainWindow(qtw.QWidget):
         tooth.start_server()
 
     def set_blue_client_section(self):
-
+        self.tab_changed()
         text = qtw.QLabel("client")
 
         layout = qtw.QVBoxLayout()
@@ -794,3 +802,6 @@ class MainWindow(qtw.QWidget):
                 self.today_btn.setStyleSheet("color: #f7f7f7; height: 20%;")
                 self.week_btn.setStyleSheet("color: #f7f7f7; height: 20%;")
                 self.all_btn.setStyleSheet("color: grey; height: 20%;")
+
+    def tab_changed(self):
+        self.LAN_server.stop_server()
