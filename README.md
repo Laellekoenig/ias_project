@@ -35,6 +35,7 @@
 - [x] move reading dots to beginning of title  
 - [x] style btn color consistency
 - [x] close server on application termination
+- [x] srf button on resize    
 - [ ] implement downloading screen  
 - [ ] code refactoring
 ---
@@ -44,7 +45,7 @@
 - [ ] stop loading animation when done downloading
 - [ ] open article into own window
 - [ ] more shortcuts
-- [ ] srf button on resize    
 - [ ] archive sort articles  
 - [ ] fix bookmark color in dark mode  
 - [ ] improve category filter efficiency
+- [ ] remove bluetooth btn from mac os

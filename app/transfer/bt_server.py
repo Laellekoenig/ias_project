@@ -146,3 +146,9 @@ class bt_server:
     def start_server_threaded(self):
         self.thread = threading.Thread(target=self.start_server)
         self.thread.start()
+
+    def on_macOS(self):
+        if platform.system().lower() == "darwin":
+            return True
+        else:
+            return False

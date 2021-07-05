@@ -323,11 +323,18 @@ class MainWindow(qtw.QWidget):
         localB.clicked.connect(self.switch_wlan)
         localB.setObjectName("bacButton")
 
+        on_macOS = self.BT_server.on_macOS()
+
         # add to download layout
         downLayout.addLayout(toggleLayout)
         downLayout.addWidget(srfB)
         downLayout.addWidget(bacB)
+
+        #if not on_macOS:
+        #    downLayout.addWidget(blueB)
+        # for testing:
         downLayout.addWidget(blueB)
+
         downLayout.addWidget(localB)
         downLayout.addStretch()
 
@@ -612,21 +619,30 @@ class MainWindow(qtw.QWidget):
         self.srfBtn = None
         self.set_selected_menu_button(self.b2)
 
-        if not self.BT_server.is_running():
-            #TODO threaded
-            self.BT_server.start_server()
+        on_macOS = self.BT_server.on_macOS()
 
-        while not self.BT_server.is_running():
-            pass
+        if not on_macOS:
+            if not self.BT_server.is_running():
+                self.BT_server.start_server_threaded()
+
+            while not self.BT_server.is_running():
+                pass
 
         s1 = "Your MAC-address is: "
         s2 = self.BT_server.get_mac_address()
         label = qtw.QLabel(s1 + s2)
         label.setObjectName("server-text")
 
+        s2 = "MacOS bluetooth transfer is not supported."
+        label2 = qtw.QLabel(s2)
+        label2.setObjectName("server-text")
+
         BTLayout = qtw.QVBoxLayout()
         BTLayout.addStretch()
-        BTLayout.addWidget(label)
+        if not on_macOS:
+            BTLayout.addWidget(label)
+        else:
+            BTLayout.addWidget(label2)
         BTLayout.addStretch()
 
         horizontalLayout = qtw.QHBoxLayout()
@@ -646,7 +662,7 @@ class MainWindow(qtw.QWidget):
 
         input = qtw.QLineEdit()
         input.setAttribute(qtc.Qt.WA_MacShowFocusRect, 0)
-        regex = qtc.QRegExp("^([0-9A-Fa-f]{2}[-]){5}([0-9A-Fa-f]{2})$")
+        regex = qtc.QRegExp("^([0-9A-Fa-f]{2}[-:]){5}([0-9A-Fa-f]{2})$")
         input.setValidator(qtg.QRegExpValidator(regex))
         input.setAlignment(qtc.Qt.AlignCenter)
 
