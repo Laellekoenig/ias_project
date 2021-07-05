@@ -98,6 +98,7 @@ class MainWindow(qtw.QWidget):
 
     def closeEvent(self, event):
         self.LAN_server.stop_server()
+        self.BT_server.stop_server()
 
     # menu bar of app
     def get_menu_bar(self):
@@ -869,3 +870,4 @@ class MainWindow(qtw.QWidget):
 
     def tab_changed(self):
         self.LAN_server.stop_server()
+        self.BT_server.stop_server()

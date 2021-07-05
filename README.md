@@ -36,16 +36,16 @@
 - [x] style btn color consistency
 - [x] close server on application termination
 - [x] srf button on resize    
-- [ ] implement downloading screen  
+- [x] archive sort articles  
+- [ ] implement downloading screen LAN
 - [ ] code refactoring
 ---
 - [ ] implement gui for bluetooth server
 - [ ] implement gui for bluetooth client
-- [ ] ui feedback for downloading files via LAN/bluetooth
+- [ ] implement downloading screen bluetooth
 - [ ] stop loading animation when done downloading
 - [ ] open article into own window
 - [ ] more shortcuts
-- [ ] archive sort articles  
 - [ ] fix bookmark color in dark mode  
 - [ ] improve category filter efficiency
 - [ ] remove bluetooth btn from mac os
