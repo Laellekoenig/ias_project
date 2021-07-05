@@ -33,8 +33,8 @@
 - [x] implement gui for lan server
 - [x] implement gui for lan client
 - [x] move reading dots to beginning of title  
+- [x] style btn color consistency
 - [ ] implement downloading screen  
-- [ ] style btn color consistency
 - [ ] code refactoring
 ---
 - [ ] close server on application termination

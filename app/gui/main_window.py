@@ -96,6 +96,9 @@ class MainWindow(qtw.QWidget):
         self.setMinimumSize(700, 500)
         self.show()
 
+    def closeEvent(self, event):
+        self.LAN_server.stop_server()
+
     # menu bar of app
     def get_menu_bar(self):
         # menu bar on top of screen
