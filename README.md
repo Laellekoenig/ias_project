@@ -38,14 +38,18 @@
 - [x] srf button on resize    
 - [x] archive sort articles  
 - [x] stop loading animation when done downloading
-- [ ] implement downloading screen LAN
-- [ ] code refactoring
+- [x] code refactoring
 ---
+- [ ] implement downloading screen LAN
+- [ ] move appropriate functions to utils
+- [ ] refactoring of utils
+- [ ] refactoring of interface
 - [ ] implement gui for bluetooth server
+---
 - [ ] implement gui for bluetooth client
 - [ ] implement downloading screen bluetooth
 - [ ] open article into own window
-- [ ] more shortcuts
-- [ ] fix bookmark color in dark mode  
+- [ ] more keyboard shortcuts
 - [ ] improve category filter efficiency
 - [ ] remove bluetooth btn from mac os
+- [ ] fix bookmark color in dark mode  
