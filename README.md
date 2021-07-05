@@ -32,15 +32,19 @@
 - [x] fix bugs with dark mode and switches
 - [x] implement gui for lan server
 - [x] implement gui for lan client
+- [ ] move reading dots to beginning of title  
+- [ ] implement downloading screen  
+- [ ] style btn color consistency
+- [ ] code refactoring
+---
+- [ ] close server on application termination
 - [ ] implement gui for bluetooth server
 - [ ] implement gui for bluetooth client
-- [ ] code refactoring
-- [ ] style btn color consistency
----
 - [ ] ui feedback for downloading files via LAN/bluetooth
 - [ ] stop loading animation when done downloading
 - [ ] open article into own window
 - [ ] more shortcuts
+- [ ] srf button on resize    
 - [ ] archive sort articles  
 - [ ] fix bookmark color in dark mode  
 - [ ] improve category filter efficiency

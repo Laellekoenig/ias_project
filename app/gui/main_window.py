@@ -407,8 +407,8 @@ class MainWindow(qtw.QWidget):
         # change displayed article in UI on selection
         selectedArticle = self.selector.currentItem().text()
         # remove new indication
-        if selectedArticle.endswith("\u2022"):
-            unmarked = selectedArticle[:-2]
+        if selectedArticle.startswith("\u2022"):
+            unmarked = selectedArticle[2:]
             self.selector.currentItem().setText(unmarked)
 
         html = self.logic.get_article_html_by_title1(selectedArticle)

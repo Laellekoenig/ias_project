@@ -33,14 +33,22 @@ class LogicInterface:
     def get_article_titles(self):
         list = get_article_titles()
         titles = []
-        for item in list:
-            if item.opened:
-                titles.append(item.title_1)
-            else:
-                titles.append(item.title_1 + " \u2022")
+        unread_titles = []
+
+        for article in list:
+            titles.append(article.title_1)
+            if not article.opened:
+                unread_titles.append(article.title_1)
 
         # sort alphabetically
         titles.sort()
+        unread_titles.sort()
+
+        for title in titles:
+            if title in unread_titles:
+                unread_titles.remove(title)
+                index = titles.index(title)
+                titles[index] = "\u2022 " + title
 
         return titles
 
@@ -48,6 +56,7 @@ class LogicInterface:
         dt = datetime.datetime.today()
         today = datetime.date(dt.year, dt.month, dt.day)
         filtered_lst = []
+        unread_titles = []
 
         articles = get_article_titles()
         for article in articles:
@@ -58,19 +67,26 @@ class LogicInterface:
             article_date = datetime.date(article_year, article_month, article_day)
 
             if today == article_date:
-                if article.opened:
-                    filtered_lst.append(article.title_1)
-                else:
-                    filtered_lst.append(article.title_1 + " \u2022")
+                filtered_lst.append(article.title_1)
+                if not article.opened:
+                    unread_titles.append(article.title_1)
 
-        # sort alphabetically
-        filtered_lst.sort()
+            # sort alphabetically
+            filtered_lst.sort()
+            unread_titles.sort()
+
+            for title in filtered_lst:
+                if title in unread_titles:
+                    unread_titles.remove(title)
+                    index = filtered_lst.index(title)
+                    filtered_lst[index] = "\u2022 " + title
 
         return filtered_lst
 
     def get_article_titles_week(self):
         today = datetime.date.today()
         filtered_lst = []
+        unread_titles = []
 
         articles = get_article_titles()
         for article in articles:
@@ -82,13 +98,19 @@ class LogicInterface:
 
             delta = today - article_day
             if delta.days <= 7:
-                if article.opened:
-                    filtered_lst.append(article.title_1)
-                else:
-                    filtered_lst.append(article.title_1 + " \u2022")
+                filtered_lst.append(article.title_1)
+                if not article.opened:
+                    unread_titles.append(article.title_1)
 
         # sort alphabetically
         filtered_lst.sort()
+        unread_titles.sort()
+
+        for title in filtered_lst:
+            if title in unread_titles:
+                unread_titles.remove(title)
+                index = filtered_lst.index(title)
+                filtered_lst[index] = "\u2022 " + title
 
         return filtered_lst
 
@@ -138,8 +160,8 @@ class LogicInterface:
                 save_article(article)
 
     def cut_title(self, title):
-        if title.endswith("\u2022"):
-            return title[:-2]
+        if title.startswith("\u2022"):
+            return title[2:]
         else:
             return title
 
@@ -159,7 +181,7 @@ class LogicInterface:
         if article.opened:
             return title
         else:
-            return title + " \u2022"
+            return "\u2022 " + title
 
     def prepare_titles_for_filter(self, titles):
         # get correct titles
