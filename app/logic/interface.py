@@ -8,6 +8,7 @@ from scraper.srf_scraper import getSRFArticles
 from scraper.scraper_manager import get_new_articles_from_web
 import threading
 import datetime
+
 class LogicInterface:
     def __init__(self):
         self.is_updating = False
@@ -16,8 +17,7 @@ class LogicInterface:
         # TODO only download new articles
         if not self.is_updating:
             self.is_updating = True
-            thread = threading.Thread(target=self.start_scraping)
-            thread.start()
+            self.start_scraping()
 
     def start_scraping(self):
         articles = get_new_articles_from_web()

@@ -1,6 +1,8 @@
 import os
 import socket
 import threading
+import time
+import queue
 
 import PyQt5.QtCore
 from PyQt5 import QtWidgets as qtw
@@ -25,6 +27,15 @@ class imageLabel(qtw.QLabel):
         if ev.button() == qtc.Qt.LeftButton:
             self.clicked.emit()
 
+class downloadingThread(qtc.QThread):
+    def __init__(self, logic):
+        super().__init__()
+        self.logic = logic
+
+    def run(self) -> None:
+        self.logic.download_new_articles()
+        #self.finished.emit()
+
 class MainWindow(qtw.QWidget):
 
     def __init__(self, app):
@@ -44,6 +55,7 @@ class MainWindow(qtw.QWidget):
         self.mdi_btn = None
         self.combo = None
         self.current_title = None
+        self.downloading_thread = None
 
         # initiate window
         super().__init__(windowTitle="IAS Project")
@@ -76,6 +88,8 @@ class MainWindow(qtw.QWidget):
         # grid layout for placing items, 10 rows, 10 cols
         # main part of program
         self.main = qtw.QGridLayout()
+        #used for moving elements from one thread to another
+        self.original_thread = self.main.thread()
 
         # get menu bar
         menu = self.get_menu_bar()
@@ -523,8 +537,10 @@ class MainWindow(qtw.QWidget):
             self.set_downloading_section()
 
     def handle_download(self):
-        self.logic.download_new_articles()
         self.set_loading_screen_section()
+        self.downloading_thread = downloadingThread(self.logic)
+        self.downloading_thread.start()
+        self.downloading_thread.finished.connect(self.set_reading_section)
 
     def switch_wlan(self):
         if self.toggle.isChecked():
@@ -612,7 +628,8 @@ class MainWindow(qtw.QWidget):
         ip = self.serverLst.currentItem().text()
         ip = ip.split("\t")[0]
         print("trying to connect to " + ip)
-        self.LAN_client.start_client(ip)
+        self.LAN_client.start_client_threaded(ip)
+        self.set_LAN_loading_screen()
 
     def set_blue_server_section(self):
         self.tab_changed()
