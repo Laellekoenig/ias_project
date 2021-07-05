@@ -34,10 +34,10 @@
 - [x] implement gui for lan client
 - [x] move reading dots to beginning of title  
 - [x] style btn color consistency
+- [x] close server on application termination
 - [ ] implement downloading screen  
 - [ ] code refactoring
 ---
-- [ ] close server on application termination
 - [ ] implement gui for bluetooth server
 - [ ] implement gui for bluetooth client
 - [ ] ui feedback for downloading files via LAN/bluetooth

@@ -486,7 +486,7 @@ class MainWindow(qtw.QWidget):
         else:
             self.toggle.setChecked(True)
 
-        self.downLayout.insertWidget(1, self.srfBtn)
+        self.set_downloading_section()
 
     def toggle2_download(self):
         if self.toggle2.isChecked():
@@ -501,7 +501,9 @@ class MainWindow(qtw.QWidget):
                 self.toggle.setStyleSheet("color: #f7f7f7;")
         else:
             self.toggle2.setChecked(True)
-        self.downLayout.removeWidget(self.srfBtn)
+        if not self.srfBtn == None:
+            self.downLayout.removeWidget(self.srfBtn)
+            self.srfBtn = None
 
     def switch_to_loading(self):
         if self.selected == self.b2:
