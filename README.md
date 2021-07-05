@@ -37,13 +37,13 @@
 - [x] close server on application termination
 - [x] srf button on resize    
 - [x] archive sort articles  
+- [x] stop loading animation when done downloading
 - [ ] implement downloading screen LAN
 - [ ] code refactoring
 ---
 - [ ] implement gui for bluetooth server
 - [ ] implement gui for bluetooth client
 - [ ] implement downloading screen bluetooth
-- [ ] stop loading animation when done downloading
 - [ ] open article into own window
 - [ ] more shortcuts
 - [ ] fix bookmark color in dark mode  

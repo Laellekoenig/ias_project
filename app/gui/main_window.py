@@ -1,41 +1,39 @@
+# -- standard python --
 import os
-import socket
-import threading
-import time
-import queue
-
-import PyQt5.QtCore
+# -- PyQt --
+import qtawesome as qta
 from PyQt5 import QtWidgets as qtw
 from PyQt5 import QtGui as qtg
 from PyQt5 import QtCore as qtc
-import qtawesome as qta
-from logic.article import Category
-from gui.interface import Interface
-from logic.interface import LogicInterface as Logic
+# -- own classes --
 import gui.utils as utils
 import gui.style as style
 import transfer.local_network as net
-import transfer.bluetooth as tooth
+from logic.article import Category
+from logic.interface import LogicInterface as Logic
+from gui.interface import Interface
 from transfer.LAN_server import LANServer
 from transfer.LAN_client import LANClient
 from transfer.bt_server import bt_server as BTServer
 from transfer.bt_client import bt_client as BTClient
 
+# own label class that can be clicked like a QPushButton
 class imageLabel(qtw.QLabel):
     clicked = qtc.pyqtSignal()
     def mouseReleaseEvent(self, ev):
         if ev.button() == qtc.Qt.LeftButton:
             self.clicked.emit()
 
+# QThread that downloads articles via logic.download_new_articles
 class downloadingThread(qtc.QThread):
     def __init__(self, logic):
         super().__init__()
         self.logic = logic
 
-    def run(self) -> None:
+    def run(self):
         self.logic.download_new_articles()
-        #self.finished.emit()
 
+# main GUI class
 class MainWindow(qtw.QWidget):
 
     def __init__(self, app):
@@ -60,11 +58,11 @@ class MainWindow(qtw.QWidget):
         # initiate window
         super().__init__(windowTitle="IAS Project")
 
-        # shortcuts
+        # keyboard shortcuts
         self.shortcut_book = qtw.QShortcut(qtg.QKeySequence("Ctrl+B"), self)
         self.shortcut_book.activated.connect(self.update_bookmark)
 
-        # for interacting with other parts of program
+        # for interacting with back-end
         self.interface = Interface(self)
         self.logic = Logic()
         self.LAN_client = LANClient()
@@ -85,11 +83,9 @@ class MainWindow(qtw.QWidget):
         # used for styling in css
         self.setObjectName("main")
 
-        # grid layout for placing items, 10 rows, 10 cols
+        # grid layout for placing items, 100 rows, 100 cols
         # main part of program
         self.main = qtw.QGridLayout()
-        #used for moving elements from one thread to another
-        self.original_thread = self.main.thread()
 
         # get menu bar
         menu = self.get_menu_bar()
@@ -101,8 +97,8 @@ class MainWindow(qtw.QWidget):
         superLayout = qtw.QGridLayout()
         superLayout.setObjectName("super")
         # add menu and main
-        superLayout.addWidget(menu, 0, 0, 1, 10)
-        superLayout.addLayout(self.main, 2, 0, 9, 10)
+        superLayout.addWidget(menu, 0, 0, 10, 100)
+        superLayout.addLayout(self.main, 10, 0, 90, 100)
 
         # configure window and application details and show
         self.setLayout(superLayout)
@@ -110,7 +106,9 @@ class MainWindow(qtw.QWidget):
         self.setMinimumSize(700, 500)
         self.show()
 
+    # if application is closed
     def closeEvent(self, event):
+        # stop diverse servers
         self.LAN_server.stop_server()
         self.BT_server.stop_server()
 
@@ -126,7 +124,7 @@ class MainWindow(qtw.QWidget):
 
         # menu items
         # from left to right
-        # button 1
+        # button 1 -- reading section
         self.b1 = qtw.QPushButton(text="read")
         self.b1.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
         self.b1.clicked.connect(self.set_reading_section)
@@ -135,19 +133,19 @@ class MainWindow(qtw.QWidget):
         # used for setting style of currently selected section
         self.selected = self.b1
 
-        # button 2
+        # button 2 -- downloading section
         self.b2 = qtw.QPushButton(text="get new articles")
         self.b2.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
         self.b2.clicked.connect(self.set_downloading_section)
         menu.addWidget(self.b2)
 
-        # button3
+        # button3 -- archive section
         self.b3 = qtw.QPushButton(text="archive")
         self.b3.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
         self.b3.clicked.connect(self.set_archiving_section)
         menu.addWidget(self.b3)
 
-        # button 4
+        # button 4 -- dark/light mode toggle
         self.b4 = qtw.QPushButton(text="dark")
         self.b4.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
         self.b4.clicked.connect(self.switch)
@@ -167,26 +165,8 @@ class MainWindow(qtw.QWidget):
     # main reading section of app
     def set_reading_section(self):
         # clear previous layout
-        utils.remove_widgets(self.main)
         self.tab_changed()
-
         self.set_selected_menu_button(self.b1)
-
-        # bookmark button before text to avoid errors when opening app
-        #bookmark = qtw.QPushButton()
-        #bookmark.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
-        #bookmark.setObjectName("bookmark")
-        #bookmark.clicked.connect(self.play_bookmark)
-
-        #bookmark_gif = qtg.QMovie(os.getcwd() + "/data/images/bookmark-animated.gif")
-        #bookmark_gif.jumpToFrame(0)
-        #bookmark_gif.frameChanged.connect(self.update_bookmark)
-        #pixmap = bookmark_gif.currentPixmap()
-        #bookmark.setIcon(qtg.QIcon(pixmap))
-        #bookmark.setIconSize(qtc.QSize(40, 40))
-
-        #self.bookmark = bookmark
-        #self.bookmark_gif = bookmark_gif
 
         # main article box, HTML reader
         text = qtw.QTextBrowser()
@@ -209,15 +189,7 @@ class MainWindow(qtw.QWidget):
         # move cursor to start of text
         text.moveCursor(qtg.QTextCursor.Start)
 
-        bookmark = imageLabel()
-        self.bookmark = bookmark
-        bookmark.setFixedSize(50, 50)
-        bookmark.setObjectName("bookmark")
-        bookmark.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
-        bookmark.clicked.connect(self.update_bookmark)
-        self.draw_bookmark()
-
-        #test
+        # bookmark for moving articles to archive section
         mdi_book = qta.icon("mdi.bookmark-outline", color="black")
         mdi_book_btn = qtw.QPushButton()
         mdi_book_btn.setObjectName("bookmark-btn")
@@ -233,6 +205,7 @@ class MainWindow(qtw.QWidget):
         self.today_btn.setObjectName("filter-btn-selected")
         self.today_btn.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
         self.today_btn.clicked.connect(self.switch_today)
+        # start with "today" article filter
         self.active_article_filter = self.today_btn
 
         self.week_btn = qtw.QPushButton(text="week")
@@ -240,7 +213,7 @@ class MainWindow(qtw.QWidget):
         self.week_btn.clicked.connect(self.switch_week)
         self.week_btn.setObjectName("filter-btn")
 
-        self.all_btn = qtw.QPushButton(text = "all")
+        self.all_btn = qtw.QPushButton(text="all")
         self.all_btn.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
         self.all_btn.clicked.connect(self.switch_all)
         self.all_btn.setObjectName("filter-btn")
@@ -250,6 +223,7 @@ class MainWindow(qtw.QWidget):
         filter_layout.addWidget(self.today_btn)
         filter_layout.addWidget(self.week_btn)
         filter_layout.addWidget(self.all_btn)
+        # -- end of filters --
 
         # category chooser
         combo = qtw.QComboBox()
@@ -263,45 +237,49 @@ class MainWindow(qtw.QWidget):
         combo.addItem("Sports")
         combo.addItem("Meteo")
         combo.addItem("Panorama")
-        combo.activated[str].connect(self.combo_selection_changed)
+        # if selection changed
+        combo.activated[str].connect(self.filter_selection_changed)
         self.combo = combo
 
+        # left of article reader
         lhs_layout = qtw.QVBoxLayout()
         lhs_layout.addLayout(filter_layout)
         lhs_layout.addWidget(combo)
         lhs_layout.addWidget(selector)
 
+        # right of article reader
         rhs_layout = qtw.QVBoxLayout()
-        #rhs_layout.addWidget(bookmark)
         rhs_layout.addWidget(mdi_book_btn)
         rhs_layout.addStretch()
 
         # article selector 20% of content
         self.main.addLayout(lhs_layout, 0, 0, 100, 20)
-        # article 80% of content
+        # article 75% of content
         self.main.addWidget(text, 0, 20, 100, 75)
-        # bookmarks etc.
+        # bookmarks etc. 5% of content
         self.main.addLayout(rhs_layout, 0, 95, 100, 5)
 
     # downloading and sharing section of app
     def set_downloading_section(self):
         if self.logic.is_updating:
+            # show loading screen if currently downloading
             self.set_loading_screen_section()
             return
-        self.tab_changed()
 
         # clear main layout
-        utils.remove_widgets(self.main)
+        self.tab_changed()
         self.set_selected_menu_button(self.b2)
 
-        # new widgets
+        # layouts
         downLayout = qtw.QVBoxLayout()
         downLayout.setContentsMargins(200, 30, 200, 0)
         toggleLayout = qtw.QHBoxLayout()
 
+        # -- begin toggles for switching between sharing and downloading --
         toggle = qtw.QPushButton(text="download")
         toggle.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
         toggle.setCheckable(True)
+        # start in downloading mode
         toggle.setChecked(True)
         toggle.clicked.connect(self.toggle_download)
         toggle.setObjectName("toggleTrue")
@@ -317,6 +295,7 @@ class MainWindow(qtw.QWidget):
 
         toggleLayout.addWidget(toggle)
         toggleLayout.addWidget(toggle2)
+        # -- end of toggles --
 
         srfB = qtw.QPushButton(text="SRF")
         srfB.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
@@ -330,7 +309,7 @@ class MainWindow(qtw.QWidget):
 
         bacB = qtw.QPushButton(text="BAC-Net")
         bacB.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
-        # bacB.clicked.connect()
+        #TODO bacB.clicked.connect()
         bacB.setObjectName("bacButton")
 
         localB = qtw.QPushButton(text="local network")
@@ -338,12 +317,12 @@ class MainWindow(qtw.QWidget):
         localB.clicked.connect(self.switch_wlan)
         localB.setObjectName("bacButton")
 
-        on_macOS = self.BT_server.on_macOS()
-
-        # add to download layout
+        # add buttons to download layout
         downLayout.addLayout(toggleLayout)
         downLayout.addWidget(srfB)
         downLayout.addWidget(bacB)
+
+        on_macOS = self.BT_server.on_macOS()
 
         #if not on_macOS:
         #    downLayout.addWidget(blueB)
@@ -352,22 +331,23 @@ class MainWindow(qtw.QWidget):
 
         downLayout.addWidget(localB)
         downLayout.addStretch()
-
         self.downLayout = downLayout
         self.srfBtn = srfB
 
         # add to layout
         self.main.addLayout(downLayout, 0, 0)
 
+    # downloading animation
     def set_loading_screen_section(self):
-        utils.remove_widgets(self.main)
-        self.set_selected_menu_button(self.b2)
+        # reset layout
         self.tab_changed()
+        self.set_selected_menu_button(self.b2)
 
-        #new widgets
+        #new layouts
         layout = qtw.QVBoxLayout()
         centering_layout = qtw.QHBoxLayout()
 
+        # get correct gif
         if self.light:
             gif_path = os.getcwd() + "/data/images/loading_light.gif"
         else:
@@ -389,197 +369,31 @@ class MainWindow(qtw.QWidget):
 
         self.main.addLayout(centering_layout, 0, 0)
 
-    # archive section of app
-    def set_archiving_section(self):
-        # clear main layout
-        utils.remove_widgets(self.main)
-        self.set_selected_menu_button(self.b3)
+    # LAN server UI
+    def set_lan_server_section(self):
         self.tab_changed()
-
-        text = qtw.QTextBrowser()
-        style.setArticleStyle(text)
-        text.setOpenExternalLinks(True)
-        self.archive_reader = text
-
-        selector = qtw.QListWidget()
-        self.selector = selector
-        selector.setWordWrap(True)
-        entries = self.get_bookmarked_article_lst()
-        selector.addItems(entries)
-        selector.itemSelectionChanged.connect(self.archive_article_changed)
-        selector.setCurrentRow(0)
-        text.moveCursor(qtg.QTextCursor.Start)
-
-        mdi_book = qta.icon("mdi.bookmark-outline", color="black")
-        mdi_book_btn = qtw.QPushButton()
-        mdi_book_btn.setObjectName("bookmark-btn")
-        mdi_book_btn.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
-        mdi_book_btn.clicked.connect(self.update_bookmark)
-        mdi_book_btn.setIconSize(qtc.QSize(40, 40))
-        mdi_book_btn.setIcon(mdi_book)
-        self.mdi_btn = mdi_book_btn
-        self.draw_bookmark()
-
-        rhs_layout = qtw.QVBoxLayout()
-        rhs_layout.addWidget(mdi_book_btn)
-        rhs_layout.addStretch()
-
-        self.main.addWidget(selector, 0, 0, 100, 20)
-        self.main.addWidget(text, 0, 20, 100, 75)
-        self.main.addLayout(rhs_layout, 0, 95, 100, 5)
-
-    def selected_article_changed(self):
-        # change displayed article in UI on selection
-        selectedArticle = self.selector.currentItem().text()
-        # remove new indication
-        if selectedArticle.startswith("\u2022"):
-            unmarked = selectedArticle[2:]
-            self.selector.currentItem().setText(unmarked)
-
-        html = self.logic.get_article_html_by_title1(selectedArticle)
-        self.article.clear()
-        self.article.insertHtml(html)
-        is_bookmarked = self.logic.is_article_bookmarked(selectedArticle)
-        if is_bookmarked:
-            self.fill_mdi()
-        else:
-            self.draw_mdi_outline()
-        #mark as read
-        self.logic.mark_as_opened(selectedArticle)
-        self.current_title = selectedArticle
-
-    def archive_article_changed(self):
-        selectedArticle = self.selector.currentItem().text()
-        self.current_title = selectedArticle
-        html = self.logic.get_article_html_by_title1(selectedArticle)
-        self.archive_reader.clear()
-        self.archive_reader.insertHtml(html)
-        #TODO bookmarks
-        is_bookmarked = self.logic.is_article_bookmarked(selectedArticle)
-        if is_bookmarked:
-            self.fill_mdi()
-        else:
-            self.draw_mdi_outline()
-
-    def switch(self):
-        # switch from dark to light or vice versa
-        if self.light:
-            self.switch.setText("light")
-            css = style.getDarkStyleSheet()
-        else:
-            self.switch.setText("dark")
-            css = style.getLightStyleSheet()
-        
-        self.setStyleSheet(css)
-        self.light = not self.light
-
-        # update colors of menu bar
-        self.set_selected_menu_button(self.selected)
-
-        if self.selected == self.b2 and self.logic.is_updating:
-            self.set_loading_screen_section()
-
-        #update bookmark color
-        self.draw_bookmark()
-        self.update_switches()
-
-    def set_selected_menu_button(self, button):
-        self.selected = button
-        buttons = [self.b1, self.b2, self.b3, self.b4]
-        for b in buttons:
-            if (self.light):
-                b.setStyleSheet("color: black;")
-            else:
-                b.setStyleSheet("color: white")
-
-        button.setStyleSheet("color: grey;")
-
-    def toggle_download(self):
-        if self.toggle.isChecked():
-            self.toggle.setObjectName("toggleTrue")
-            self.toggle2.setChecked(False)
-            self.toggle2.setObjectName("toggleFalse")
-            if self.light:
-                self.toggle.setStyleSheet("color: grey;")
-                self.toggle2.setStyleSheet("color: black;")
-            else:
-                self.toggle.setStyleSheet("color: grey;")
-                self.toggle2.setStyleSheet("color: #f7f7f7;")
-        else:
-            self.toggle.setChecked(True)
-
-        self.set_downloading_section()
-
-    def toggle2_download(self):
-        if self.toggle2.isChecked():
-            self.toggle2.setObjectName("toggleTrue")
-            self.toggle.setChecked(False)
-            self.toggle.setObjectName("toggleFalse")
-            if self.light:
-                self.toggle2.setStyleSheet("color: grey;")
-                self.toggle.setStyleSheet("color: black;")
-            else:
-                self.toggle2.setStyleSheet("color: grey;")
-                self.toggle.setStyleSheet("color: #f7f7f7;")
-        else:
-            self.toggle2.setChecked(True)
-        if not self.srfBtn == None:
-            self.downLayout.removeWidget(self.srfBtn)
-            self.srfBtn = None
-
-    def switch_to_loading(self):
-        if self.selected == self.b2:
-            self.set_loading_screen_section()
-
-    def finished_downloading(self):
-        print(self.selected)
-        if self.selected == self.b2:
-            self.set_downloading_section()
-
-    def handle_download(self):
-        self.set_loading_screen_section()
-        self.downloading_thread = downloadingThread(self.logic)
-        self.downloading_thread.start()
-        self.downloading_thread.finished.connect(self.set_reading_section)
-
-    def switch_wlan(self):
-        if self.toggle.isChecked():
-            self.set_wlan_client_section()
-        else:
-            self.set_wlan_server_section()
-
-    def switch_blue(self):
-        if self.toggle.isChecked():
-            self.set_blue_client_section()
-        else:
-            self.set_blue_server_section()
-
-    def set_wlan_server_section(self):
-        self.tab_changed()
-        self.LAN_server.keep_alive()
-        utils.remove_widgets(self.main)
-        self.srfBtn = None
         self.set_selected_menu_button(self.b2)
 
+        # don't kill open server
+        self.LAN_server.keep_alive()
+
+        # open a new server if no already running
         if not self.LAN_server.is_running():
             self.LAN_server.start_server_threaded()
 
+        # wait for server to run
         while not self.LAN_server.is_running():
             pass
 
-        s1 = "Your IP address is: "
-        t1 = qtw.QLabel(s1)
-        t1.setObjectName("server-text")
-
-        s2 = self.LAN_server.get_IP()
-        t2 = qtw.QLabel(s1 + s2)
-        t2.setObjectName("server-text")
+        # widgets
+        text = "Your IP address is: "
+        address = self.LAN_server.get_IP()
+        label = qtw.QLabel(text + address)
+        label.setObjectName("server-text")
 
         lanLayout = qtw.QVBoxLayout()
         lanLayout.addStretch()
-        #lanLayout.addWidget(t1)
-        lanLayout.addWidget(t2)
-        #lanLayout.addWidget(t3)
+        lanLayout.addWidget(label)
         lanLayout.addStretch()
 
         horizontalLayout = qtw.QHBoxLayout()
@@ -589,13 +403,16 @@ class MainWindow(qtw.QWidget):
 
         self.main.addLayout(horizontalLayout, 0, 0)
 
-    def set_wlan_client_section(self):
-        utils.remove_widgets(self.main)
-        self.set_selected_menu_button(self.b2)
+    # LAN client UI
+    def set_lan_client_section(self):
         self.tab_changed()
+        self.set_selected_menu_button(self.b2)
+
+        # widgets
         title = qtw.QLabel(text="Server selection:")
         title.setObjectName("lan-title")
 
+        # get list of devices
         devices = net.get_devices()
         ip = []
         for d in devices:
@@ -604,6 +421,7 @@ class MainWindow(qtw.QWidget):
             entry = ip_addr + "\t" + name
             ip.append(entry)
 
+        # display devices in list widget
         lst = qtw.QListWidget()
         lst.addItems(ip)
         lst.setCurrentRow(0)
@@ -624,35 +442,32 @@ class MainWindow(qtw.QWidget):
 
         self.main.addLayout(lanLayout, 0, 0)
 
-    def connect(self):
-        ip = self.serverLst.currentItem().text()
-        ip = ip.split("\t")[0]
-        print("trying to connect to " + ip)
-        self.LAN_client.start_client_threaded(ip)
-        self.set_LAN_loading_screen()
-
+    # bluetooth server UI
     def set_blue_server_section(self):
         self.tab_changed()
-        utils.remove_widgets(self.main)
-        self.srfBtn = None
         self.set_selected_menu_button(self.b2)
 
+        # bluetooth sockets do not work on macOS
         on_macOS = self.BT_server.on_macOS()
 
         if not on_macOS:
             if not self.BT_server.is_running():
+                # not on mac -> open socket
                 self.BT_server.start_server_threaded()
 
+            # wait for server to run
             while not self.BT_server.is_running():
                 pass
 
-        s1 = "Your MAC-address is: "
-        s2 = self.BT_server.get_mac_address()
-        label = qtw.QLabel(s1 + s2)
+        # not displayed on macOS
+        text = "Your MAC-address is: "
+        address = self.BT_server.get_mac_address()
+        label = qtw.QLabel(text + address)
         label.setObjectName("server-text")
 
-        s2 = "MacOS bluetooth transfer is not supported."
-        label2 = qtw.QLabel(s2)
+        # only displayed on macOS
+        text2 = "MacOS bluetooth transfer is not supported."
+        label2 = qtw.QLabel(text2)
         label2.setObjectName("server-text")
 
         BTLayout = qtw.QVBoxLayout()
@@ -670,9 +485,9 @@ class MainWindow(qtw.QWidget):
 
         self.main.addLayout(horizontalLayout, 0, 0)
 
+    # bluetooth client UI
     def set_blue_client_section(self):
         self.tab_changed()
-        utils.remove_widgets(self.main)
         self.set_selected_menu_button(self.b2)
 
         label = qtw.QLabel("Enter partner's MAC-address:")
@@ -680,6 +495,7 @@ class MainWindow(qtw.QWidget):
 
         input = qtw.QLineEdit()
         input.setAttribute(qtc.Qt.WA_MacShowFocusRect, 0)
+        # only allow input of valid MAC addresses
         regex = qtc.QRegExp("^([0-9A-Fa-f]{2}[-:]){5}([0-9A-Fa-f]{2})$")
         input.setValidator(qtg.QRegExpValidator(regex))
         input.setAlignment(qtc.Qt.AlignCenter)
@@ -687,7 +503,7 @@ class MainWindow(qtw.QWidget):
         btn = qtw.QPushButton("connect")
         btn.setObjectName("bt-client-btn")
         btn.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
-        #btn.clicked.connect(TODO)
+        #TODO btn.clicked.connect()
 
         layout = qtw.QVBoxLayout()
         layout.addStretch()
@@ -703,12 +519,214 @@ class MainWindow(qtw.QWidget):
 
         self.main.addLayout(horizontal, 0, 0)
 
-    def close_connections(self):
-        if self.server_socket != None:
-            self.server_socket.stop_server()
-            self.server_socket = None
+    # archive section of app
+    def set_archiving_section(self):
+        # clear main layout
+        self.tab_changed()
+        self.set_selected_menu_button(self.b3)
 
+        # article reader
+        text = qtw.QTextBrowser()
+        style.setArticleStyle(text)
+        text.setOpenExternalLinks(True)
+        self.archive_reader = text
+
+        # article selector
+        selector = qtw.QListWidget()
+        self.selector = selector
+        selector.setWordWrap(True)
+        # only bookmarked articles
+        entries = self.get_bookmarked_article_lst()
+        selector.addItems(entries)
+        selector.itemSelectionChanged.connect(self.archive_article_changed)
+        selector.setCurrentRow(0)
+        text.moveCursor(qtg.QTextCursor.Start)
+
+        # bookmark btn
+        mdi_book = qta.icon("mdi.bookmark-outline", color="black")
+        mdi_book_btn = qtw.QPushButton()
+        mdi_book_btn.setObjectName("bookmark-btn")
+        mdi_book_btn.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
+        mdi_book_btn.clicked.connect(self.update_bookmark)
+        mdi_book_btn.setIconSize(qtc.QSize(40, 40))
+        mdi_book_btn.setIcon(mdi_book)
+        self.mdi_btn = mdi_book_btn
+        self.draw_bookmark()
+
+        rhs_layout = qtw.QVBoxLayout()
+        rhs_layout.addWidget(mdi_book_btn)
+        rhs_layout.addStretch()
+
+        self.main.addWidget(selector, 0, 0, 100, 20)
+        self.main.addWidget(text, 0, 20, 100, 75)
+        self.main.addLayout(rhs_layout, 0, 95, 100, 5)
+
+    # if selected article in article selector changes
+    # used in reading section
+    def selected_article_changed(self):
+        # change displayed article in UI on selection
+        selectedArticle = self.selector.currentItem().text()
+
+        # remove "new article" indication
+        if selectedArticle.startswith("\u2022"):
+            unmarked = selectedArticle[2:]
+            self.selector.currentItem().setText(unmarked)
+
+        # set article to reader
+        html = self.logic.get_article_html_by_title1(selectedArticle)
+        self.article.clear()
+        self.article.insertHtml(html)
+
+        # check article bookmark status
+        is_bookmarked = self.logic.is_article_bookmarked(selectedArticle)
+        if is_bookmarked:
+            self.fill_mdi()
+        else:
+            self.draw_mdi_outline()
+
+        #mark as read
+        self.logic.mark_as_opened(selectedArticle)
+        self.current_title = selectedArticle
+
+    # if selected article in article selector changes
+    # used in archive section
+    def archive_article_changed(self):
+        # get new article title
+        selectedArticle = self.selector.currentItem().text()
+        self.current_title = selectedArticle
+
+        # get html of article and set it to reader
+        html = self.logic.get_article_html_by_title1(selectedArticle)
+        self.archive_reader.clear()
+        self.archive_reader.insertHtml(html)
+
+        # check bookmark status
+        is_bookmarked = self.logic.is_article_bookmarked(selectedArticle)
+        if is_bookmarked:
+            self.fill_mdi()
+        else:
+            self.draw_mdi_outline()
+
+    # used for switching between dark/light mode
+    def switch(self):
+        # switch from dark to light or vice versa
+        if self.light:
+            self.switch.setText("light")
+            css = style.getDarkStyleSheet()
+        else:
+            self.switch.setText("dark")
+            css = style.getLightStyleSheet()
+        
+        self.setStyleSheet(css)
+        self.light = not self.light
+
+        # update colors of menu bar
+        self.set_selected_menu_button(self.selected)
+
+        # if currently in downloading screen, get new gif
+        if self.selected == self.b2 and self.logic.is_updating:
+            self.set_loading_screen_section()
+
+        # update bookmark color
+        self.draw_bookmark()
+        # update filter color
+        self.update_switches()
+
+    # set the currently selected button and set correct color
+    def set_selected_menu_button(self, button):
+        self.selected = button
+        buttons = [self.b1, self.b2, self.b3, self.b4]
+        for b in buttons:
+            if (self.light):
+                b.setStyleSheet("color: black;")
+            else:
+                b.setStyleSheet("color: white")
+
+        button.setStyleSheet("color: grey;")
+
+    # switch between downloading/sharing mode in downloading section
+    def toggle_download(self):
+        # switch toggles
+        if self.toggle.isChecked():
+            self.toggle.setObjectName("toggleTrue")
+            self.toggle2.setChecked(False)
+            self.toggle2.setObjectName("toggleFalse")
+
+            # set correct style
+            if self.light:
+                self.toggle.setStyleSheet("color: grey;")
+                self.toggle2.setStyleSheet("color: black;")
+            else:
+                self.toggle.setStyleSheet("color: grey;")
+                self.toggle2.setStyleSheet("color: #f7f7f7;")
+        else:
+            # if already activated toggle was selected, reactivate
+            self.toggle.setChecked(True)
+
+        # refresh section
+        self.set_downloading_section()
+
+    # switch between downloading/sharing mode in downloading section
+    def toggle2_download(self):
+        # switch toggles
+        if self.toggle2.isChecked():
+            self.toggle2.setObjectName("toggleTrue")
+            self.toggle.setChecked(False)
+            self.toggle.setObjectName("toggleFalse")
+
+            # set correct style
+            if self.light:
+                self.toggle2.setStyleSheet("color: grey;")
+                self.toggle.setStyleSheet("color: black;")
+            else:
+                self.toggle2.setStyleSheet("color: grey;")
+                self.toggle.setStyleSheet("color: #f7f7f7;")
+        else:
+            # reactivate if already active toggle selected
+            self.toggle2.setChecked(True)
+
+        # remove srf button in sharing mode
+        if not self.srfBtn == None:
+            self.downLayout.removeWidget(self.srfBtn)
+            self.srfBtn = None
+
+    # activated if srf button is clicked
+    # download new articles
+    def handle_download(self):
+        # set loading screen
+        self.set_loading_screen_section()
+        # create and start downloadingThread
+        self.downloading_thread = downloadingThread(self.logic)
+        self.downloading_thread.start()
+        # switch to reading section when finished downloading
+        self.downloading_thread.finished.connect(self.set_reading_section)
+
+    # check current mode downloading/sharing and select corresponding action
+    def switch_wlan(self):
+        if self.toggle.isChecked():
+            self.set_lan_client_section()
+        else:
+            self.set_lan_server_section()
+
+    # check current mode downloading/sharing and select corresponding action
+    def switch_blue(self):
+        if self.toggle.isChecked():
+            self.set_blue_client_section()
+        else:
+            self.set_blue_server_section()
+
+    # used in LAN client UI
+    # connect to selected IP address
+    def connect(self):
+        ip = self.serverLst.currentItem().text()
+        ip = ip.split("\t")[0]
+        print("trying to connect to " + ip)
+        self.LAN_client.start_client_threaded(ip)
+        self.set_LAN_loading_screen()
+
+    # switch active article filter to "today"
     def switch_today(self):
+        # update style of items
         self.active_article_filter.setStyleSheet("color: black; height: 20%;")
         if not self.light:
             self.active_article_filter.setStyleSheet("color: #f7f7f7; height: 20%;")
@@ -716,12 +734,14 @@ class MainWindow(qtw.QWidget):
         self.active_article_filter = self.today_btn
         self.today_btn.setStyleSheet("color: grey; height: 20%;")
         self.today_btn.setObjectName("filter-btn-active")
-        self.update_article_list()
 
-        self.combo_selection_changed(None)
+        # update article selection according to filter
+        self.filter_selection_changed(None)
         self.selector.setCurrentRow(0)
 
+    # switch active article filter to "week"
     def switch_week(self):
+        # update style of items
         self.active_article_filter.setStyleSheet("color: black; height: 20%;")
         if not self.light:
             self.active_article_filter.setStyleSheet("color: #f7f7f7; height: 20%;")
@@ -729,13 +749,14 @@ class MainWindow(qtw.QWidget):
         self.active_article_filter = self.week_btn
         self.week_btn.setStyleSheet("color: grey; height: 20%;")
         self.week_btn.setObjectName("filter-btn-active")
-        self.update_article_list()
 
-        self.combo_selection_changed(None)
+        # update article list
+        self.filter_selection_changed(None)
         self.selector.setCurrentRow(0)
 
+    # switch active article filter to "all"
     def switch_all(self):
-        active_item = self.selector.currentItem()
+        # update style of items
         self.active_article_filter.setStyleSheet("color: black; height: 20%;")
         if not self.light:
             self.active_article_filter.setStyleSheet("color: #f7f7f7; height: 20%;")
@@ -743,17 +764,19 @@ class MainWindow(qtw.QWidget):
         self.active_article_filter = self.all_btn
         self.all_btn.setStyleSheet("color: grey; height: 20%;")
         self.all_btn.setObjectName("filter-btn-active")
-        self.update_article_list()
 
-        self.combo_selection_changed(None)
+        # update entries in article selector
+        self.filter_selection_changed(None)
         self.selector.setCurrentRow(0)
 
+    # update stylesheet of main window according to mode
     def update_style(self):
         if self.light:
             self.setStyleSheet(style.getLightStyleSheet())
         else:
             self.setStyleSheet(style.getDarkStyleSheet())
 
+    # get article list according to active filter
     def get_article_lst(self):
         if self.active_article_filter == self.today_btn:
             return self.logic.get_article_titles_today()
@@ -762,33 +785,30 @@ class MainWindow(qtw.QWidget):
         else:
             return self.logic.get_article_titles()
 
+    # get list of all bookmarked articles
     def get_bookmarked_article_lst(self):
         lst = self.logic.get_bookmarked_article_titles()
         return lst
 
+    # get list of all articles and set it to selector
+    # not paying attention to filter
     def update_article_list(self):
         entries = self.get_article_lst()
         self.selector.clear()
         self.selector.addItems(entries)
 
-    def set_bookmark(self):
-        if self.bookmark == None:
-            return
-        self.bookmark.setPixmap(qtg.QPixmap(os.getcwd() + "/data/images/bookmark-filled.png"))
-
-    def remove_bookmark(self):
-        if self.bookmark == None:
-            return
-        self.bookmark.setPixmap(qtg.QPixmap(os.getcwd() + "/data/images/bookmark-empty.png"))
-
+    # updates the bookmark icon after clicking on it
+    # also communicates with back-end to update article bookmark in json files
     def update_bookmark(self):
-        #if self.selector.currentItem() == None:
-        #    return
-        #title = self.selector.currentItem().text()
+        # get title without reading indication
         title = utils.remove_dot(self.current_title)
         if title == None:
+            # nothing to bookmark
             return
+
+        # check if article is bookmarked
         active = self.logic.is_article_bookmarked(title)
+        # send bookmark info to back-end and update icon
         if active:
             self.logic.remove_bookmark_article(title)
             self.draw_mdi_outline()
@@ -796,46 +816,62 @@ class MainWindow(qtw.QWidget):
             self.logic.bookmark_article(title)
             self.fill_mdi()
 
-        #if in archive update selector
+        # if in archive section: update selector
         if self.selected == self.b3:
             entries = self.get_bookmarked_article_lst()
             self.selector.clear()
             self.selector.addItems(entries)
 
+    # draws the appropriate bookmark icon, considering bookmark status
     def draw_bookmark(self):
         if self.selector.currentItem() == None:
+            # nothing to bookmark
             return
+
+        # get current title and check if active
         title = self.selector.currentItem().text()
         active = self.logic.is_article_bookmarked(title)
+
         if active:
             self.fill_mdi()
         else:
             self.draw_mdi_outline()
 
+    # draws empty bookmark -> not bookmarked, considers dark/light mode
     def draw_mdi_outline(self):
         if self.mdi_btn == None:
+            # nothing to bookmark
             return
+
         if self.light:
             icon = qta.icon("mdi.bookmark-outline", color="black")
         else:
             icon = qta.icon("mdi.bookmark-outline", color="#f7f7f7")
         self.mdi_btn.setIcon(icon)
 
+    # draws full bookmark -> bookmarked, considers dark/light mode
     def fill_mdi(self):
         if self.mdi_btn == None:
+            # nothing to bookmark
             return
+
         if self.light:
             icon = qta.icon("mdi.bookmark", color="black")
         else:
             icon = qta.icon("mdi.bookmark", color="#f7f7f7")
         self.mdi_btn.setIcon(icon)
 
-    def combo_selection_changed(self, category):
+    # on category filter change
+    # get correct articles and display them in selector
+    def filter_selection_changed(self, category):
         if category == None:
+            # if not given, get active filter from combo box
             category = str(self.combo.currentText())
 
+        # get artcile list, considering time filter (today, week, all)
         titles = self.get_article_lst()
 
+        # apply category filter to list
         if category == "All Categories":
             self.update_article_list()
             return
@@ -857,6 +893,7 @@ class MainWindow(qtw.QWidget):
         self.selector.clear()
         self.selector.addItems(new_lst)
 
+    # update style of time filter switches considering dark/light mode and active switch
     def update_switches(self):
         if self.light:
             if self.active_article_filter == self.today_btn:
@@ -885,6 +922,10 @@ class MainWindow(qtw.QWidget):
                 self.week_btn.setStyleSheet("color: #f7f7f7; height: 20%;")
                 self.all_btn.setStyleSheet("color: grey; height: 20%;")
 
+    # reset window on section change
     def tab_changed(self):
+        # clear window
+        utils.remove_widgets(self.main)
+        # stop active servers
         self.LAN_server.stop_server()
         self.BT_server.stop_server()
