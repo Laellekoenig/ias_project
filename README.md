@@ -32,7 +32,7 @@
 - [x] fix bugs with dark mode and switches
 - [x] implement gui for lan server
 - [x] implement gui for lan client
-- [ ] move reading dots to beginning of title  
+- [x] move reading dots to beginning of title  
 - [ ] implement downloading screen  
 - [ ] style btn color consistency
 - [ ] code refactoring

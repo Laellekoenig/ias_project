@@ -89,11 +89,11 @@ def getLightStyleSheet():
     }
     #srfButton {
         background-color: #AF011E;
-        color: white;
+        color: #f7f7f7;
         border-radius: 3px;
     }
     #srfButton:pressed {
-        background-color: white;
+        background-color: #f7f7f7;
         color: #AF011E;
         border-style: solid;
         border-width: 1px;
@@ -101,11 +101,11 @@ def getLightStyleSheet():
     }
     #blueButton {
         background-color: #0C3C91;
-        color: white;
+        color: #f7f7f7;
         border-radius: 3px;
     }
     #blueButton:pressed {
-        background-color: white;
+        background-color: #f7f7f7;
         color: #0C3C91;
         border-style: solid;
         border-width: 1px;
@@ -121,14 +121,14 @@ def getLightStyleSheet():
         color: black;
     }
     #bacButton {
-        color: white;
+        color: #f7f7f7;
         background-color: black;
         border-radius: 3px;
         border-style: none;
     }
     #bacButton:pressed {
         color: black;
-        background-color: white;
+        background-color: #f7f7f7;
         border-style: solid;
         border-width: 1px;
         border-color: black;
@@ -138,12 +138,12 @@ def getLightStyleSheet():
     }
     #connectButton {
         background-color: black;
-        color: white;
+        color: #f7f7f7;
         border-radius: 5px;
         padding: 5px;
     }
     #connectButton:pressed {
-        background-color: white;
+        background-color: #f7f7f7;
         border-style: solid;
         border-radius: 1px;
         border-color: black;
