@@ -98,7 +98,7 @@ def get_items_from_list_widget(widget):
     return lst
 
 def remove_dot(title):
-    if not title.endswith("\u2022"):
+    if not title.startswith("\u2022"):
         return title
     else:
-        return title[:-2]
+        return title[2:]

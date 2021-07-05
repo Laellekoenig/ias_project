@@ -133,6 +133,7 @@ class LogicInterface:
         for article in self.get_articles():
             if article.bookmarked:
                 lst.append(article.title_1)
+        lst.sort()
         return lst
 
     def bookmark_article(self, title):
