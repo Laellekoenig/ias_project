@@ -84,6 +84,7 @@ class MainWindow(qtw.QWidget):
         self.lan_is_downloading = False
         self.BT_is_downloading = False
         self.MAC_input = None
+        self.IP_input = None
         self.BT_thread = None
         self.download_status = queue.Queue()
 
@@ -459,12 +460,18 @@ class MainWindow(qtw.QWidget):
         lst.setCurrentRow(0)
         self.serverLst = lst
 
+        manual_btn = qtw.QPushButton(text="manually input IP")
+        manual_btn.setObjectName("manualButton")
+        manual_btn.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
+        manual_btn.clicked.connect(self.set_lan_client_manual_input_section)
+
         connect_btn = qtw.QPushButton(text="connect")
         connect_btn.setObjectName("bacButton")
         connect_btn.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
         connect_btn.clicked.connect(self.connect)
 
-        btns = qtw.QHBoxLayout()
+        btns = qtw.QVBoxLayout()
+        btns.addWidget(manual_btn)
         btns.addWidget(connect_btn)
 
         lanLayout = qtw.QVBoxLayout()
@@ -473,6 +480,46 @@ class MainWindow(qtw.QWidget):
         lanLayout.addLayout(btns)
 
         self.main.addLayout(lanLayout, 0, 0)
+
+    # LAN client UI for manually entering an IP address
+    def set_lan_client_manual_input_section(self):
+        self.tab_changed()
+        self.set_selected_menu_button(self.b2)
+
+        label = qtw.QLabel("Enter partner's IP address:")
+        label.setObjectName("client-text")
+
+        input = qtw.QLineEdit()
+        input.setAttribute(qtc.Qt.WA_MacShowFocusRect, 0)
+        regex = qtc.QRegExp("^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$")
+        input.setValidator(qtg.QRegExpValidator(regex))
+        input.setAlignment(qtc.Qt.AlignCenter)
+        self.IP_input = input
+
+        btn = qtw.QPushButton("connect")
+        btn.setObjectName("bacButton")
+        btn.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
+        btn.clicked.connect(self.connect_manually)
+
+        btn2 = qtw.QPushButton("back")
+        btn2.setObjectName("manualButton2")
+        btn2.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
+        btn2.clicked.connect(self.set_lan_client_section)
+
+        layout = qtw.QVBoxLayout()
+        layout.addStretch()
+        layout.addWidget(label)
+        layout.addWidget(input)
+        layout.addWidget(btn2)
+        layout.addWidget(btn)
+        layout.addStretch()
+
+        horizontal = qtw.QHBoxLayout()
+        horizontal.addStretch()
+        horizontal.addLayout(layout)
+        horizontal.addStretch()
+
+        self.main.addLayout(horizontal, 0, 0)
 
     # bluetooth server UI
     def set_blue_server_section(self):
@@ -801,6 +848,18 @@ class MainWindow(qtw.QWidget):
         self.lan_thread.start()
         self.lan_is_downloading = True
         self.lan_thread.finished.connect(self.finished_lan_download)
+
+    def connect_manually(self):
+        ip = self.IP_input.text()
+        if len(ip) >= 7 and len(ip) <= 15:
+            print("trying to connect to " + ip)
+            self.set_loading_screen_section()
+            self.lan_thread = LANThread(self.LAN_client, ip, self.download_status)
+            self.lan_thread.start()
+            self.lan_is_downloading = True
+            self.lan_thread.finished.connect(self.finished_lan_download)
+        else:
+            self.set_info_screen("Invalid IP address.", "back", self.set_lan_client_manual_input_section)
 
     # used for reading user input
     # retrieves entered MAC address and hands it to Bluetooth client

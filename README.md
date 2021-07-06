@@ -48,7 +48,7 @@
 - [x] move appropriate functions to utils
 - [x] refactoring of utils
 ---
-- [ ] refactoring of interface
+- [ ] manual input of IP address
 ---
 - [ ] message if download via BT failed  
 - [ ] open article into own window

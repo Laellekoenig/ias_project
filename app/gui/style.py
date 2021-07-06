@@ -133,6 +133,32 @@ def getLightStyleSheet():
         border-width: 1px;
         border-color: black;
     }
+    #manualButton {
+        color: black;
+        background-color: #f7f7f7;
+        border-radius: 3px;
+        border-style: none;
+        border: 1px solid black
+    }
+    #manualButton:pressed {
+        color: #f7f7f7;
+        background-color: black;
+        border-style none;
+    }
+    #manualButton2 {
+        margin-top: 50px;
+        color: black;
+        background-color: #f7f7f7;
+        border-radius: 3px;
+        border-style: none;
+        border: 1px solid black
+    }
+    #manualButton2:pressed {
+        color: #f7f7f7;
+        background-color: black;
+        border-style none;
+    }
+
     #gif {
         margin-bottom: 100px;
     }
@@ -366,6 +392,31 @@ def getDarkStyleSheet():
         border-width: 1px;
         border-color: #f7f7f7;
     }
+    #manualButton {
+        color: #f7f7f7;
+        background-color: #282828;
+        border-radius: 3px;
+        border-style: none;
+        border: 1px solid #f7f7f7;
+    }
+    #manualButton:pressed {
+        color: #282828;
+        background-color: #f7f7f7;
+    }
+    #manualButton2 {
+        margin-top: 50px;
+        color: #f7f7f7;
+        background-color: #282828;
+        border-radius: 3px;
+        border-style: none;
+        border: 1px solid #f7f7f7;
+    }
+    #manualButton2:pressed {
+        color: #282828;
+        background-color: #f7f7f7;
+        border-style: none;
+    }
+
     #gif {
         margin-bottom: 100px;
     }
