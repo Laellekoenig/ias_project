@@ -43,80 +43,76 @@ class bt_server:
             return
         
         while self.running:
+            try: 
+                client, address = self.socket.accept()
+                print("client {} connected to your server and is receiving your articles now".format(address))
+            except:
+                print("couldn't connect with client")
+                self.socket.close()
+                self.running = False
+                return
+            except socket.timeout:
+                self.socket.listen(1)
+                print("renew timeout")
+
             try:
-                try: 
-                    client, address = self.socket.accept()
-                    print("client {} connected to your server and is receiving your articles now".format(address))
-                except:
-                    print("couldn't connect with client")
-                    self.socket.close()
-                    self.running = False
-                    return
-                except socket.timeout:
+                date_time_msg = client.recv(4096)
+                date_time = datetime.fromisoformat(date_time_msg.decode())
+            except:
+                print("something went wrong...")
+                print("try to turn on your bluetooth and try again")
+                client.close()
+                self.socket.close()
+                self.running = False
+                return
+            except socket.timeout:
                 self.socket.listen(1)
                 print("renew timeout")
 
-                try:
-                    date_time_msg = client.recv(4096)
-                    date_time = datetime.fromisoformat(date_time_msg.decode())
-                except:
-                    print("something went wrong...")
-                    print("try to turn on your bluetooth and try again")
-                    client.close()
-                    self.socket.close()
-                    self.running = False
-                    return
-                except socket.timeout:
-                self.socket.listen(1)
-                print("renew timeout")
-
-                try:
-                    path = zip_articles(date_time)
-                    if path == None:
-                        client.send("???!no_new_data_for_you!???")
-                        client.close()
-                        self.socket.close()
-                        self.running = False
-                        print("there are no new articles for you")
-                        return
-                    else:
-                        f = open(path, 'rb')
-                except Exception:
-                    print("Failed to open or compress files for sending to client.")
+            try:
+                path = zip_articles(date_time)
+                if path == None:
                     client.send("???!no_new_data_for_you!???")
                     client.close()
                     self.socket.close()
                     self.running = False
+                    print("there are no new articles for you")
                     return
-                except socket.timeout:
-                self.socket.listen(1)
-                print("renew timeout")
-                #f = open("Bluetoothtest.txt", "rb")
-
-                try:    
-                    data = ""
-                    while not data == "!?L=C)(JZB?)K)=FJ(W".encode():
-                        data = f.read(1024)
-                        if data == "".encode(): # sent all bits of the file
-                            data = "!?L=C)(JZB?)K)=FJ(W".encode() # windows socket doesn't support flush() (problems with sending empty packet, so that receiver doesn't know when last packet arrived, therefore sending this string)
-                        client.send(data)
-                    #client.flush()  
-                    print("finished sending new articles")
-                except:
-                    print("something went wrong while sending your articles")
-                except socket.timeout:
-                self.socket.listen(1)
-                print("renew timeout")
-
-                f.close()
-                #if os.path.exists(str(Path.home()) + "/NewsTest/Articles/articles.zip"):
-                    #os.remove(str(Path.home()) + "/NewsTest/Articles/articles.zip")
+                else:
+                    f = open(path, 'rb')
+            except Exception:
+                print("Failed to open or compress files for sending to client.")
+                client.send("???!no_new_data_for_you!???")
                 client.close()
                 self.socket.close()
                 self.running = False
+                return
             except socket.timeout:
                 self.socket.listen(1)
                 print("renew timeout")
+            #f = open("Bluetoothtest.txt", "rb")
+
+            try:    
+                data = ""
+                while not data == "!?L=C)(JZB?)K)=FJ(W".encode():
+                    data = f.read(1024)
+                    if data == "".encode(): # sent all bits of the file
+                        data = "!?L=C)(JZB?)K)=FJ(W".encode() # windows socket doesn't support flush() (problems with sending empty packet, so that receiver doesn't know when last packet arrived, therefore sending this string)
+                    client.send(data)
+                #client.flush()  
+                print("finished sending new articles")
+            except:
+                print("something went wrong while sending your articles")
+            except socket.timeout:
+                self.socket.listen(1)
+                print("renew timeout")
+
+            f.close()
+            #if os.path.exists(str(Path.home()) + "/NewsTest/Articles/articles.zip"):
+                #os.remove(str(Path.home()) + "/NewsTest/Articles/articles.zip")
+            client.close()
+            self.socket.close()
+            self.running = False
 
         self.thread_running = False
 
