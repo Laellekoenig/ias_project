@@ -1,5 +1,6 @@
 # -- standard python --
 import os
+import queue
 # -- PyQt --
 import qtawesome as qta
 from PyQt5 import QtWidgets as qtw
@@ -35,13 +36,18 @@ class downloadingThread(qtc.QThread):
 
 # QThread that downloads articles via LAN connection
 class LANThread(qtc.QThread):
-    def __init__(self, LAN_client, ip):
+    def __init__(self, LAN_client, ip, queue):
         super().__init__()
         self.LAN_client = LAN_client
         self.ip = ip
+        self.queue = queue
 
     def run(self):
-        self.LAN_client.start_client(self.ip)
+        ret = self.LAN_client.start_client(self.ip)
+        if ret == 1:
+            self.queue.put(False)
+        else:
+            self.queue.put(True)
 
 # QThread that downloads articles via Bluetooth connection
 class BTThread(qtc.QThread):
@@ -79,6 +85,7 @@ class MainWindow(qtw.QWidget):
         self.BT_is_downloading = False
         self.MAC_input = None
         self.BT_thread = None
+        self.download_status = queue.Queue()
 
         # initiate window
         super().__init__(windowTitle="IAS Project")
@@ -757,7 +764,7 @@ class MainWindow(qtw.QWidget):
         ip = ip.split("\t")[0]
         print("trying to connect to " + ip)
         self.set_loading_screen_section()
-        self.lan_thread = LANThread(self.LAN_client, ip)
+        self.lan_thread = LANThread(self.LAN_client, ip, self.download_status)
         self.lan_thread.start()
         self.lan_is_downloading = True
         self.lan_thread.finished.connect(self.finished_lan_download)
@@ -783,6 +790,10 @@ class MainWindow(qtw.QWidget):
     # used after lan download finishes, turns off loading screen
     def finished_lan_download(self):
         self.lan_is_downloading = False
+        bool = self.download_status.get()
+        if bool == True:
+            print("download failed")
+        self.download_status.empty()
         self.set_reading_section()
 
     # used after Bluetooth download finishes, turns off loading screen
