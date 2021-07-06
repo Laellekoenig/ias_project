@@ -16,6 +16,7 @@ class bt_server:
         self.port = 4
         self.socket = None
         self.running = False
+        self.server_timeout = 5
 
     def start_server(self):
         self.host_mac_address = self.get_mac_address()
@@ -28,6 +29,7 @@ class bt_server:
 
         try: #try to create a socket
             self.socket = socket.socket(socket.AF_BLUETOOTH, socket.SOCK_STREAM, socket.BTPROTO_RFCOMM)
+            self.socket.settimeout(self.server_timeout)
             #####self.socket.settimeout(30)
             self.socket.bind((self.host_mac_address, self.port))
             #####print("in 30 seconds the server closes, if no client connected")
@@ -38,70 +40,70 @@ class bt_server:
             print("Socket creation exception")
             return
         
-        try: 
-            client, address = self.socket.accept()
-            print("client {} connected to your server and is receiving your articles now".format(address))
-        except:
-            print("couldn't connect with client")
-            self.socket.close()
-            self.running = False
-            return
+        while self.running:
+            try:
+                try: 
+                    client, address = self.socket.accept()
+                    print("client {} connected to your server and is receiving your articles now".format(address))
+                except:
+                    print("couldn't connect with client")
+                    self.socket.close()
+                    self.running = False
+                    return
 
-        try:
-            date_time_msg = client.recv(4096)
-            date_time = datetime.fromisoformat(date_time_msg.decode())
-        #except socket.timeout:
-        #    print("no client connected, server gets closed")
-        #    client.close()
-        #    self.socket.close()
-        #    self.running = False
-        #    return
-        except:
-            print("something went wrong...")
-            print("try to turn on your bluetooth and try again")
-            client.close()
-            self.socket.close()
-            self.running = False
-            return
+                try:
+                    date_time_msg = client.recv(4096)
+                    date_time = datetime.fromisoformat(date_time_msg.decode())
+                except:
+                    print("something went wrong...")
+                    print("try to turn on your bluetooth and try again")
+                    client.close()
+                    self.socket.close()
+                    self.running = False
+                    return
 
-        try:
-            path = zip_articles(date_time)
-            if path == None:
-                client.send("???!no_new_data_for_you!???")
+                try:
+                    path = zip_articles(date_time)
+                    if path == None:
+                        client.send("???!no_new_data_for_you!???")
+                        client.close()
+                        self.socket.close()
+                        self.running = False
+                        print("there are no new articles for you")
+                        return
+                    else:
+                        f = open(path, 'rb')
+                except Exception:
+                    print("Failed to open or compress files for sending to client.")
+                    client.send("???!no_new_data_for_you!???")
+                    client.close()
+                    self.socket.close()
+                    self.running = False
+                    return
+                #f = open("Bluetoothtest.txt", "rb")
+
+                try:    
+                    data = ""
+                    while not data == "!?L=C)(JZB?)K)=FJ(W".encode():
+                        data = f.read(1024)
+                        if data == "".encode(): # sent all bits of the file
+                            data = "!?L=C)(JZB?)K)=FJ(W".encode() # windows socket doesn't support flush() (problems with sending empty packet, so that receiver doesn't know when last packet arrived, therefore sending this string)
+                        client.send(data)
+                    #client.flush()  
+                    print("finished sending new articles")
+                except:
+                    print("something went wrong while sending your articles")
+
+                f.close()
+                #if os.path.exists(str(Path.home()) + "/NewsTest/Articles/articles.zip"):
+                    #os.remove(str(Path.home()) + "/NewsTest/Articles/articles.zip")
                 client.close()
                 self.socket.close()
                 self.running = False
-                print("there are no new articles for you")
-                return
-            else:
-                f = open(path, 'rb')
-        except Exception:
-            print("Failed to open or compress files for sending to client.")
-            client.send("???!no_new_data_for_you!???")
-            client.close()
-            self.socket.close()
-            self.running = False
-            return
-        #f = open("Bluetoothtest.txt", "rb")
+            except socket.timeout:
+                self.socket.listen(1)
+                print("renew timeout")
 
-        try:    
-            data = ""
-            while not data == "!?L=C)(JZB?)K)=FJ(W".encode():
-                data = f.read(1024)
-                if data == "".encode(): # sent all bits of the file
-                    data = "!?L=C)(JZB?)K)=FJ(W".encode() # windows socket doesn't support flush() (problems with sending empty packet, so that receiver doesn't know when last packet arrived, therefore sending this string)
-                client.send(data)
-            #client.flush()  
-            print("finished sending new articles")
-        except:
-            print("something went wrong while sending your articles")
-
-        f.close()
-        #if os.path.exists(str(Path.home()) + "/NewsTest/Articles/articles.zip"):
-            #os.remove(str(Path.home()) + "/NewsTest/Articles/articles.zip")
-        client.close()
-        self.socket.close()
-        self.running = False
 
     def get_device_os(self):
         try:
@@ -134,11 +136,15 @@ class bt_server:
             return None
 
     def stop_server(self):
-        if self.running:
+        """if self.running:
             if self.socket != None:
                 self.socket.close()
                 self.running = False
-        print("closed connection")
+        print("closed connection")"""
+        self.running = False
+
+    def keep_alive(self):
+        self.running = True
 
     def is_running(self):
         return self.running
