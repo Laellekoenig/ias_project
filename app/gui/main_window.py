@@ -33,6 +33,16 @@ class downloadingThread(qtc.QThread):
     def run(self):
         self.logic.download_new_articles()
 
+# QThread that downloads articles via LAN connection
+class LANThread(qtc.QThread):
+    def __init__(self, LAN_client, ip):
+        super().__init__()
+        self.LAN_client = LAN_client
+        self.ip = ip
+
+    def run(self):
+        self.LAN_client.start_client(self.ip)
+
 # main GUI class
 class MainWindow(qtw.QWidget):
 
@@ -54,6 +64,7 @@ class MainWindow(qtw.QWidget):
         self.combo = None
         self.current_title = None
         self.downloading_thread = None
+        self.lan_thread = None
 
         # initiate window
         super().__init__(windowTitle="IAS Project")
@@ -442,6 +453,11 @@ class MainWindow(qtw.QWidget):
 
         self.main.addLayout(lanLayout, 0, 0)
 
+    # LAN client downloading UI
+    def set_lan_loading_section(self):
+        self.tab_changed()
+        #TODO
+
     # bluetooth server UI
     def set_blue_server_section(self):
         self.tab_changed()
@@ -721,8 +737,10 @@ class MainWindow(qtw.QWidget):
         ip = self.serverLst.currentItem().text()
         ip = ip.split("\t")[0]
         print("trying to connect to " + ip)
-        self.LAN_client.start_client_threaded(ip)
-        self.set_LAN_loading_screen()
+        self.set_loading_screen_section()
+        self.lan_thread = LANThread(self.LAN_client, ip)
+        self.lan_thread.start()
+        self.lan_thread.finished.connect(self.set_reading_section)
 
     # switch active article filter to "today"
     def switch_today(self):

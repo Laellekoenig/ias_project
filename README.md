@@ -5,18 +5,18 @@
 - [x] loading animation when scraping
 - [x] only download new articles
 - [x] logic interface for GUI
-- [ ] option to stop server
+- [x] option to stop server
 
 ## GLOBAL TODO
-- [ ] add server timeouts in order to easily close servers
+- [x] add server timeouts in order to easily close servers
 
 ## Simon
-- [ ] implement lan server as class
-- [ ] implment lan client as class
+- [x] implement lan server as class
+- [x] implment lan client as class
 
 ## Philipp
-- [ ] implement bluetooth server as class
-- [ ] implment bluetooth client as class
+- [x] implement bluetooth server as class
+- [x] implment bluetooth client as class
 
 ## Max
 - [x] article filter in read section
