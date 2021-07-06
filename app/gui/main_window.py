@@ -44,7 +44,7 @@ class LANThread(qtc.QThread):
         self.LAN_client.start_client(self.ip)
 
 # QThread that downloads articles via Bluetooth connection
-class BTThread(qtc.Thread):
+class BTThread(qtc.QThread):
     def __init__(self, BT_client, mac):
         super().__init__()
         self.BT_client = BT_client
