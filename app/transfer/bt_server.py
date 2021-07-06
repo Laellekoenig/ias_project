@@ -49,12 +49,20 @@ class bt_server:
             except socket.timeout:
                 self.socket.listen(1)
                 print("renew timeout")
+                continue
+            except Exception:
+                print("couldn't connect with client")
+                self.socket.close()
+                self.running = False
+                return
+
             try:
                 date_time_msg = client.recv(4096)
                 date_time = datetime.fromisoformat(date_time_msg.decode())
             except socket.timeout:
                 self.socket.listen(1)
                 print("renew timeout")
+                continue
             except Exception:
                 print("something went wrong...")
                 print("try to turn on your bluetooth and try again")
@@ -77,6 +85,7 @@ class bt_server:
             except socket.timeout:
                 self.socket.listen(1)
                 print("renew timeout")
+                continue
             except Exception:
                 print("Failed to open or compress files for sending to client.")
                 client.send("???!no_new_data_for_you!???")
@@ -109,6 +118,7 @@ class bt_server:
             self.running = False
 
         self.thread_running = False
+        print("server closed")
 
 
     def get_device_os(self):
