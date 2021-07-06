@@ -462,6 +462,9 @@ class MainWindow(qtw.QWidget):
         # bluetooth sockets do not work on macOS
         on_macOS = self.BT_server.on_macOS()
 
+        # keep server alive if open
+        self.BT_server.keep_alive()
+
         if not on_macOS:
             if not self.BT_server.is_running():
                 # not on mac -> open socket
