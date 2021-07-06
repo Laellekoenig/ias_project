@@ -1,5 +1,6 @@
 # -- standard python --
 import os
+import queue
 # -- PyQt --
 import qtawesome as qta
 from PyQt5 import QtWidgets as qtw
@@ -35,13 +36,18 @@ class downloadingThread(qtc.QThread):
 
 # QThread that downloads articles via LAN connection
 class LANThread(qtc.QThread):
-    def __init__(self, LAN_client, ip):
+    def __init__(self, LAN_client, ip, queue):
         super().__init__()
         self.LAN_client = LAN_client
         self.ip = ip
+        self.queue = queue
 
     def run(self):
-        self.LAN_client.start_client(self.ip)
+        ret = self.LAN_client.start_client(self.ip)
+        if ret == 1:
+            self.queue.put(False)
+        else:
+            self.queue.put(True)
 
 # QThread that downloads articles via Bluetooth connection
 class BTThread(qtc.QThread):
@@ -76,8 +82,11 @@ class MainWindow(qtw.QWidget):
         self.downloading_thread = None
         self.lan_thread = None
         self.lan_is_downloading = False
+        self.BT_is_downloading = False
         self.MAC_input = None
+        self.IP_input = None
         self.BT_thread = None
+        self.download_status = queue.Queue()
 
         # initiate window
         super().__init__(windowTitle="IAS Project")
@@ -285,7 +294,7 @@ class MainWindow(qtw.QWidget):
 
     # downloading and sharing section of app
     def set_downloading_section(self):
-        if self.logic.is_updating or self.lan_is_downloading:
+        if self.logic.is_updating or self.lan_is_downloading or self.BT_is_downloading:
             # show loading screen if currently downloading
             self.set_loading_screen_section()
             return
@@ -451,12 +460,18 @@ class MainWindow(qtw.QWidget):
         lst.setCurrentRow(0)
         self.serverLst = lst
 
+        manual_btn = qtw.QPushButton(text="manually input IP")
+        manual_btn.setObjectName("manualButton")
+        manual_btn.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
+        manual_btn.clicked.connect(self.set_lan_client_manual_input_section)
+
         connect_btn = qtw.QPushButton(text="connect")
         connect_btn.setObjectName("bacButton")
         connect_btn.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
         connect_btn.clicked.connect(self.connect)
 
-        btns = qtw.QHBoxLayout()
+        btns = qtw.QVBoxLayout()
+        btns.addWidget(manual_btn)
         btns.addWidget(connect_btn)
 
         lanLayout = qtw.QVBoxLayout()
@@ -465,6 +480,46 @@ class MainWindow(qtw.QWidget):
         lanLayout.addLayout(btns)
 
         self.main.addLayout(lanLayout, 0, 0)
+
+    # LAN client UI for manually entering an IP address
+    def set_lan_client_manual_input_section(self):
+        self.tab_changed()
+        self.set_selected_menu_button(self.b2)
+
+        label = qtw.QLabel("Enter partner's IP address:")
+        label.setObjectName("client-text")
+
+        input = qtw.QLineEdit()
+        input.setAttribute(qtc.Qt.WA_MacShowFocusRect, 0)
+        regex = qtc.QRegExp("^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$")
+        input.setValidator(qtg.QRegExpValidator(regex))
+        input.setAlignment(qtc.Qt.AlignCenter)
+        self.IP_input = input
+
+        btn = qtw.QPushButton("connect")
+        btn.setObjectName("bacButton")
+        btn.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
+        btn.clicked.connect(self.connect_manually)
+
+        btn2 = qtw.QPushButton("back")
+        btn2.setObjectName("manualButton2")
+        btn2.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
+        btn2.clicked.connect(self.set_lan_client_section)
+
+        layout = qtw.QVBoxLayout()
+        layout.addStretch()
+        layout.addWidget(label)
+        layout.addWidget(input)
+        layout.addWidget(btn2)
+        layout.addWidget(btn)
+        layout.addStretch()
+
+        horizontal = qtw.QHBoxLayout()
+        horizontal.addStretch()
+        horizontal.addLayout(layout)
+        horizontal.addStretch()
+
+        self.main.addLayout(horizontal, 0, 0)
 
     # bluetooth server UI
     def set_blue_server_section(self):
@@ -531,7 +586,7 @@ class MainWindow(qtw.QWidget):
         btn = qtw.QPushButton("connect")
         btn.setObjectName("bt-client-btn")
         btn.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
-        btn.clicked.connect(self.handle_BT_client)
+        btn.clicked.connect(self.connect_BT)
 
         layout = qtw.QVBoxLayout()
         layout.addStretch()
@@ -588,6 +643,34 @@ class MainWindow(qtw.QWidget):
         self.main.addWidget(selector, 0, 0, 100, 20)
         self.main.addWidget(text, 0, 20, 100, 75)
         self.main.addLayout(rhs_layout, 0, 95, 100, 5)
+
+    # customizable info screen
+    # msg = big text message
+    # btn_name = text on btn beneath info
+    # btn_fct = button onclick function
+    def set_info_screen(self, msg, btn_name, btn_fct):
+        self.tab_changed()
+
+        label = qtw.QLabel(msg)
+        label.setObjectName("server-text")
+
+        btn = qtw.QPushButton(text=btn_name)
+        btn.setObjectName("bacButton")
+        btn.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
+        btn.clicked.connect(btn_fct)
+
+        vertical = qtw.QVBoxLayout()
+        vertical.addStretch()
+        vertical.addWidget(label)
+        vertical.addWidget(btn)
+        vertical.addStretch()
+
+        horizontal = qtw.QHBoxLayout()
+        horizontal.addStretch()
+        horizontal.addLayout(vertical)
+        horizontal.addStretch()
+
+        self.main.addLayout(horizontal, 0, 0)
 
     # if selected article in article selector changes
     # used in reading section
@@ -656,6 +739,9 @@ class MainWindow(qtw.QWidget):
             self.set_loading_screen_section()
 
         if self.selected == self.b2 and self.lan_is_downloading:
+            self.set_loading_screen_section()
+
+        if self.selected == self.b2 and self.BT_is_downloading:
             self.set_loading_screen_section()
 
         # update bookmark color
@@ -730,20 +816,12 @@ class MainWindow(qtw.QWidget):
         self.downloading_thread = downloadingThread(self.logic)
         self.downloading_thread.start()
         # switch to reading section when finished downloading
-        self.downloading_thread.finished.connect(self.set_reading_section)
+        self.downloading_thread.finished.connect(self.srf_download_finished)
 
-    def handle_BT_client(self):
-        mac = self.MAC_input.text()
-        if len(mac) == 17:
-            self.set_loading_screen_section()
-            self.BT_thread = BTThread(self.BT_client, mac)
-            self.BT_thread.start()
-            self.BT_thread.finished.connect(self.set_reading_section)
-        else:
-            info = qtw.QMessageBox()
-            info.setText("Invalid MAC address.")
-            info.setWindowTitle("Invalid")
-            info.exec_()
+    # activated after scraping is finished
+    # not possible to directly insert above
+    def srf_download_finished(self):
+        self.set_info_screen("Download successful.", "read", self.set_reading_section)
 
     # check current mode downloading/sharing and select corresponding action
     def switch_wlan(self):
@@ -766,16 +844,52 @@ class MainWindow(qtw.QWidget):
         ip = ip.split("\t")[0]
         print("trying to connect to " + ip)
         self.set_loading_screen_section()
-        self.lan_thread = LANThread(self.LAN_client, ip)
+        self.lan_thread = LANThread(self.LAN_client, ip, self.download_status)
         self.lan_thread.start()
         self.lan_is_downloading = True
         self.lan_thread.finished.connect(self.finished_lan_download)
 
+    def connect_manually(self):
+        ip = self.IP_input.text()
+        if len(ip) >= 7 and len(ip) <= 15:
+            print("trying to connect to " + ip)
+            self.set_loading_screen_section()
+            self.lan_thread = LANThread(self.LAN_client, ip, self.download_status)
+            self.lan_thread.start()
+            self.lan_is_downloading = True
+            self.lan_thread.finished.connect(self.finished_lan_download)
+        else:
+            self.set_info_screen("Invalid IP address.", "back", self.set_lan_client_manual_input_section)
+
+    # used for reading user input
+    # retrieves entered MAC address and hands it to Bluetooth client
+    def connect_BT(self):
+        mac = self.MAC_input.text()
+        if len(mac) == 17:
+            # valid address
+            self.set_loading_screen_section()
+            self.BT_thread = BTThread(self.BT_client, mac)
+            self.BT_thread.start()
+            self.BT_is_downloading = True
+            self.BT_thread.finished.connect(self.finished_BT_download)
+        else:
+            # invalid address
+            self.set_info_screen("Invalid MAC address.", "back", self.set_blue_client_section)
+
     # used after lan download finishes, turns off loading screen
     def finished_lan_download(self):
         self.lan_is_downloading = False
+        bool = self.download_status.get()
+        self.download_status.empty()
+        if bool == True:
+            self.set_info_screen("Download failed.", "back", self.set_downloading_section)
+        else:
+            self.set_info_screen("Download successful.", "read", self.set_reading_section)
+
+    # used after Bluetooth download finishes, turns off loading screen
+    def finished_BT_download(self):
+        self.BT_is_downloading = False
         self.set_reading_section()
-        print("done")
 
     # switch active article filter to "today"
     def switch_today(self):

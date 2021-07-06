@@ -1,6 +1,6 @@
 - [ ] BAC net integration
 - [ ] bluetooth article transmission
-- [ ] local network article transmission
+- [x] local network article transmission
 - [x] download articles
 - [x] loading animation when scraping
 - [x] only download new articles
@@ -16,7 +16,7 @@
 
 ## Philipp
 - [x] implement bluetooth server as class
-- [x~~~~~~~~] implment bluetooth client as class
+- [x] implement bluetooth client as class
 
 ## Max
 - [x] article filter in read section
@@ -39,15 +39,18 @@
 - [x] archive sort articles  
 - [x] stop loading animation when done downloading
 - [x] code refactoring
+- [x] implement downloading screen LAN
+- [x] implement gui for bluetooth server
+- [x] implement gui for bluetooth client
+- [x] implement downloading screen bluetooth
+- [x] style MAC error message
+- [x] message if download via LAN failed
+- [x] move appropriate functions to utils
+- [x] refactoring of utils
 ---
-- [ ] implement downloading screen LAN
-- [ ] move appropriate functions to utils
-- [ ] refactoring of utils
-- [ ] refactoring of interface
-- [ ] implement gui for bluetooth server
+- [ ] manual input of IP address
 ---
-- [ ] implement gui for bluetooth client
-- [ ] implement downloading screen bluetooth
+- [ ] message if download via BT failed  
 - [ ] open article into own window
 - [ ] more keyboard shortcuts
 - [ ] improve category filter efficiency
