@@ -49,12 +49,6 @@ class bt_server:
             except socket.timeout:
                 self.socket.listen(1)
                 print("renew timeout")
-            except Exception:
-                print("couldn't connect with client")
-                self.socket.close()
-                self.running = False
-                return
-
             try:
                 date_time_msg = client.recv(4096)
                 date_time = datetime.fromisoformat(date_time_msg.decode())
