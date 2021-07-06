@@ -43,6 +43,16 @@ class LANThread(qtc.QThread):
     def run(self):
         self.LAN_client.start_client(self.ip)
 
+# QThread that downloads articles via Bluetooth connection
+class BTThread(qtc.Thread):
+    def __init__(self, BT_client, mac):
+        super().__init__()
+        self.BT_client = BT_client
+        self.mac = mac
+
+    def run(self):
+        self.BT_client.start_client(self.mac)
+
 # main GUI class
 class MainWindow(qtw.QWidget):
 
@@ -66,6 +76,8 @@ class MainWindow(qtw.QWidget):
         self.downloading_thread = None
         self.lan_thread = None
         self.lan_is_downloading = False
+        self.MAC_input = None
+        self.BT_thread = None
 
         # initiate window
         super().__init__(windowTitle="IAS Project")
@@ -514,11 +526,12 @@ class MainWindow(qtw.QWidget):
         regex = qtc.QRegExp("^([0-9A-Fa-f]{2}[-:]){5}([0-9A-Fa-f]{2})$")
         input.setValidator(qtg.QRegExpValidator(regex))
         input.setAlignment(qtc.Qt.AlignCenter)
+        self.MAC_input = input
 
         btn = qtw.QPushButton("connect")
         btn.setObjectName("bt-client-btn")
         btn.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
-        #TODO btn.clicked.connect()
+        btn.clicked.connect(self.handle_BT_client)
 
         layout = qtw.QVBoxLayout()
         layout.addStretch()
@@ -715,6 +728,19 @@ class MainWindow(qtw.QWidget):
         self.downloading_thread.start()
         # switch to reading section when finished downloading
         self.downloading_thread.finished.connect(self.set_reading_section)
+
+    def handle_BT_client(self):
+        mac = self.MAC_input.text()
+        if len(mac) == 17:
+            self.set_loading_screen_section()
+            self.BT_thread = BTThread(self.BT_client, mac)
+            self.BT_thread.start()
+            self.BT_thread.finished.connect(self.set_reading_section)
+        else:
+            info = qtw.QMessageBox()
+            info.setText("Invalid MAC address.")
+            info.setWindowTitle("Invalid")
+            info.exec_()
 
     # check current mode downloading/sharing and select corresponding action
     def switch_wlan(self):
