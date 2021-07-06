@@ -60,7 +60,7 @@ class BTThread(qtc.QThread):
         self.BT_client.start_client(self.mac)
 
 # new window for displaying articles
-class externalWindow(qtw.QDialog):
+class externalWindow(qtw.QWidget):
     def __init__(self, title, html, w, h, light):
         super().__init__()
         self.setWindowTitle(title)
