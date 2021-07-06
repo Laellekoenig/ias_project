@@ -43,16 +43,16 @@
 - [x] implement gui for bluetooth server
 - [x] implement gui for bluetooth client
 - [x] implement downloading screen bluetooth
+- [x] style MAC error message
+- [x] message if download via LAN failed
+- [x] move appropriate functions to utils
+- [x] refactoring of utils
 ---
-- [ ] move appropriate functions to utils
-- [ ] refactoring of utils
 - [ ] refactoring of interface
 ---
-- [ ] message if download via LAN failed
 - [ ] message if download via BT failed  
 - [ ] open article into own window
 - [ ] more keyboard shortcuts
 - [ ] improve category filter efficiency
 - [ ] remove bluetooth btn from mac os
 - [ ] fix bookmark color in dark mode  
-- [ ] style MAC error message

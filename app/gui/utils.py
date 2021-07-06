@@ -1,11 +1,14 @@
+# -- standard python --
 import os
 import math
+# -- PyQt --
 from PyQt5 import QtWidgets as qtw
 from PyQt5 import QtGui as qtg
 from PyQt5 import QtCore as qtc
 
+# loads fonts stored in /data/fonts for use in application
 def load_fonts():
-    # adds custom fonts to application
+    # load custom fonts
     db = qtg.QFontDatabase()
     walbaum = os.getcwd() + "/data/fonts/Walbaum.ttf"
     merri_light = os.getcwd() + "/data/fonts/Merriweather-Light.ttf"
@@ -15,6 +18,7 @@ def load_fonts():
     merri_italic = os.getcwd() + "/data/fonts/Merriweather-Italic.ttf"
     assistant = os.getcwd() + "/data/fonts/Assistant.ttf"
 
+    # add to application
     db.addApplicationFont(walbaum)
     db.addApplicationFont(merri_light)
     db.addApplicationFont(merri_regular)
@@ -22,8 +26,8 @@ def load_fonts():
     db.addApplicationFont(merri_black)
     db.addApplicationFont(merri_italic)
     db.addApplicationFont(assistant)
-    return
 
+# used for determining starting window size
 def get_screen_size(app):
     screen = app.primaryScreen()
     size = screen.size()
@@ -31,6 +35,7 @@ def get_screen_size(app):
     h = size.height()
     return (w, h)
 
+# scales the given window to 70% of screen size
 def starting_screen_size(window, app):
     w, h = get_screen_size(app)
     # application takes up 70% of screen size on start
@@ -38,48 +43,24 @@ def starting_screen_size(window, app):
     w = math.floor(RATIO * w)
     h = math.floor(RATIO * h)
     window.resize(w, h)
-    return
 
-def get_article_list():
-    # articles must be in data/articles folder
-    # must be .html files
-    # name will be formatted as follows:
-    # generic_article_name.html     ->      generic article name
-
-    files = os.listdir("data/articles")
-    articles = []
-    for item in files:
-        if item.endswith(".html"):
-            articleName = get_article_name(item)
-            articles.append(articleName)
-    return articles
-
-def get_article_name(name):
-    # cut away .html
-    name = name[:-5]
-    # format name:  article_name -> article name
-    name = name.replace("_", " ")
-    return name
-
-def get_file_name(name):
-    # article name  -> article_name ->  article_name.html
-    name = name.replace(" ", "_")
-    name += ".html"
-    return name
-
+# clears every widget / layout from layout
+# used for resetting window
 def remove_widgets(layout):
+    # iterate over every widget/layout in layout
     for i in reversed(range(layout.count())):
         item = layout.itemAt(i)
 
         # not ideal but seems to work
+        # remove parents of widget
         if str(type(item)) == "<class 'PyQt5.QtWidgets.QWidgetItem'>":
             item.widget().setParent(None)
         else:
             if str(type(item)) != "<class 'PyQt5.QtWidgets.QSpacerItem'>":
                 remove_widgets(item)
                 item.layout().setParent(None)
-    return
 
+# used for loading app icons of application
 def load_app_icons(app):
     app_icon = qtg.QIcon()
     path = os.getcwd() + "/data/images/"
@@ -90,15 +71,10 @@ def load_app_icons(app):
     app_icon.addFile(path + "256x256.png", qtc.QSize(256, 256))
     app.setWindowIcon(app_icon)
 
-def get_items_from_list_widget(widget):
-    lst = []
-    for i in range(widget.count() - 1):
-        lst.append(widget.item(i).text())
-
-    return lst
-
+# removes reading indication from article title
 def remove_dot(title):
     if not title.startswith("\u2022"):
         return title
     else:
+        # remove dot and space in front of title
         return title[2:]
