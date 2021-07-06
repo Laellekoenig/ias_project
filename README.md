@@ -5,18 +5,18 @@
 - [x] loading animation when scraping
 - [x] only download new articles
 - [x] logic interface for GUI
-- [ ] option to stop server
+- [x] option to stop server
 
 ## GLOBAL TODO
-- [ ] add server timeouts in order to easily close servers
+- [x] add server timeouts in order to easily close servers
 
 ## Simon
-- [ ] implement lan server as class
-- [ ] implment lan client as class
+- [x] implement lan server as class
+- [x] implment lan client as class
 
 ## Philipp
-- [ ] implement bluetooth server as class
-- [ ] implment bluetooth client as class
+- [x] implement bluetooth server as class
+- [x] implment bluetooth client as class
 
 ## Max
 - [x] article filter in read section
@@ -37,15 +37,19 @@
 - [x] close server on application termination
 - [x] srf button on resize    
 - [x] archive sort articles  
-- [ ] implement downloading screen LAN
-- [ ] code refactoring
+- [x] stop loading animation when done downloading
+- [x] code refactoring
 ---
+- [ ] implement downloading screen LAN
+- [ ] move appropriate functions to utils
+- [ ] refactoring of utils
+- [ ] refactoring of interface
 - [ ] implement gui for bluetooth server
+---
 - [ ] implement gui for bluetooth client
 - [ ] implement downloading screen bluetooth
-- [ ] stop loading animation when done downloading
 - [ ] open article into own window
-- [ ] more shortcuts
-- [ ] fix bookmark color in dark mode  
+- [ ] more keyboard shortcuts
 - [ ] improve category filter efficiency
 - [ ] remove bluetooth btn from mac os
+- [ ] fix bookmark color in dark mode  
