@@ -46,18 +46,21 @@ class bt_server:
             try: 
                 client, address = self.socket.accept()
                 print("client {} connected to your server and is receiving your articles now".format(address))
+            except socket.timeout:
+                self.socket.listen(1)
+                print("renew timeout")
             except Exception:
                 print("couldn't connect with client")
                 self.socket.close()
                 self.running = False
                 return
-            except socket.timeout:
-                self.socket.listen(1)
-                print("renew timeout")
 
             try:
                 date_time_msg = client.recv(4096)
                 date_time = datetime.fromisoformat(date_time_msg.decode())
+            except socket.timeout:
+                self.socket.listen(1)
+                print("renew timeout")
             except Exception:
                 print("something went wrong...")
                 print("try to turn on your bluetooth and try again")
@@ -65,9 +68,6 @@ class bt_server:
                 self.socket.close()
                 self.running = False
                 return
-            except socket.timeout:
-                self.socket.listen(1)
-                print("renew timeout")
 
             try:
                 path = zip_articles(date_time)
@@ -80,6 +80,9 @@ class bt_server:
                     return
                 else:
                     f = open(path, 'rb')
+            except socket.timeout:
+                self.socket.listen(1)
+                print("renew timeout")
             except Exception:
                 print("Failed to open or compress files for sending to client.")
                 client.send("???!no_new_data_for_you!???")
@@ -87,9 +90,6 @@ class bt_server:
                 self.socket.close()
                 self.running = False
                 return
-            except socket.timeout:
-                self.socket.listen(1)
-                print("renew timeout")
             #f = open("Bluetoothtest.txt", "rb")
 
             try:    
@@ -101,11 +101,11 @@ class bt_server:
                     client.send(data)
                 #client.flush()  
                 print("finished sending new articles")
-            except Exception:
-                print("something went wrong while sending your articles")
             except socket.timeout:
                 self.socket.listen(1)
                 print("renew timeout")
+            except Exception:
+                print("something went wrong while sending your articles")
 
             f.close()
             #if os.path.exists(str(Path.home()) + "/NewsTest/Articles/articles.zip"):
