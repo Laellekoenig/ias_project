@@ -104,7 +104,6 @@ class MainWindow(qtw.QWidget):
         self.bookmark = None
         self.bookmark_gif = None
         self.bookmark_active = False
-        self.archive_selector = None
         self.archive_reader = None
         self.mdi_btn = None
         self.combo = None

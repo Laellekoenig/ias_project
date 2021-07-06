@@ -48,11 +48,12 @@
 - [x] move appropriate functions to utils
 - [x] refactoring of utils
 - [x] manual input of IP address
+- [x] open article into own window
 ---
 ---
 - [ ] message if download via BT failed  
-- [ ] open article into own window
 - [ ] more keyboard shortcuts
 - [ ] improve category filter efficiency
 - [ ] remove bluetooth btn from mac os
+- [ ] fix article viewer in archive section swithing from dark/light  
 - [ ] fix bookmark color in dark mode  
