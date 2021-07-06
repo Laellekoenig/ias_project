@@ -59,7 +59,7 @@ class BTThread(qtc.QThread):
     def run(self):
         self.BT_client.start_client(self.mac)
 
-# new window for displaying articles 
+# new window for displaying articles
 class externalWindow(qtw.QDialog):
     def __init__(self, title, html, w, h, light):
         super().__init__()
@@ -1175,10 +1175,11 @@ class MainWindow(qtw.QWidget):
             title = utils.remove_dot(title)
         # archive section
         elif self.selected == self.b3:
-            if self.archive_selector.currentItem() == None:
+            if self.selector.currentItem() == None:
                 return
-            title = self.archive_selector.currentItem().text()
-            title = utils.remove_dot(title)
+            else:
+                title = self.selector.currentItem().text()
+                title = utils.remove_dot(title)
         else:
             return
 
