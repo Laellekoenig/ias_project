@@ -47,8 +47,8 @@
 - [x] message if download via LAN failed
 - [x] move appropriate functions to utils
 - [x] refactoring of utils
+- [x] manual input of IP address
 ---
-- [ ] manual input of IP address
 ---
 - [ ] message if download via BT failed  
 - [ ] open article into own window

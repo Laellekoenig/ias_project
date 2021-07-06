@@ -59,6 +59,36 @@ class BTThread(qtc.QThread):
     def run(self):
         self.BT_client.start_client(self.mac)
 
+# new window for displaying articles 
+class externalWindow(qtw.QDialog):
+    def __init__(self, title, html, w, h, light):
+        super().__init__()
+        self.setWindowTitle(title)
+        self.resize(w, h)
+
+        if light:
+            self.setStyleSheet(style.getLightStyleSheet())
+        else:
+            self.setStyleSheet(style.getDarkStyleSheet())
+
+        # create reader
+        reader = qtw.QTextBrowser()
+        style.setArticleStyle(reader)
+        reader.setOpenExternalLinks(True)
+        reader.insertHtml(html)
+        reader.moveCursor(qtg.QTextCursor.Start)
+
+        layout = qtw.QVBoxLayout()
+        layout.addWidget(reader)
+
+        self.setLayout(layout)
+
+    def switch(self, light):
+        if light:
+            self.setStyleSheet(style.getLightStyleSheet())
+        else:
+            self.setStyleSheet(style.getDarkStyleSheet())
+
 # main GUI class
 class MainWindow(qtw.QWidget):
 
@@ -87,6 +117,8 @@ class MainWindow(qtw.QWidget):
         self.IP_input = None
         self.BT_thread = None
         self.download_status = queue.Queue()
+        self.external_btn = None
+        self.open_windows = []
 
         # initiate window
         super().__init__(windowTitle="IAS Project")
@@ -233,7 +265,17 @@ class MainWindow(qtw.QWidget):
         self.mdi_btn = mdi_book_btn
         self.draw_bookmark()
 
-        #article filters
+        # for opening articles in own windows
+        mdi_external = qta.icon("mdi.open-in-new", color="black")
+        external_btn = qtw.QPushButton()
+        external_btn.setObjectName("bookmark-btn")
+        external_btn.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
+        external_btn.clicked.connect(self.open_external)
+        external_btn.setIconSize(qtc.QSize(35, 35))
+        external_btn.setIcon(mdi_external)
+        self.external_btn = external_btn
+
+        # article filters
         self.today_btn = qtw.QPushButton(text="today")
         self.today_btn.setObjectName("filter-btn-selected")
         self.today_btn.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
@@ -283,6 +325,7 @@ class MainWindow(qtw.QWidget):
         # right of article reader
         rhs_layout = qtw.QVBoxLayout()
         rhs_layout.addWidget(mdi_book_btn)
+        rhs_layout.addWidget(external_btn)
         rhs_layout.addStretch()
 
         # article selector 20% of content
@@ -636,8 +679,19 @@ class MainWindow(qtw.QWidget):
         self.mdi_btn = mdi_book_btn
         self.draw_bookmark()
 
+        # for opening articles in own windows
+        mdi_external = qta.icon("mdi.open-in-new", color="black")
+        external_btn = qtw.QPushButton()
+        external_btn.setObjectName("bookmark-btn")
+        external_btn.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
+        external_btn.clicked.connect(self.open_external)
+        external_btn.setIconSize(qtc.QSize(35, 35))
+        external_btn.setIcon(mdi_external)
+        self.external_btn = external_btn
+
         rhs_layout = qtw.QVBoxLayout()
         rhs_layout.addWidget(mdi_book_btn)
+        rhs_layout.addWidget(external_btn)
         rhs_layout.addStretch()
 
         self.main.addWidget(selector, 0, 0, 100, 20)
@@ -733,6 +787,22 @@ class MainWindow(qtw.QWidget):
 
         # update colors of menu bar
         self.set_selected_menu_button(self.selected)
+
+        # update external link icon
+        if self.light:
+            icon = qta.icon("mdi.open-in-new", color="black")
+        else:
+            icon = qta.icon("mdi.open-in-new", color="#f7f7f7")
+
+        self.external_btn.setIcon(icon)
+
+        # update external windows
+        for window in self.open_windows:
+            if window.isVisible():
+                window.switch(self.light)
+            else:
+                # remove windows from list if no longer open
+                self.open_windows.remove(window)
 
         # if currently in downloading screen, get new gif
         if self.selected == self.b2 and self.logic.is_updating:
@@ -1096,3 +1166,25 @@ class MainWindow(qtw.QWidget):
         # stop active servers
         self.LAN_server.stop_server()
         self.BT_server.stop_server()
+
+    # opens the currently selected article in a new window
+    def open_external(self):
+        # in reading section
+        if self.selected == self.b1:
+            title = self.selector.currentItem().text()
+            title = utils.remove_dot(title)
+        # archive section
+        elif self.selected == self.b3:
+            if self.archive_selector.currentItem() == None:
+                return
+            title = self.archive_selector.currentItem().text()
+            title = utils.remove_dot(title)
+        else:
+            return
+
+        # retrieve html from title
+        html = self.logic.get_article_html_by_title1(title)
+        external_window = externalWindow(title, html, self.window().width(), self.window().height(), self.light)
+        external_window.show()
+
+        self.open_windows.append(external_window)
