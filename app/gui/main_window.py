@@ -76,6 +76,7 @@ class MainWindow(qtw.QWidget):
         self.downloading_thread = None
         self.lan_thread = None
         self.lan_is_downloading = False
+        self.BT_is_downloading = False
         self.MAC_input = None
         self.BT_thread = None
 
@@ -285,7 +286,7 @@ class MainWindow(qtw.QWidget):
 
     # downloading and sharing section of app
     def set_downloading_section(self):
-        if self.logic.is_updating or self.lan_is_downloading:
+        if self.logic.is_updating or self.lan_is_downloading or self.BT_is_downloading:
             # show loading screen if currently downloading
             self.set_loading_screen_section()
             return
@@ -531,7 +532,7 @@ class MainWindow(qtw.QWidget):
         btn = qtw.QPushButton("connect")
         btn.setObjectName("bt-client-btn")
         btn.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
-        btn.clicked.connect(self.handle_BT_client)
+        btn.clicked.connect(self.connect_BT)
 
         layout = qtw.QVBoxLayout()
         layout.addStretch()
@@ -658,6 +659,9 @@ class MainWindow(qtw.QWidget):
         if self.selected == self.b2 and self.lan_is_downloading:
             self.set_loading_screen_section()
 
+        if self.selected == self.b2 and self.BT_is_downloading:
+            self.set_loading_screen_section()
+
         # update bookmark color
         self.draw_bookmark()
         # update filter color
@@ -732,19 +736,6 @@ class MainWindow(qtw.QWidget):
         # switch to reading section when finished downloading
         self.downloading_thread.finished.connect(self.set_reading_section)
 
-    def handle_BT_client(self):
-        mac = self.MAC_input.text()
-        if len(mac) == 17:
-            self.set_loading_screen_section()
-            self.BT_thread = BTThread(self.BT_client, mac)
-            self.BT_thread.start()
-            self.BT_thread.finished.connect(self.set_reading_section)
-        else:
-            info = qtw.QMessageBox()
-            info.setText("Invalid MAC address.")
-            info.setWindowTitle("Invalid")
-            info.exec_()
-
     # check current mode downloading/sharing and select corresponding action
     def switch_wlan(self):
         if self.toggle.isChecked():
@@ -771,11 +762,33 @@ class MainWindow(qtw.QWidget):
         self.lan_is_downloading = True
         self.lan_thread.finished.connect(self.finished_lan_download)
 
+    # used for reading user input
+    # retrieves entered MAC address and hands it to Bluetooth client
+    def connect_BT(self):
+        mac = self.MAC_input.text()
+        if len(mac) == 17:
+            # valid address
+            self.set_loading_screen_section()
+            self.BT_thread = BTThread(self.BT_client, mac)
+            self.BT_thread.start()
+            self.BT_is_downloading = True
+            self.BT_thread.finished.connect(self.finished_BT_download)
+        else:
+            # invalid address
+            info = qtw.QMessageBox()
+            info.setText("Invalid MAC address.")
+            info.setWindowTitle("Invalid")
+            info.exec_()
+
     # used after lan download finishes, turns off loading screen
     def finished_lan_download(self):
         self.lan_is_downloading = False
         self.set_reading_section()
-        print("done")
+
+    # used after Bluetooth download finishes, turns off loading screen
+    def finished_BT_download(self):
+        self.BT_is_downloading = False
+        self.set_reading_section()
 
     # switch active article filter to "today"
     def switch_today(self):
