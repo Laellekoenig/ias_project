@@ -52,6 +52,9 @@ class bt_server:
                     self.socket.close()
                     self.running = False
                     return
+                except socket.timeout:
+                self.socket.listen(1)
+                print("renew timeout")
 
                 try:
                     date_time_msg = client.recv(4096)
@@ -63,6 +66,9 @@ class bt_server:
                     self.socket.close()
                     self.running = False
                     return
+                except socket.timeout:
+                self.socket.listen(1)
+                print("renew timeout")
 
                 try:
                     path = zip_articles(date_time)
@@ -82,6 +88,9 @@ class bt_server:
                     self.socket.close()
                     self.running = False
                     return
+                except socket.timeout:
+                self.socket.listen(1)
+                print("renew timeout")
                 #f = open("Bluetoothtest.txt", "rb")
 
                 try:    
@@ -95,6 +104,9 @@ class bt_server:
                     print("finished sending new articles")
                 except:
                     print("something went wrong while sending your articles")
+                except socket.timeout:
+                self.socket.listen(1)
+                print("renew timeout")
 
                 f.close()
                 #if os.path.exists(str(Path.home()) + "/NewsTest/Articles/articles.zip"):
