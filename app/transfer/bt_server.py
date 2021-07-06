@@ -17,8 +17,10 @@ class bt_server:
         self.socket = None
         self.running = False
         self.server_timeout = 5
+        self.thread_running = False
 
     def start_server(self):
+        self.thread_running = True
         self.host_mac_address = self.get_mac_address()
         if self.host_mac_address is None:
             print("Your device is currently not supported (you cannot start a bluetooth server)")
@@ -104,6 +106,8 @@ class bt_server:
                 self.socket.listen(1)
                 print("renew timeout")
 
+        self.thread_running = False
+
 
     def get_device_os(self):
         try:
@@ -147,7 +151,7 @@ class bt_server:
         self.running = True
 
     def is_running(self):
-        return self.running
+        return self.thread_running
 
     def start_server_threaded(self):
         self.thread = threading.Thread(target=self.start_server)
