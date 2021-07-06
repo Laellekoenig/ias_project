@@ -65,6 +65,7 @@ class MainWindow(qtw.QWidget):
         self.current_title = None
         self.downloading_thread = None
         self.lan_thread = None
+        self.lan_is_downloading = False
 
         # initiate window
         super().__init__(windowTitle="IAS Project")
@@ -272,7 +273,7 @@ class MainWindow(qtw.QWidget):
 
     # downloading and sharing section of app
     def set_downloading_section(self):
-        if self.logic.is_updating:
+        if self.logic.is_updating or self.lan_is_downloading:
             # show loading screen if currently downloading
             self.set_loading_screen_section()
             return
@@ -452,11 +453,6 @@ class MainWindow(qtw.QWidget):
         lanLayout.addLayout(btns)
 
         self.main.addLayout(lanLayout, 0, 0)
-
-    # LAN client downloading UI
-    def set_lan_loading_section(self):
-        self.tab_changed()
-        #TODO
 
     # bluetooth server UI
     def set_blue_server_section(self):
@@ -740,7 +736,14 @@ class MainWindow(qtw.QWidget):
         self.set_loading_screen_section()
         self.lan_thread = LANThread(self.LAN_client, ip)
         self.lan_thread.start()
-        self.lan_thread.finished.connect(self.set_reading_section)
+        self.lan_is_downloading = True
+        self.lan_thread.finished.connect(self.finished_lan_download)
+
+    # used after lan download finishes, turns off loading screen
+    def finished_lan_download(self):
+        self.lan_is_downloading = False
+        self.set_reading_section()
+        print("done")
 
     # switch active article filter to "today"
     def switch_today(self):
