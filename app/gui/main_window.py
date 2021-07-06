@@ -597,6 +597,34 @@ class MainWindow(qtw.QWidget):
         self.main.addWidget(text, 0, 20, 100, 75)
         self.main.addLayout(rhs_layout, 0, 95, 100, 5)
 
+    # customizable info screen
+    # msg = big text message
+    # btn_name = text on btn beneath info
+    # btn_fct = button onclick function
+    def set_info_screen(self, msg, btn_name, btn_fct):
+        self.tab_changed()
+
+        label = qtw.QLabel(msg)
+        label.setObjectName("server-text")
+
+        btn = qtw.QPushButton(text=btn_name)
+        btn.setObjectName("bacButton")
+        btn.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
+        btn.clicked.connect(btn_fct)
+
+        vertical = qtw.QVBoxLayout()
+        vertical.addStretch()
+        vertical.addWidget(label)
+        vertical.addWidget(btn)
+        vertical.addStretch()
+
+        horizontal = qtw.QHBoxLayout()
+        horizontal.addStretch()
+        horizontal.addLayout(vertical)
+        horizontal.addStretch()
+
+        self.main.addLayout(horizontal, 0, 0)
+
     # if selected article in article selector changes
     # used in reading section
     def selected_article_changed(self):
@@ -741,7 +769,12 @@ class MainWindow(qtw.QWidget):
         self.downloading_thread = downloadingThread(self.logic)
         self.downloading_thread.start()
         # switch to reading section when finished downloading
-        self.downloading_thread.finished.connect(self.set_reading_section)
+        self.downloading_thread.finished.connect(self.srf_download_finished)
+
+    # activated after scraping is finished
+    # not possible to directly insert above
+    def srf_download_finished(self):
+        self.set_info_screen("Download successful.", "read", self.set_reading_section)
 
     # check current mode downloading/sharing and select corresponding action
     def switch_wlan(self):
@@ -791,10 +824,11 @@ class MainWindow(qtw.QWidget):
     def finished_lan_download(self):
         self.lan_is_downloading = False
         bool = self.download_status.get()
-        if bool == True:
-            print("download failed")
         self.download_status.empty()
-        self.set_reading_section()
+        if bool == True:
+            self.set_info_screen("Download failed.", "back", self.set_downloading_section)
+        else:
+            self.set_info_screen("Download successful.", "read", self.set_reading_section)
 
     # used after Bluetooth download finishes, turns off loading screen
     def finished_BT_download(self):
