@@ -46,7 +46,7 @@ class bt_server:
             try: 
                 client, address = self.socket.accept()
                 print("client {} connected to your server and is receiving your articles now".format(address))
-            except Exception::
+            except Exception:
                 print("couldn't connect with client")
                 self.socket.close()
                 self.running = False
@@ -58,7 +58,7 @@ class bt_server:
             try:
                 date_time_msg = client.recv(4096)
                 date_time = datetime.fromisoformat(date_time_msg.decode())
-            except Exception::
+            except Exception:
                 print("something went wrong...")
                 print("try to turn on your bluetooth and try again")
                 client.close()
@@ -101,7 +101,7 @@ class bt_server:
                     client.send(data)
                 #client.flush()  
                 print("finished sending new articles")
-            except Exception::
+            except Exception:
                 print("something went wrong while sending your articles")
             except socket.timeout:
                 self.socket.listen(1)
