@@ -815,10 +815,7 @@ class MainWindow(qtw.QWidget):
             self.BT_thread.finished.connect(self.finished_BT_download)
         else:
             # invalid address
-            info = qtw.QMessageBox()
-            info.setText("Invalid MAC address.")
-            info.setWindowTitle("Invalid")
-            info.exec_()
+            self.set_info_screen("Invalid MAC address.", "back", self.set_blue_client_section)
 
     # used after lan download finishes, turns off loading screen
     def finished_lan_download(self):
