@@ -523,7 +523,7 @@ class MainWindow(qtw.QWidget):
         input = qtw.QLineEdit()
         input.setAttribute(qtc.Qt.WA_MacShowFocusRect, 0)
         # only allow input of valid MAC addresses
-        regex = qtc.QRegExp("^([0-9A-Fa-f]{2}[-:]){5}([0-9A-Fa-f]{2})$")
+        regex = qtc.QRegExp("^([0-9A-Fa-f]{2}[:]){5}([0-9A-Fa-f]{2})$")
         input.setValidator(qtg.QRegExpValidator(regex))
         input.setAlignment(qtc.Qt.AlignCenter)
         self.MAC_input = input
@@ -653,6 +653,9 @@ class MainWindow(qtw.QWidget):
 
         # if currently in downloading screen, get new gif
         if self.selected == self.b2 and self.logic.is_updating:
+            self.set_loading_screen_section()
+
+        if self.selected == self.b2 and self.lan_is_downloading:
             self.set_loading_screen_section()
 
         # update bookmark color

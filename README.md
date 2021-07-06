@@ -16,7 +16,7 @@
 
 ## Philipp
 - [x] implement bluetooth server as class
-- [x] implment bluetooth client as class
+- [x~~~~~~~~] implment bluetooth client as class
 
 ## Max
 - [x] article filter in read section
