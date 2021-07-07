@@ -586,6 +586,11 @@ class MainWindow(qtw.QWidget):
         # not displayed on macOS
         text = "Your MAC-address is: "
         address = self.BT_server.get_mac_address()
+
+        # check if bluetooth possible
+        if address is None:
+            self.set_info_screen("Bluetooth not available.", "back", self.set_downloading_section)
+
         label = qtw.QLabel(text + address)
         label.setObjectName("server-text")
 
