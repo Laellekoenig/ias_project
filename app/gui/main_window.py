@@ -125,6 +125,22 @@ class MainWindow(qtw.QWidget):
         # keyboard shortcuts
         self.shortcut_book = qtw.QShortcut(qtg.QKeySequence("Ctrl+B"), self)
         self.shortcut_book.activated.connect(self.update_bookmark)
+        self.shortcut_open = qtw.QShortcut(qtg.QKeySequence("Ctrl+O"), self)
+        self.shortcut_open.activated.connect(self.open_external)
+        self.shortcut_new = qtw.QShortcut(qtg.QKeySequence("Ctrl+D"), self)
+        self.shortcut_new.activated.connect(self.set_downloading_section)
+        self.shortcut_archive = qtw.QShortcut(qtg.QKeySequence("Ctrl+A"), self)
+        self.shortcut_archive.activated.connect(self.set_archiving_section)
+        self.shortcut_switch = qtw.QShortcut(qtg.QKeySequence("Ctrl+S"), self)
+        self.shortcut_switch.activated.connect(self.switch)
+        self.shortcut_read = qtw.QShortcut(qtg.QKeySequence("Ctrl+R"), self)
+        self.shortcut_read.activated.connect(self.set_reading_section)
+        self.shortcut_today = qtw.QShortcut(qtg.QKeySequence("1"), self)
+        self.shortcut_today.activated.connect(self.switch_today)
+        self.shortcut_week = qtw.QShortcut(qtg.QKeySequence("2"), self)
+        self.shortcut_week.activated.connect(self.switch_week)
+        self.shortcut_all = qtw.QShortcut(qtg.QKeySequence("3"), self)
+        self.shortcut_all.activated.connect(self.switch_all)
 
         # for interacting with back-end
         self.interface = Interface(self)
@@ -1176,11 +1192,13 @@ class MainWindow(qtw.QWidget):
     def open_external(self):
         # in reading section
         if self.selected == self.b1:
+            if self.selector.currentItem() is None:
+                return
             title = self.selector.currentItem().text()
             title = utils.remove_dot(title)
         # archive section
         elif self.selected == self.b3:
-            if self.selector.currentItem() == None:
+            if self.selector.currentItem() is None:
                 return
             else:
                 title = self.selector.currentItem().text()
