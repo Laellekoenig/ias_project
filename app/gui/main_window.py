@@ -588,6 +588,7 @@ class MainWindow(qtw.QWidget):
         address = self.BT_server.get_mac_address()
 
         # check if bluetooth possible
+        print(type(address))
         if address is None:
             self.set_info_screen("Bluetooth not available.", "back", self.set_downloading_section)
 
