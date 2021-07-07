@@ -1,3 +1,10 @@
+# A newsreader for the BAC-net
+
+Easily download articles from SRF and share them with other users via LAN, Bluetooth or BAC-net.
+
+![light](screen1.png)
+![dark](screen2.png)
+
 - [ ] BAC net integration
 - [ ] bluetooth article transmission
 - [x] local network article transmission
