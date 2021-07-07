@@ -51,7 +51,6 @@
 - [x] open article into own window
 - [x] more keyboard shortcuts
 ---
-- [ ] fix article viewer in archive section switching from dark/light
 ---
 - [ ] message if download via BT failed  
 - [ ] improve category filter efficiency
