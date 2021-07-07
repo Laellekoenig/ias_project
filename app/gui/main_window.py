@@ -589,7 +589,8 @@ class MainWindow(qtw.QWidget):
 
         # check if bluetooth possible
         print(type(address))
-        if address is None:
+        print(address)
+        if type(address) is None:
             self.set_info_screen("Bluetooth not available.", "back", self.set_downloading_section)
 
         label = qtw.QLabel(text + address)
