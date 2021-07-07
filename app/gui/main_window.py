@@ -588,10 +588,10 @@ class MainWindow(qtw.QWidget):
         address = self.BT_server.get_mac_address()
 
         # check if bluetooth possible
-        print(type(address))
-        print(address)
-        if type(address) is None:
+        if address is None:
+            print("inside")
             self.set_info_screen("Bluetooth not available.", "back", self.set_downloading_section)
+            return
 
         label = qtw.QLabel(text + address)
         label.setObjectName("server-text")
@@ -787,7 +787,7 @@ class MainWindow(qtw.QWidget):
         else:
             self.switch.setText("dark")
             css = style.getLightStyleSheet()
-        
+
         self.setStyleSheet(css)
         self.light = not self.light
 
