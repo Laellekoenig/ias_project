@@ -41,11 +41,17 @@ class bt_client:
             return
         self.running = True
         try:
-            self.socket.send(get_newest_datetime().isoformat().encode())
+            date_time = get_newest_datetime()
+            if date_time is None:
+                self.socket.send("None".encode())
+            else 
+                self.socket.send(get_newest_datetime().isoformat().encode())
             data = self.socket.recv(1024)
-            if data.decode() == "???!no_new_data_for_you!???":
+            if data == "???!no_new_data_for_you!???".encode():
                 print("no new articles for you")
                 return
+            if not os.path.exists(DIR_TRANSFER):
+                os.makedirs(DIR_TRANSFER)
             f = open(DIR_TRANSFER + "/received_articles.zip", 'wb')
             f.write(data)
         except:
