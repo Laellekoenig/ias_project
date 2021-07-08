@@ -44,7 +44,7 @@ class bt_client:
             date_time = get_newest_datetime()
             if date_time is None:
                 self.socket.send("None".encode())
-            else 
+            else: 
                 self.socket.send(get_newest_datetime().isoformat().encode())
             data = self.socket.recv(1024)
             if data == "???!no_new_data_for_you!???".encode():
