@@ -58,7 +58,10 @@ class bt_server:
 
             try:
                 date_time_msg = client.recv(4096)
-                date_time = datetime.fromisoformat(date_time_msg.decode())
+                if date_time_msg.decode() == "None":
+                    date_time = None
+                else:
+                    date_time = datetime.fromisoformat(date_time_msg.decode())
             except socket.timeout:
                 self.socket.listen(1)
                 print("renew timeout")
@@ -74,7 +77,7 @@ class bt_server:
             try:
                 path = zip_articles(date_time)
                 if path == None:
-                    client.send("???!no_new_data_for_you!???")
+                    client.send("???!no_new_data_for_you!???".encode())
                     client.close()
                     self.socket.close()
                     self.running = False
@@ -88,7 +91,7 @@ class bt_server:
                 continue
             except Exception:
                 print("Failed to open or compress files for sending to client.")
-                client.send("???!no_new_data_for_you!???")
+                client.send("???!no_new_data_for_you!???".encode())
                 client.close()
                 self.socket.close()
                 self.running = False
