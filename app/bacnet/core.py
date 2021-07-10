@@ -21,13 +21,14 @@ from logStore.transconn.database_connector import DatabaseConnector
 from logStore.funcs.event import Event, Meta, Content
 from logStore.appconn.chat_connection import ChatFunction
 from feedCtrl.uiFunctionsHandler import UiFunctionHandler
+from logStore.transconn.database_connector import DatabaseConnector
 
 class BACCore:
 
     def __init__(self):
         self.pickle_file_names = ['personList.pkl', 'username.pkl']  # use to reset user or create new one
         self.switch = ["", "", ""]
-        ufh = UiFunctionHandler()
+        self.ufh = UiFunctionHandler()
     
     # return 1 if user already exists; 0 if not
     def exists_user(self):
@@ -61,6 +62,32 @@ class BACCore:
             return 1
         else:
             return 0
+    
+    def create_feed(self, feed_name):
+        
+        ecf = EventCreationTool.EventFactory()
+        master_feed_id = self.ufh.get_host_master_id()
+        dictionary = {
+            'master_feed': master_feed_id
+        }
+        first_event = ecf.create_first_event('bac_news/MASTER', dictionary)
+        print(first_event)
+        
+
+        
+        list_of_feed_ids = EventCreationTool.EventCreationTool.get_stored_feed_ids()
+        d = DatabaseConnector()
+        for f in list_of_feed_ids:
+            print(d.get_current_seq_no(f))
+        #print(list_of_feed_ids)
+
+    def create_event(self, feed_id):
+        #first_event = EventCreationTool.EventFactory.
+        dictionary = {
+            'user_name': 'user1',
+            'public_key': 'password'
+        }
+        new_event = ecf.next_event('bac_news/' + feed_name, dictionary)
 
         
 
