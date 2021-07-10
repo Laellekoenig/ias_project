@@ -7,6 +7,13 @@ from logic.file_handler import zip_articles
 from logic.file_handler import get_newest_datetime
 from datetime import datetime
 
+# ---------------------- bac net test: --------------------------
+#from bacnet.core import BACCore
+#b = BACCore()
+#print(b.exists_user())
+#b.create_user('test_user') # only if no user exists
+# ---------------------------------------------------------------------
+
 # ---------------------- client server test: --------------------------
 #from transfer.LAN_client import LANClient
 #from transfer.LAN_server import LANServer
@@ -16,7 +23,7 @@ from datetime import datetime
 #else:
 #    c = LANClient()
 #    c.start_client_threaded("192.168.2.3")
-
+#
 # ---------------------------------------------------------------------
 
 #from transfer.local_network import start_server_threaded

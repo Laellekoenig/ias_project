@@ -12,6 +12,7 @@ import time
 DIR_MAIN = str(Path.home()) + '/BACNews'
 DIR_ARTICLES = DIR_MAIN + '/Articles'
 DIR_TRANSFER = DIR_MAIN + '/Export'
+DIR_BACNET = DIR_MAIN + '/BACNet'
 DELTA_TIME_OLDEST_ARTICLES = timedelta(days = 10)
 
 def make_dirs():
@@ -19,6 +20,8 @@ def make_dirs():
         os.makedirs(DIR_ARTICLES)
     if not os.path.exists(DIR_TRANSFER):
         os.makedirs(DIR_TRANSFER)
+    if not os.path.exists(DIR_BACNET):
+        os.makedirs(DIR_BACNET)
 
 def get_stored_articles():
     #todo
@@ -133,6 +136,7 @@ def zip_articles(date_time):
 # if an article already exists, it does not get overwritten (MAYBE CHANGE THIS?)
 # metadata of new articles is reset
 def unzip_articles(zip_path):
+    make_dirs()
     try:
         with zipfile.ZipFile(zip_path) as z:
             for file in z.namelist():
