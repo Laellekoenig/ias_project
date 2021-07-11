@@ -1,6 +1,7 @@
 import pickle
 import os
 import sys
+from datetime import datetime
 from logic.file_handler import DIR_BACNET, make_dirs
 
 # determine absolute path of this folder
@@ -34,8 +35,8 @@ class BACCore:
         self.pickle_file_names = ['personList.pkl', 'username.pkl']  # use to reset user or create new one
         self.switch = ["", "", ""]
         #self.ufh = UiFunctionHandler()
-        self.db_connector = DatabaseConnector()
-        self.setup_db()
+        #self.db_connector = DatabaseConnector()
+        #self.setup_db()
     
     # return 1 if user already exists; 0 if not
     def exists_user(self):
@@ -70,7 +71,7 @@ class BACCore:
         else:
             return 0
     
-    def create_feed(self, feed_name):
+    def create_feed(self, article_list_name):
         #print(d.get_all_feed_ids())
         #print(d.get_master_feed_id())
         """
@@ -91,7 +92,14 @@ class BACCore:
         new_feed_event = eventCreationWrapper.create_newFeed(public_key, 'bac_news')
         fcc.add_event(new_feed_event)
         fcc.add_event(first_event)
-        
+
+        # create event containing list name, host name and creation date
+        ect = EventCreationTool()
+        dictionary = {  'host' : self.get_event_content(self.master_feed_id, 2)[1]['name'],
+                        'list_name' : article_list_name,
+                        'date' : datetime.now().isoformat() }
+        second_event = ect.create_event_from_previous(first_event, 'bac_news/new_article', dictionary)
+        fcc.add_event(second_event)
         """
                 dictionary = {
                     'user_name': 'user1',
@@ -120,40 +128,54 @@ class BACCore:
         """
     def create_event(self, feed_id):
         #first_event = EventCreationTool.EventFactory.
-        event = self.db_connector.get_current_event(self.db_connector.get_all_feed_ids()[1])
-        print(event)
+        #print(feed_ids)
+        event = self.db_connector.get_current_event(self.db_connector.get_all_feed_ids()[2])
+        #print(event)
         dictionary = {
             'user_name': 'user1',
             'public_key': 'password'
         }
-        ect = EventCreationTool.EventCreationTool()
+        ect = EventCreationTool()
         new_event = ect.create_event_from_previous(event, 'bac_news/new_article', dictionary)
         fcc = FeedCtrlConnection()
         fcc.add_event(new_event)
 
 
-    def get_some_event(self):
-        #list_of_feed_ids = EventCreationTool.EventCreationTool.get_stored_feed_ids()
-        print(self.db_connector.get_all_feed_ids())
+    def get_event_content(self, feed_id, seq_no):
+        cbor_event = self.db_connector.get_event(feed_id, seq_no)
+        event = Event.from_cbor(cbor_event)
+        return event.content.content
+    
         #print(list_of_feed_ids[5])
         #print(d.get_current_event(list_of_feed_ids[1]))
-
-    def setup_db(self):
+    def exists_db(self):
         self._fcc = FeedCtrlConnection()
+        lastEvent = self._fcc.get_my_last_event()
+        if lastEvent is not None:
+            return 1
+        return 0
+
+    def setup_db(self, user_name=''):
         # try catch or if None??
         lastEvent = self._fcc.get_my_last_event()
         if lastEvent is not None:
-            pass
+            self.master_feed_id = self._fcc.get_host_master_id()
+            self.db_connector = DatabaseConnector()
         else:
             self._ecf = EventFactory()
             self._eventCreationWrapper = EventCreationWrapper(self._ecf)
             _firstEvent = self._eventCreationWrapper.create_MASTER()
             _secondEvent = self._eventCreationWrapper.create_radius(1)
-            #_thirdEvent = self._eventCreationWrapper.create_name('Anon')
+            _thirdEvent = self._eventCreationWrapper.create_name(user_name)
             self._fcc.add_event(_firstEvent)
             self._fcc.add_event(_secondEvent)
-            #self._fcc.add_event(_thirdEvent)
-        self.master_feed_id = self._fcc.get_host_master_id()
+            self._fcc.add_event(_thirdEvent)
+            self.master_feed_id = self._fcc.get_host_master_id()
+            self.db_connector = DatabaseConnector()
+
+    def get_all_feed_ids(self):
+        return self.db_connector.get_all_feed_ids()
+    
 
         
 

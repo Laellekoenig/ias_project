@@ -135,7 +135,7 @@ class EventCreationTool:
     def create_event_from_previous(self, previous_event, content_identifier, content_parameter):
         previous_event = Event.from_cbor(previous_event)
         feed_id = previous_event.meta.feed_id
-        last_sequence_number = previous_event.meta.seq_no + 1
+        last_sequence_number = previous_event.meta.seq_no
         hash_of_previous_meta = self._calculate_hash(previous_event.meta.get_as_cbor())
         return self.create_event(feed_id, last_sequence_number, hash_of_previous_meta,
                                  content_identifier, content_parameter)
