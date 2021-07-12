@@ -118,6 +118,7 @@ class MainWindow(qtw.QWidget):
         self.download_status = queue.Queue()
         self.external_btn = None
         self.open_windows = []
+        self.login = None
 
         # initiate window
         super().__init__(windowTitle="IAS Project")
@@ -408,7 +409,7 @@ class MainWindow(qtw.QWidget):
 
         bacB = qtw.QPushButton(text="BAC-Net")
         bacB.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
-        bacB.clicked.connect()
+        #bacB.clicked.connect()
         bacB.setObjectName("bacButton")
 
         localB = qtw.QPushButton(text="local network")
@@ -730,6 +731,38 @@ class MainWindow(qtw.QWidget):
     def set_BAC_section(self):
         self.tab_changed()
         self.set_selected_menu_button(self.b5)
+        self.set_login_section()
+
+    def set_login_section(self):
+        self.tab_changed()
+        self.set_selected_menu_button(self.b5)
+
+        text = qtw.QLabel("Enter a username:")
+        text.setObjectName("client-text")
+
+        login = qtw.QLineEdit()
+        login.setAttribute(qtc.Qt.WA_MacShowFocusRect, 0)
+        login.setAlignment(qtc.Qt.AlignCenter)
+        self.login = login
+
+        btn = qtw.QPushButton("continue")
+        btn.setObjectName("loginBtn")
+        btn.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
+        #btn.clicked.connect(TODO)
+
+        layout = qtw.QVBoxLayout()
+        layout.addStretch()
+        layout.addWidget(text)
+        layout.addWidget(login)
+        layout.addWidget(btn)
+        layout.addStretch()
+
+        horizontal = qtw.QHBoxLayout()
+        horizontal.addStretch()
+        horizontal.addLayout(layout)
+        horizontal.addStretch()
+
+        self.main.addLayout(horizontal, 0, 0)
 
     # customizable info screen
     # msg = big text message
