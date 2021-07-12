@@ -8,16 +8,16 @@ from logic.file_handler import get_newest_datetime
 from datetime import datetime
 
 # ---------------------- bac net test: --------------------------
-from bacnet.core import BACCore
-b = BACCore()
-if not b.exists_db():
-    b.setup_db('phil_sim')
-else:
-    b.setup_db()
-print(b.get_event_content(b.get_all_feed_ids()[1], 1))
+#from bacnet.core import BACCore
+#b = BACCore()
+#if not b.exists_db():
+#    b.setup_db('phil_sim')
+#else:
+#    b.setup_db()
+#print(b.get_event_content(b.get_all_feed_ids()[1], 1))
 #print(b.exists_user())
 #b.create_user('test_user') # only if no user exists
-b.create_feed('test_feed')
+#b.create_feed('test_feed')
 #b.create_event('f')
 #b.get_some_event()
 #b.get_event_content(3, 2)

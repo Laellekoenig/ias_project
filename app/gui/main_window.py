@@ -231,6 +231,14 @@ class MainWindow(qtw.QWidget):
         self.b4.clicked.connect(self.switch)
         # switch for changing UI style sheet
         self.switch = self.b4
+
+        # button 5 -- BAC-net, last addition
+        self.b5 = qtw.QPushButton(text="BAC-net")
+        self.b5.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
+        self.b5.clicked.connect(self.set_BAC_section)
+        menu.addWidget(self.b5)
+
+        # ordering
         menu.addWidget(self.b4)
 
         # container for menu bar
@@ -400,7 +408,7 @@ class MainWindow(qtw.QWidget):
 
         bacB = qtw.QPushButton(text="BAC-Net")
         bacB.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
-        #TODO bacB.clicked.connect()
+        bacB.clicked.connect()
         bacB.setObjectName("bacButton")
 
         localB = qtw.QPushButton(text="local network")
@@ -411,7 +419,7 @@ class MainWindow(qtw.QWidget):
         # add buttons to download layout
         downLayout.addLayout(toggleLayout)
         downLayout.addWidget(srfB)
-        downLayout.addWidget(bacB)
+        #downLayout.addWidget(bacB)
 
         on_macOS = self.BT_server.on_macOS()
 
@@ -718,6 +726,10 @@ class MainWindow(qtw.QWidget):
         self.main.addWidget(selector, 0, 0, 100, 20)
         self.main.addWidget(text, 0, 20, 100, 75)
         self.main.addLayout(rhs_layout, 0, 95, 100, 5)
+
+    def set_BAC_section(self):
+        self.tab_changed()
+        self.set_selected_menu_button(self.b5)
 
     # customizable info screen
     # msg = big text message
