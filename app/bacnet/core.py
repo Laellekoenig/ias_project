@@ -172,7 +172,7 @@ class BACCore:
         #print(event)
 
         ect = EventCreationTool()
-        new_event = ect.create_event_from_previous(event, 'bac_news/new_article', json_file)
+        new_event = ect.create_event_from_previous(event, 'bac_news/new_article', {'json': json_file})
         fcc = FeedCtrlConnection()
         fcc.add_event(new_event)
 
@@ -269,4 +269,4 @@ class BACCore:
         return self.get_event_content(feed_id, 1)[1]["host"]
 
     def get_json_from_event(self, feed_id, seq_no):
-        return self.get_event_content(feed_id, seq_no)[1]
+        return self.get_event_content(feed_id, seq_no)[1]['json']
