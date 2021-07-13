@@ -123,6 +123,7 @@ class MainWindow(qtw.QWidget):
         self.bac_core = BACCore()
         self.feed_input = None
         self.bac_btn = None
+        self.active_feed = None
 
         # initiate window
         super().__init__(windowTitle="IAS Project")
@@ -778,9 +779,21 @@ class MainWindow(qtw.QWidget):
 
         print("successfully loaded db")
 
-        lst = qtw.QListWidget()
+        text = qtw.QLabel("Active feed:")
+        text.setObjectName("client-text")
+
+        #lst = qtw.QListWidget()
         items = self.bac_core.get_feednames_from_host()
-        lst.addItems(items)
+        #lst.addItems(items)
+
+        active_feed = qtw.QComboBox()
+        active_feed.setObjectName("combo")
+        active_feed.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
+        for item in items:
+            active_feed.addItem(item)
+
+        if self.active_feed is None:
+            self.active_feed = active_feed
 
         btn = qtw.QPushButton(text="create a new feed")
         btn.setObjectName("bacButton")
@@ -789,7 +802,9 @@ class MainWindow(qtw.QWidget):
 
         layout = qtw.QVBoxLayout()
         layout.addStretch()
-        layout.addWidget(lst)
+        #layout.addWidget(lst)
+        layout.addWidget(text)
+        layout.addWidget(self.active_feed)
         layout.addWidget(btn)
         layout.addStretch()
 
@@ -1085,7 +1100,8 @@ class MainWindow(qtw.QWidget):
 
     def handle_bac_net(self):
         article = self.selector.currentItem().text()
-        print("trying to add \"{}\" into feed".format(article))
+        feed = self.active_feed.currentText()
+        print("trying to add \"{}\" into feed \"{}\"".format(article, feed))
 
     # check current mode downloading/sharing and select corresponding action
     def switch_wlan(self):
