@@ -746,8 +746,8 @@ class MainWindow(qtw.QWidget):
         print("successfully loaded db")
 
         lst = qtw.QListWidget()
-        #TODO
-        lst.addItems(["feed1", "feed2", "feed3"])
+        items = self.bac_core.get_feednames_from_host()
+        lst.addItems(items)
 
         btn = qtw.QPushButton(text="create a new feed")
         btn.setObjectName("bacButton")
