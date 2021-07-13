@@ -271,6 +271,20 @@ def getLightStyleSheet():
         border: 1px solid black;
         border-radius: 3px;
         margin-top: 10px;
+    }
+    #loginBtn {
+        color: #f7f7f7;
+        background-color: black;
+        border-radius: 3px;
+        border-style: none;
+        margin-bottom: 50px;
+    }
+    #loginBtn:pressed {
+        color: black;
+        background-color: #f7f7f7;
+        border-style: solid;
+        border-width: 1px;
+        border-color: black;
     }"""
     return stylesheet
 
@@ -517,5 +531,19 @@ def getDarkStyleSheet():
         border: 1px solid #f7f7f7;
         border-radius: 3px;
         margin-top: 10px;
+    }
+    #loginBtn {
+        color: #282828;
+        background-color: #f7f7f7;
+        border-radius: 3px;
+        border-style: none;
+        margin-bottom: 50px;
+    }
+    #loginBtn:pressed {
+        color: #f7f7f7;
+        background-color: #282828;
+        border-style: solid;
+        border-width: 1px;
+        border-color: #f7f7f7;
     }"""
     return stylesheet
