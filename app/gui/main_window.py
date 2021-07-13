@@ -121,6 +121,7 @@ class MainWindow(qtw.QWidget):
         self.open_windows = []
         self.login = None
         self.bac_core = BACCore()
+        self.feed_input = None
 
         # initiate window
         super().__init__(windowTitle="IAS Project")
@@ -737,14 +738,34 @@ class MainWindow(qtw.QWidget):
         # check if a user account is already present
         if self.bac_core.exists_db() == 0:
             self.set_login_section()
-        #self.set_login_section()
+            return
 
         # if exists, go through setup
         self.bac_core.setup_db()
 
         print("successfully loaded db")
 
+        lst = qtw.QListWidget()
         #TODO
+        lst.addItems(["feed1", "feed2", "feed3"])
+
+        btn = qtw.QPushButton(text="create a new feed")
+        btn.setObjectName("bacButton")
+        btn.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
+        btn.clicked.connect(self.set_feed_section)
+
+        layout = qtw.QVBoxLayout()
+        layout.addStretch()
+        layout.addWidget(lst)
+        layout.addWidget(btn)
+        layout.addStretch()
+
+        hLayout = qtw.QHBoxLayout()
+        hLayout.addStretch()
+        hLayout.addLayout(layout)
+        hLayout.addStretch()
+
+        self.main.addLayout(hLayout, 0, 0)
 
     def set_login_section(self):
         self.tab_changed()
@@ -777,6 +798,37 @@ class MainWindow(qtw.QWidget):
 
         self.main.addLayout(horizontal, 0, 0)
 
+    def set_feed_section(self):
+        self.tab_changed()
+        self.set_selected_menu_button(self.b5)
+
+        text = qtw.QLabel("Enter a feed name:")
+        text.setObjectName("client-text")
+
+        feed_input = qtw.QLineEdit()
+        feed_input.setAttribute(qtc.Qt.WA_MacShowFocusRect, 0)
+        feed_input.setAlignment(qtc.Qt.AlignCenter)
+        self.feed_input = feed_input
+
+        btn = qtw.QPushButton("create")
+        btn.setObjectName("loginBtn")
+        btn.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
+        btn.clicked.connect(self.create_feed)
+
+        layout = qtw.QVBoxLayout()
+        layout.addStretch()
+        layout.addWidget(text)
+        layout.addWidget(feed_input)
+        layout.addWidget(btn)
+        layout.addStretch()
+
+        hLayout = qtw.QHBoxLayout()
+        hLayout.addStretch()
+        hLayout.addLayout(layout)
+        hLayout.addStretch()
+
+        self.main.addLayout(hLayout, 0, 0)
+
     # customizable info screen
     # msg = big text message
     # btn_name = text on btn beneath info
@@ -805,6 +857,16 @@ class MainWindow(qtw.QWidget):
 
         self.main.addLayout(horizontal, 0, 0)
 
+    def create_feed(self):
+        name = self.feed_input.text()
+
+        if len(name) > 0:
+            print("creating feed {}".format(name))
+            self.bac_core.create_feed(name)
+            self.set_BAC_section()
+        else:
+            self.set_info_screen("Invalid feed name.", "back", self.set_feed_section)
+
     def bac_login(self):
         name = self.login.text()
 
@@ -813,7 +875,6 @@ class MainWindow(qtw.QWidget):
             self.bac_core.setup_db(name)
             self.set_BAC_section()
         else:
-            print("invalid name")
             self.set_info_screen("Invalid name.", "back", self.set_login_section)
 
     # if selected article in article selector changes
