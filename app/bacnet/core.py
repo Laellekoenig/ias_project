@@ -270,9 +270,3 @@ class BACCore:
 
     def get_json_from_event(self, feed_id, seq_no):
         return self.get_event_content(feed_id, seq_no)[1]
-    
-
-        
-
-
-

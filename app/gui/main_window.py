@@ -122,6 +122,8 @@ class MainWindow(qtw.QWidget):
         self.login = None
         self.bac_core = BACCore()
         self.feed_input = None
+        self.bac_btn = None
+        self.active_feed = None
 
         # initiate window
         super().__init__(windowTitle="IAS Project")
@@ -282,7 +284,12 @@ class MainWindow(qtw.QWidget):
         text.moveCursor(qtg.QTextCursor.Start)
 
         # bookmark for moving articles to archive section
-        mdi_book = qta.icon("mdi.bookmark-outline", color="black")
+        if self.light:
+            color = "black"
+        else:
+            color = "#f7f7f7"
+
+        mdi_book = qta.icon("mdi.bookmark-outline", color=color)
         mdi_book_btn = qtw.QPushButton()
         mdi_book_btn.setObjectName("bookmark-btn")
         mdi_book_btn.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
@@ -293,7 +300,7 @@ class MainWindow(qtw.QWidget):
         self.draw_bookmark()
 
         # for opening articles in own windows
-        mdi_external = qta.icon("mdi.open-in-new", color="black")
+        mdi_external = qta.icon("mdi.open-in-new", color=color)
         external_btn = qtw.QPushButton()
         external_btn.setObjectName("bookmark-btn")
         external_btn.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
@@ -301,6 +308,16 @@ class MainWindow(qtw.QWidget):
         external_btn.setIconSize(qtc.QSize(35, 35))
         external_btn.setIcon(mdi_external)
         self.external_btn = external_btn
+
+        # for sharing on bac net
+        mdi_bac = qta.icon("mdi.folder-key-network", color=color)
+        bac_btn = qtw.QPushButton()
+        bac_btn.setObjectName("bookmark-btn")
+        bac_btn.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
+        bac_btn.clicked.connect(self.handle_bac_net)
+        bac_btn.setIconSize(qtc.QSize(35, 35))
+        bac_btn.setIcon(mdi_bac)
+        self.bac_btn = bac_btn
 
         # article filters
         self.today_btn = qtw.QPushButton(text="today")
@@ -352,6 +369,7 @@ class MainWindow(qtw.QWidget):
         # right of article reader
         rhs_layout = qtw.QVBoxLayout()
         rhs_layout.addWidget(mdi_book_btn)
+        rhs_layout.addWidget(bac_btn)
         rhs_layout.addWidget(external_btn)
         rhs_layout.addStretch()
 
@@ -702,7 +720,12 @@ class MainWindow(qtw.QWidget):
         text.moveCursor(qtg.QTextCursor.Start)
 
         # bookmark btn
-        mdi_book = qta.icon("mdi.bookmark-outline", color="black")
+        if self.light:
+            color = "black"
+        else:
+            color = "#f7f7f7"
+
+        mdi_book = qta.icon("mdi.bookmark-outline", color=color)
         mdi_book_btn = qtw.QPushButton()
         mdi_book_btn.setObjectName("bookmark-btn")
         mdi_book_btn.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
@@ -713,7 +736,7 @@ class MainWindow(qtw.QWidget):
         self.draw_bookmark()
 
         # for opening articles in own windows
-        mdi_external = qta.icon("mdi.open-in-new", color="black")
+        mdi_external = qta.icon("mdi.open-in-new", color=color)
         external_btn = qtw.QPushButton()
         external_btn.setObjectName("bookmark-btn")
         external_btn.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
@@ -722,8 +745,19 @@ class MainWindow(qtw.QWidget):
         external_btn.setIcon(mdi_external)
         self.external_btn = external_btn
 
+        # for sharing on bac net
+        mdi_bac = qta.icon("mdi.folder-key-network", color=color)
+        bac_btn = qtw.QPushButton()
+        bac_btn.setObjectName("bookmark-btn")
+        bac_btn.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
+        bac_btn.clicked.connect(self.handle_bac_net)
+        bac_btn.setIconSize(qtc.QSize(35, 35))
+        bac_btn.setIcon(mdi_bac)
+        self.bac_btn = bac_btn
+
         rhs_layout = qtw.QVBoxLayout()
         rhs_layout.addWidget(mdi_book_btn)
+        rhs_layout.addWidget(bac_btn)
         rhs_layout.addWidget(external_btn)
         rhs_layout.addStretch()
 
@@ -745,9 +779,21 @@ class MainWindow(qtw.QWidget):
 
         print("successfully loaded db")
 
-        lst = qtw.QListWidget()
-        #TODO
-        lst.addItems(["feed1", "feed2", "feed3"])
+        text = qtw.QLabel("Active feed:")
+        text.setObjectName("client-text")
+
+        #lst = qtw.QListWidget()
+        items = self.bac_core.get_feednames_from_host()
+        #lst.addItems(items)
+
+        active_feed = qtw.QComboBox()
+        active_feed.setObjectName("combo")
+        active_feed.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
+        for item in items:
+            active_feed.addItem(item)
+
+        if self.active_feed is None:
+            self.active_feed = active_feed
 
         btn = qtw.QPushButton(text="create a new feed")
         btn.setObjectName("bacButton")
@@ -756,7 +802,9 @@ class MainWindow(qtw.QWidget):
 
         layout = qtw.QVBoxLayout()
         layout.addStretch()
-        layout.addWidget(lst)
+        #layout.addWidget(lst)
+        layout.addWidget(text)
+        layout.addWidget(self.active_feed)
         layout.addWidget(btn)
         layout.addStretch()
 
@@ -945,7 +993,13 @@ class MainWindow(qtw.QWidget):
         else:
             icon = qta.icon("mdi.open-in-new", color="#f7f7f7")
 
+        if self.light:
+            icon2 = qta.icon("mdi.folder-key-network", color="black")
+        else:
+            icon2 = qta.icon("mdi.folder-key-network", color="#f7f7f7")
+
         self.external_btn.setIcon(icon)
+        self.bac_btn.setIcon(icon2)
 
         # update external windows
         for window in self.open_windows:
@@ -973,7 +1027,7 @@ class MainWindow(qtw.QWidget):
     # set the currently selected button and set correct color
     def set_selected_menu_button(self, button):
         self.selected = button
-        buttons = [self.b1, self.b2, self.b3, self.b4]
+        buttons = [self.b1, self.b2, self.b3, self.b4, self.b5]
         for b in buttons:
             if (self.light):
                 b.setStyleSheet("color: black;")
@@ -1043,6 +1097,27 @@ class MainWindow(qtw.QWidget):
     # not possible to directly insert above
     def srf_download_finished(self):
         self.set_info_screen("Download successful.", "read", self.set_reading_section)
+
+    def handle_bac_net(self):
+        if self.selected == self.b1:
+            current_section = self.set_reading_section
+        else:
+            current_section = self.set_archiving_section
+
+        if self.active_feed is None or self.active_feed.currentText() is None:
+            self.set_info_screen("Please select a feed first.", "back", current_section)
+            return
+
+        if self.selector is None or self.selector.currentItem() is None:
+            self.set_info_screen("Please select an article first.", "back", current_section)
+            return
+
+        title = self.selector.currentItem().text()
+        article = self.logic.get_article_from_title(title)
+        print(article.path)
+
+        feed = self.active_feed.currentText()
+        print("trying to add \"{}\" into feed \"{}\"".format(title, feed))
 
     # check current mode downloading/sharing and select corresponding action
     def switch_wlan(self):
