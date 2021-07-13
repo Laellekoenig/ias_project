@@ -136,10 +136,12 @@ class BACCore:
 
         # Creates an event for the Feed given by the feed_id with the content found in the .json article file
         # returns 0, if there was an error, return 1 if event successfully created and added to feed.
-    def create_event(self, feed_id, article_name):
+    
+    """def create_event(self, feed_name, article_name):
         #first_event = EventCreationTool.EventFactory.
         #print(feed_ids)
         #event = self.db_connector.get_current_event(self.db_connector.get_all_feed_ids()[2])
+        feed_id = self.get_id_from_feed_name(feed_name)
         event = self.db_connector.get_current_event(feed_id)
         #print(event)
 
@@ -148,10 +150,10 @@ class BACCore:
             data = f.read()
             f.close()
 
-            """dictionary = {
+            dictionary = {
                 'user_name': 'user1',
                 'public_key': 'password'
-            }"""
+            }
             
             ect = EventCreationTool()
             new_event = ect.create_event_from_previous(event, 'bac_news/new_article', data)
@@ -159,7 +161,20 @@ class BACCore:
             fcc.add_event(new_event)
             return 1
         except:
-            return 0
+            return 0"""
+
+    def create_event(self, feed_name, json_file):
+        #first_event = EventCreationTool.EventFactory.
+        #print(feed_ids)
+        #event = self.db_connector.get_current_event(self.db_connector.get_all_feed_ids()[2])
+        feed_id = self.get_id_from_feed_name(feed_name)
+        event = self.db_connector.get_current_event(feed_id)
+        #print(event)
+
+        ect = EventCreationTool()
+        new_event = ect.create_event_from_previous(event, 'bac_news/new_article', json_file)
+        fcc = FeedCtrlConnection()
+        fcc.add_event(new_event)
 
 
     def get_event_content(self, feed_id, seq_no):
@@ -208,10 +223,10 @@ class BACCore:
             if feed_id == self.master_feed_id:
                 continue
             host = self.get_host_from_feed(feed_id)
-            if (host == self.user_name): #host of this feed is also host of this app
+            if host == self.user_name: #host of this feed is also host of this app
                 feed_names.append(self.get_feedname_from_id(feed_id))
         print(feed_names)
-        return(feed_names)
+        return feed_names
 
     def set_path_to_db(self, path):
         os.chdir(path)
@@ -237,6 +252,18 @@ class BACCore:
     def get_feedname_from_id(self, feed_id):
         print(self.get_event_content(feed_id, 1)[1]["list_name"])
         return self.get_event_content(feed_id, 1)[1]["list_name"]
+
+    def get_id_from_feed_name(self, feed_name):
+        feed_ids = self.get_all_feed_ids()
+        for feed_id in feed_ids:
+            if feed_id == self.master_feed_id:
+                continue
+            host = self.get_host_from_feed(feed_id)
+            if host == self.user_name:
+                if feed_name == self.get_feedname_from_id(feed_id):
+                    return feed_id
+        return None
+
 
     def get_host_from_feed(self, feed_id):
         return self.get_event_content(feed_id, 1)[1]["host"]
