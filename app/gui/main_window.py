@@ -313,7 +313,7 @@ class MainWindow(qtw.QWidget):
         bac_btn = qtw.QPushButton()
         bac_btn.setObjectName("bookmark-btn")
         bac_btn.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
-        #bac_btn.clicked.connect(TODO)
+        bac_btn.clicked.connect(self.handle_bac_net)
         bac_btn.setIconSize(qtc.QSize(35, 35))
         bac_btn.setIcon(mdi_bac)
         self.bac_btn = bac_btn
@@ -749,7 +749,7 @@ class MainWindow(qtw.QWidget):
         bac_btn = qtw.QPushButton()
         bac_btn.setObjectName("bookmark-btn")
         bac_btn.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
-        #bac_btn.clicked.connect(TODO)
+        bac_btn.clicked.connect(self.handle_bac_net)
         bac_btn.setIconSize(qtc.QSize(35, 35))
         bac_btn.setIcon(mdi_bac)
         self.bac_btn = bac_btn
@@ -1082,6 +1082,10 @@ class MainWindow(qtw.QWidget):
     # not possible to directly insert above
     def srf_download_finished(self):
         self.set_info_screen("Download successful.", "read", self.set_reading_section)
+
+    def handle_bac_net(self):
+        article = self.selector.currentItem().text()
+        print("trying to add \"{}\" into feed".format(article))
 
     # check current mode downloading/sharing and select corresponding action
     def switch_wlan(self):
