@@ -14,13 +14,24 @@ if not b.exists_db():
     b.setup_db('phil_sim')
 else:
     b.setup_db()
-print(b.get_event_content(b.get_all_feed_ids()[1], 1))
 #print(b.exists_user())
 #b.create_user('test_user') # only if no user exists
-b.create_feed('test_feed')
-#b.create_event('f')
+##b.create_feed('test_feed')
+##b.create_feed('test_feed2')
+##b.create_feed('test_feed3')
+##b.create_event(b.get_all_feed_ids()[1], "SRF - Am Gotthard ist zu Ferienbeginn Geduld gefragt")
+#print(b.get_event_content(b.get_all_feed_ids()[1], 1))
 #b.get_some_event()
-#b.get_event_content(3, 2)
+#f = open('result.json', 'w')
+##print(b.get_json_from_event(b.get_all_feed_ids()[1], 4))
+#f.write(b.get_event_content(b.get_all_feed_ids()[1], 4)[1])
+#f.close
+
+#b.set_path_to_db("D:")
+#b.export_db_to_pcap("pcap")
+#b.import_from_pcap_to_db("pcap")
+##b.get_user_name()
+print(b.get_feednames_from_host())
 # ---------------------------------------------------------------------
 
 # ---------------------- client server test: --------------------------

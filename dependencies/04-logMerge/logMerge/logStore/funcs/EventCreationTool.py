@@ -128,7 +128,7 @@ class EventCreationTool:
             raise IllegalArgumentTypeException
         private_key = self._load_private_key(feed_id)
         content = Content(content_identifier, content_parameter)
-        meta = Meta(feed_id, last_sequence_number + 1,
+        meta = Meta(feed_id, last_sequence_number,
                     hash_of_previous_meta, self._signing_algorithm, self._calculate_hash(content.get_as_cbor()))
         signature = self._calculate_signature(private_key, meta.get_as_cbor())
         return Event(meta, signature, content).get_as_cbor()

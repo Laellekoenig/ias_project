@@ -3,6 +3,9 @@ import os
 import sys
 from datetime import datetime
 from logic.file_handler import DIR_BACNET, make_dirs
+from pathlib import Path
+
+import json
 
 # determine absolute path of this folder
 dirname = os.path.abspath(os.path.dirname(__file__))
@@ -28,6 +31,10 @@ from logStore.appconn.feed_ctrl_connection import FeedCtrlConnection
 from feedCtrl.uiFunctionsHandler import UiFunctionHandler
 from logStore.transconn.database_connector import DatabaseConnector
 from feedCtrl.eventCreationWrapper import EventCreationWrapper
+
+folderG7 = os.path.join(dirname, '../../dependencies/04-logMerge/logMerge')
+sys.path.append(folderG7)
+from LogMerge import LogMerge
 
 class BACCore:
 
@@ -126,19 +133,33 @@ class BACCore:
                     #print(d.get_event(list_of_feed_ids[1], seq))
                 #print(list_of_feed_ids)
         """
-    def create_event(self, feed_id):
+
+        # Creates an event for the Feed given by the feed_id with the content found in the .json article file
+        # returns 0, if there was an error, return 1 if event successfully created and added to feed.
+    def create_event(self, feed_id, article_name):
         #first_event = EventCreationTool.EventFactory.
         #print(feed_ids)
-        event = self.db_connector.get_current_event(self.db_connector.get_all_feed_ids()[2])
+        #event = self.db_connector.get_current_event(self.db_connector.get_all_feed_ids()[2])
+        event = self.db_connector.get_current_event(feed_id)
         #print(event)
-        dictionary = {
-            'user_name': 'user1',
-            'public_key': 'password'
-        }
-        ect = EventCreationTool()
-        new_event = ect.create_event_from_previous(event, 'bac_news/new_article', dictionary)
-        fcc = FeedCtrlConnection()
-        fcc.add_event(new_event)
+
+        try:
+            f = open(str(Path.home()) + '/BACNews/Articles/' + article_name + ".json", "r")
+            data = f.read()
+            f.close()
+
+            """dictionary = {
+                'user_name': 'user1',
+                'public_key': 'password'
+            }"""
+            
+            ect = EventCreationTool()
+            new_event = ect.create_event_from_previous(event, 'bac_news/new_article', data)
+            fcc = FeedCtrlConnection()
+            fcc.add_event(new_event)
+            return 1
+        except:
+            return 0
 
 
     def get_event_content(self, feed_id, seq_no):
@@ -161,6 +182,7 @@ class BACCore:
         if lastEvent is not None:
             self.master_feed_id = self._fcc.get_host_master_id()
             self.db_connector = DatabaseConnector()
+            self.user_name = self.get_user_name()
         else:
             self._ecf = EventFactory()
             self._eventCreationWrapper = EventCreationWrapper(self._ecf)
@@ -172,9 +194,55 @@ class BACCore:
             self._fcc.add_event(_thirdEvent)
             self.master_feed_id = self._fcc.get_host_master_id()
             self.db_connector = DatabaseConnector()
+            self.user_name = user_name
 
+    def get_user_name(self):
+        print(self.get_event_content(self.master_feed_id, 2)[1]["name"])
+        return(self.get_event_content(self.master_feed_id, 2)[1]["name"])
+
+    def get_feednames_from_host(self):
+        feed_names = list()
+        feed_ids = self.get_all_feed_ids()
+        print(feed_ids)
+        for feed_id in feed_ids:
+            if feed_id == self.master_feed_id:
+                continue
+            host = self.get_host_from_feed(feed_id)
+            if (host == self.user_name): #host of this feed is also host of this app
+                feed_names.append(self.get_feedname_from_id(feed_id))
+        print(feed_names)
+        return(feed_names)
+
+    def set_path_to_db(self, path):
+        os.chdir(path)
+        f = open("testfile.txt", "w")
+        f.write("hello")
+        f.close
+
+    def export_db_to_pcap(self, path):
+        dictionary = {}
+        feed_ids = self.get_all_feed_ids()
+        for f_id in feed_ids:
+            dictionary[f_id] = -1
+        lm = LogMerge()
+        lm.export_logs(path, dictionary)
+
+    def import_from_pcap_to_db(self, path):
+        lm = LogMerge()
+        lm.import_logs(path)
+        
     def get_all_feed_ids(self):
         return self.db_connector.get_all_feed_ids()
+    
+    def get_feedname_from_id(self, feed_id):
+        print(self.get_event_content(feed_id, 1)[1]["list_name"])
+        return self.get_event_content(feed_id, 1)[1]["list_name"]
+
+    def get_host_from_feed(self, feed_id):
+        return self.get_event_content(feed_id, 1)[1]["host"]
+
+    def get_json_from_event(self, feed_id, seq_no):
+        return self.get_event_content(feed_id, seq_no)[1]
     
 
         

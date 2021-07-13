@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from ..funcs.constants import CBORTABLE, EVENTTABLE, KOTLINTABLE, MASTERTABLE
 from ..funcs.log import create_logger
-from sqlalchemy import Table, Column, Integer, String, MetaData, Binary, func, Boolean
+from sqlalchemy import Table, Column, Integer, String, MetaData, LargeBinary, func, Boolean
 from sqlalchemy.orm import sessionmaker, mapper
 from contextlib import contextmanager
 
@@ -40,7 +40,7 @@ class SqLiteDatabase:
                            Column('id', Integer, primary_key=True),
                            Column('feed_id', String),
                            Column('seq_no', Integer),
-                           Column('event_as_cbor', Binary))
+                           Column('event_as_cbor', LargeBinary))
         mapper(cbor_event, cbor_table)
         try:
             metadata.create_all(self.__db_engine)
@@ -94,14 +94,14 @@ class SqLiteDatabase:
         master_event_table = Table(MASTERTABLE, metadata,
                                    Column('id', Integer, primary_key=True),
                                    Column('master', Boolean),
-                                   Column('feed_id', Binary),
-                                   Column('app_feed_id', Binary),
-                                   Column('trust_feed_id', Binary),
+                                   Column('feed_id', LargeBinary),
+                                   Column('app_feed_id', LargeBinary),
+                                   Column('trust_feed_id', LargeBinary),
                                    Column('seq_no', Integer),
                                    Column('trust', Boolean),
                                    Column('name', String),
                                    Column('radius', Integer),
-                                   Column('event_as_cbor', Binary),
+                                   Column('event_as_cbor', LargeBinary),
                                    Column('app_name', String))
         mapper(master_event, master_event_table)
         try:
