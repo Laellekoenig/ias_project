@@ -735,9 +735,16 @@ class MainWindow(qtw.QWidget):
         self.set_selected_menu_button(self.b5)
 
         # check if a user account is already present
-        #if self.bac_core.exists_user() == 0:
-        #    self.set_login_section()
-        self.set_login_section()
+        if self.bac_core.exists_db() == 0:
+            self.set_login_section()
+        #self.set_login_section()
+
+        # if exists, go through setup
+        self.bac_core.setup_db()
+
+        print("successfully loaded db")
+
+        #TODO
 
     def set_login_section(self):
         self.tab_changed()
@@ -803,7 +810,8 @@ class MainWindow(qtw.QWidget):
 
         if len(name) > 0:
             print("creating user {}".format(name))
-            self.bac_core.create_user(name)
+            self.bac_core.setup_db(name)
+            self.set_BAC_section()
         else:
             print("invalid name")
             self.set_info_screen("Invalid name.", "back", self.set_login_section)
