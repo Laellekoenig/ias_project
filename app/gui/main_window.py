@@ -719,7 +719,12 @@ class MainWindow(qtw.QWidget):
         text.moveCursor(qtg.QTextCursor.Start)
 
         # bookmark btn
-        mdi_book = qta.icon("mdi.bookmark-outline", color="black")
+        if self.light:
+            color = "black"
+        else:
+            color = "#f7f7f7"
+
+        mdi_book = qta.icon("mdi.bookmark-outline", color=color)
         mdi_book_btn = qtw.QPushButton()
         mdi_book_btn.setObjectName("bookmark-btn")
         mdi_book_btn.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
@@ -730,7 +735,7 @@ class MainWindow(qtw.QWidget):
         self.draw_bookmark()
 
         # for opening articles in own windows
-        mdi_external = qta.icon("mdi.open-in-new", color="black")
+        mdi_external = qta.icon("mdi.open-in-new", color=color)
         external_btn = qtw.QPushButton()
         external_btn.setObjectName("bookmark-btn")
         external_btn.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
@@ -739,8 +744,19 @@ class MainWindow(qtw.QWidget):
         external_btn.setIcon(mdi_external)
         self.external_btn = external_btn
 
+        # for sharing on bac net
+        mdi_bac = qta.icon("mdi.folder-key-network", color=color)
+        bac_btn = qtw.QPushButton()
+        bac_btn.setObjectName("bookmark-btn")
+        bac_btn.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
+        #bac_btn.clicked.connect(TODO)
+        bac_btn.setIconSize(qtc.QSize(35, 35))
+        bac_btn.setIcon(mdi_bac)
+        self.bac_btn = bac_btn
+
         rhs_layout = qtw.QVBoxLayout()
         rhs_layout.addWidget(mdi_book_btn)
+        rhs_layout.addWidget(bac_btn)
         rhs_layout.addWidget(external_btn)
         rhs_layout.addStretch()
 
