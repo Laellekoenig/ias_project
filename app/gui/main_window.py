@@ -1099,9 +1099,25 @@ class MainWindow(qtw.QWidget):
         self.set_info_screen("Download successful.", "read", self.set_reading_section)
 
     def handle_bac_net(self):
-        article = self.selector.currentItem().text()
+        if self.selected == self.b1:
+            current_section = self.set_reading_section
+        else:
+            current_section = self.set_archiving_section
+
+        if self.active_feed is None or self.active_feed.currentText() is None:
+            self.set_info_screen("Please select a feed first.", "back", current_section)
+            return
+
+        if self.selector is None or self.selector.currentItem() is None:
+            self.set_info_screen("Please select an article first.", "back", current_section)
+            return
+
+        title = self.selector.currentItem().text()
+        article = self.logic.get_article_from_title(title)
+        print(article.path)
+
         feed = self.active_feed.currentText()
-        print("trying to add \"{}\" into feed \"{}\"".format(article, feed))
+        print("trying to add \"{}\" into feed \"{}\"".format(title, feed))
 
     # check current mode downloading/sharing and select corresponding action
     def switch_wlan(self):
