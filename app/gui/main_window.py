@@ -1114,10 +1114,14 @@ class MainWindow(qtw.QWidget):
 
         title = self.selector.currentItem().text()
         article = self.logic.get_article_from_title(title)
-        print(article.path)
+        json = article.get_json()
 
         feed = self.active_feed.currentText()
         print("trying to add \"{}\" into feed \"{}\"".format(title, feed))
+
+        # add it to feed
+        self.bac_core.create_event(feed, json)
+        print("added to feed")
 
     # check current mode downloading/sharing and select corresponding action
     def switch_wlan(self):
