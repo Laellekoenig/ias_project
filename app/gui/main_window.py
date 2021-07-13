@@ -122,6 +122,7 @@ class MainWindow(qtw.QWidget):
         self.login = None
         self.bac_core = BACCore()
         self.feed_input = None
+        self.bac_btn = None
 
         # initiate window
         super().__init__(windowTitle="IAS Project")
@@ -282,7 +283,12 @@ class MainWindow(qtw.QWidget):
         text.moveCursor(qtg.QTextCursor.Start)
 
         # bookmark for moving articles to archive section
-        mdi_book = qta.icon("mdi.bookmark-outline", color="black")
+        if self.light:
+            color = "black"
+        else:
+            color = "#f7f7f7"
+
+        mdi_book = qta.icon("mdi.bookmark-outline", color=color)
         mdi_book_btn = qtw.QPushButton()
         mdi_book_btn.setObjectName("bookmark-btn")
         mdi_book_btn.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
@@ -293,7 +299,7 @@ class MainWindow(qtw.QWidget):
         self.draw_bookmark()
 
         # for opening articles in own windows
-        mdi_external = qta.icon("mdi.open-in-new", color="black")
+        mdi_external = qta.icon("mdi.open-in-new", color=color)
         external_btn = qtw.QPushButton()
         external_btn.setObjectName("bookmark-btn")
         external_btn.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
@@ -301,6 +307,16 @@ class MainWindow(qtw.QWidget):
         external_btn.setIconSize(qtc.QSize(35, 35))
         external_btn.setIcon(mdi_external)
         self.external_btn = external_btn
+
+        # for sharing on bac net
+        mdi_bac = qta.icon("mdi.folder-key-network", color=color)
+        bac_btn = qtw.QPushButton()
+        bac_btn.setObjectName("bookmark-btn")
+        bac_btn.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
+        #bac_btn.clicked.connect(TODO)
+        bac_btn.setIconSize(qtc.QSize(35, 35))
+        bac_btn.setIcon(mdi_bac)
+        self.bac_btn = bac_btn
 
         # article filters
         self.today_btn = qtw.QPushButton(text="today")
@@ -352,6 +368,7 @@ class MainWindow(qtw.QWidget):
         # right of article reader
         rhs_layout = qtw.QVBoxLayout()
         rhs_layout.addWidget(mdi_book_btn)
+        rhs_layout.addWidget(bac_btn)
         rhs_layout.addWidget(external_btn)
         rhs_layout.addStretch()
 
@@ -945,7 +962,13 @@ class MainWindow(qtw.QWidget):
         else:
             icon = qta.icon("mdi.open-in-new", color="#f7f7f7")
 
+        if self.light:
+            icon2 = qta.icon("mdi.folder-key-network", color="black")
+        else:
+            icon2 = qta.icon("mdi.folder-key-network", color="#f7f7f7")
+
         self.external_btn.setIcon(icon)
+        self.bac_btn.setIcon(icon2)
 
         # update external windows
         for window in self.open_windows:
@@ -973,7 +996,7 @@ class MainWindow(qtw.QWidget):
     # set the currently selected button and set correct color
     def set_selected_menu_button(self, button):
         self.selected = button
-        buttons = [self.b1, self.b2, self.b3, self.b4]
+        buttons = [self.b1, self.b2, self.b3, self.b4, self.b5]
         for b in buttons:
             if (self.light):
                 b.setStyleSheet("color: black;")
