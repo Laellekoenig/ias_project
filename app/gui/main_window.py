@@ -17,6 +17,7 @@ from transfer.LAN_server import LANServer
 from transfer.LAN_client import LANClient
 from transfer.bt_server import bt_server as BTServer
 from transfer.bt_client import bt_client as BTClient
+from bacnet.core import BACCore
 
 # own label class that can be clicked like a QPushButton
 class imageLabel(qtw.QLabel):
@@ -119,6 +120,7 @@ class MainWindow(qtw.QWidget):
         self.external_btn = None
         self.open_windows = []
         self.login = None
+        self.bac_core = BACCore()
 
         # initiate window
         super().__init__(windowTitle="IAS Project")
@@ -731,6 +733,10 @@ class MainWindow(qtw.QWidget):
     def set_BAC_section(self):
         self.tab_changed()
         self.set_selected_menu_button(self.b5)
+
+        # check if a user account is already present
+        #if self.bac_core.exists_user() == 0:
+        #    self.set_login_section()
         self.set_login_section()
 
     def set_login_section(self):
@@ -748,7 +754,7 @@ class MainWindow(qtw.QWidget):
         btn = qtw.QPushButton("continue")
         btn.setObjectName("loginBtn")
         btn.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
-        #btn.clicked.connect(TODO)
+        btn.clicked.connect(self.bac_login)
 
         layout = qtw.QVBoxLayout()
         layout.addStretch()
@@ -791,6 +797,16 @@ class MainWindow(qtw.QWidget):
         horizontal.addStretch()
 
         self.main.addLayout(horizontal, 0, 0)
+
+    def bac_login(self):
+        name = self.login.text()
+
+        if len(name) > 0:
+            print("creating user {}".format(name))
+            self.bac_core.create_user(name)
+        else:
+            print("invalid name")
+            self.set_info_screen("Invalid name.", "back", self.set_login_section)
 
     # if selected article in article selector changes
     # used in reading section
