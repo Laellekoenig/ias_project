@@ -810,12 +810,12 @@ class MainWindow(qtw.QWidget):
         btn2 = qtw.QPushButton(text="import")
         btn2.setObjectName("bacButton")
         btn2.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
-        #btn2.clicked.connect(TODO)
+        btn2.clicked.connect(self.bac_import)
 
         btn3 = qtw.QPushButton(text="export")
         btn3.setObjectName("bacButton")
         btn3.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
-        #btn3.clicked.connect(TODO)
+        btn3.clicked.connect(self.bac_export)
 
         layout = qtw.QVBoxLayout()
         layout.addStretch()
@@ -824,11 +824,25 @@ class MainWindow(qtw.QWidget):
         layout.addWidget(self.active_feed)
         layout.addWidget(btn)
         layout.addWidget(btn2)
+        layout.addWidget(btn3)
         layout.addStretch()
+
+        lst = qtw.QListWidget()
+        lst.setWordWrap(True)
+        #TODO
+        items = ["hallo", "welt", "wie", "gehts"]
+        lst.addItems(items)
+        #lst.itemSelectionChanged.connect(TODO)
+
+        layout2 = qtw.QVBoxLayout()
+        layout2.addStretch()
+        layout2.addWidget(lst)
+        layout2.addStretch()
 
         hLayout = qtw.QHBoxLayout()
         hLayout.addStretch()
         hLayout.addLayout(layout)
+        hLayout.addLayout(layout2)
         hLayout.addStretch()
 
         self.main.addLayout(hLayout, 0, 0)
