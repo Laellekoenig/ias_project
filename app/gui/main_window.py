@@ -780,7 +780,7 @@ class MainWindow(qtw.QWidget):
         print("successfully loaded db")
 
         text = qtw.QLabel("Active feed:")
-        text.setObjectName("client-text")
+        text.setObjectName("bac-text")
 
         #lst = qtw.QListWidget()
         items = self.bac_core.get_feednames_from_host()
@@ -814,7 +814,6 @@ class MainWindow(qtw.QWidget):
         btn3.clicked.connect(self.bac_export)
 
         layout = qtw.QVBoxLayout()
-        layout.addStretch()
         #layout.addWidget(lst)
         layout.addWidget(text)
         layout.addWidget(self.active_feed)
@@ -822,6 +821,9 @@ class MainWindow(qtw.QWidget):
         layout.addWidget(btn2)
         layout.addWidget(btn3)
         layout.addStretch()
+
+        text2 = qtw.QLabel("Articles in feeds:")
+        text2.setObjectName("bac-text")
 
         lst = qtw.QListWidget()
         lst.setWordWrap(True)
@@ -832,7 +834,7 @@ class MainWindow(qtw.QWidget):
         #lst.itemSelectionChanged.connect(TODO)
 
         layout2 = qtw.QVBoxLayout()
-        layout2.addStretch()
+        layout2.addWidget(text2)
         layout2.addWidget(lst)
         layout2.addStretch()
 

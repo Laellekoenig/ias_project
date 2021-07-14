@@ -285,6 +285,13 @@ def getLightStyleSheet():
         border-style: solid;
         border-width: 1px;
         border-color: black;
+    }
+    #bac-text {
+        font-family: Assistant;
+        font-size: 35px;
+        text-align: center;
+        margin-bottom: 10px;
+        margin-top: 100px;
     }"""
     return stylesheet
 
@@ -545,5 +552,12 @@ def getDarkStyleSheet():
         border-style: solid;
         border-width: 1px;
         border-color: #f7f7f7;
+    }
+    #bac-text {
+        font-family: Assistant;
+        font-size: 35px;
+        text-align: center;
+        margin-bottom: 10px;
+        margin-top: 100px;
     }"""
     return stylesheet
