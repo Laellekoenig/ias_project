@@ -1157,8 +1157,7 @@ class MainWindow(qtw.QWidget):
         msg.exec_()
 
     def bac_import(self):
-        # only allow .sqlite files
-        path, _ = qtw.QFileDialog.getOpenFileName(self, "Import", "", "database files (*.sqlite)")
+        path = str(qtw.QFileDialog.getExistingDirectory(self, "Import"))
 
         # give path to bac core
         self.bac_core.import_from_pcap_to_db(path)
