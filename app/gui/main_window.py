@@ -1146,10 +1146,6 @@ class MainWindow(qtw.QWidget):
         msg.setText("Added article to {}.".format(feed))
         msg.exec_()
 
-    def file_selector(self):
-        fileName, _ = qtw.QFileDialog.getOpenFileName(self, "QFileDialog.getOpenFileName()", "All Files (*);;")
-        return fileName
-
     def bac_import(self):
         # only allow .sqlite files
         path, _ = qtw.QFileDialog.getOpenFileName(self, "Import", "", "database files (*.sqlite)")
