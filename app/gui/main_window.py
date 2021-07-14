@@ -825,6 +825,7 @@ class MainWindow(qtw.QWidget):
 
         lst = qtw.QListWidget()
         lst.setWordWrap(True)
+        lst.setObjectName("bacLst")
         #TODO
         items = ["hallo", "welt", "wie", "gehts"]
         lst.addItems(items)
@@ -838,6 +839,7 @@ class MainWindow(qtw.QWidget):
         hLayout = qtw.QHBoxLayout()
         hLayout.addStretch()
         hLayout.addLayout(layout)
+        hLayout.addStretch()
         hLayout.addLayout(layout2)
         hLayout.addStretch()
 
