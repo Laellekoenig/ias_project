@@ -795,10 +795,15 @@ class MainWindow(qtw.QWidget):
         if self.active_feed is None:
             self.active_feed = active_feed
 
-        btn = qtw.QPushButton(text="create a new feed")
+        btn = qtw.QPushButton(text="create feed")
         btn.setObjectName("bacButton")
         btn.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
         btn.clicked.connect(self.set_feed_section)
+
+        btn2 = qtw.QPushButton(text="import articles")
+        btn2.setObjectName("bacButton")
+        btn2.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
+        #btn2.clicked.connect(TODO)
 
         layout = qtw.QVBoxLayout()
         layout.addStretch()
@@ -806,6 +811,7 @@ class MainWindow(qtw.QWidget):
         layout.addWidget(text)
         layout.addWidget(self.active_feed)
         layout.addWidget(btn)
+        layout.addWidget(btn2)
         layout.addStretch()
 
         hLayout = qtw.QHBoxLayout()
@@ -1122,6 +1128,11 @@ class MainWindow(qtw.QWidget):
         # add it to feed
         self.bac_core.create_event(feed, json)
         print("added to feed")
+
+        msg = qtw.QMessageBox()
+        msg.setWindowTitle("Success")
+        msg.setText("Added article to {}.".format(feed))
+        msg.exec_()
 
     # check current mode downloading/sharing and select corresponding action
     def switch_wlan(self):
