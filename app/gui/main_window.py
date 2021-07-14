@@ -766,6 +766,10 @@ class MainWindow(qtw.QWidget):
         self.main.addLayout(rhs_layout, 0, 95, 100, 5)
 
     def set_BAC_section(self):
+
+        self.bac_export()
+        return
+
         self.tab_changed()
         self.set_selected_menu_button(self.b5)
 
@@ -1143,10 +1147,22 @@ class MainWindow(qtw.QWidget):
         msg.exec_()
 
     def file_selector(self):
-        options = qtw.QFileDialog.Options()
-        options |= qtw.QFileDialog.DontUseNativeDialog
         fileName, _ = qtw.QFileDialog.getOpenFileName(self, "QFileDialog.getOpenFileName()", "All Files (*);;")
         return fileName
+
+    def bac_import(self):
+        # only allow .sqlite files
+        path, _ = qtw.QFileDialog.getOpenFileName(self, "Import", "", "database files (*.sqlite)")
+
+        # give path to bac core
+        self.bac_core.import_from_pcap_to_db(path)
+
+    def bac_export(self):
+        # choose directory
+        path = str(qtw.QFileDialog.getExistingDirectory(self, "Export"))
+
+        # give to bac core
+        self.bac_core.export_db_to_pcap(path)
 
     # check current mode downloading/sharing and select corresponding action
     def switch_wlan(self):
