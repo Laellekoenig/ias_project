@@ -766,10 +766,6 @@ class MainWindow(qtw.QWidget):
         self.main.addLayout(rhs_layout, 0, 95, 100, 5)
 
     def set_BAC_section(self):
-
-        self.bac_export()
-        return
-
         self.tab_changed()
         self.set_selected_menu_button(self.b5)
 
