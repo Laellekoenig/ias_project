@@ -794,6 +794,9 @@ class MainWindow(qtw.QWidget):
 
         if self.active_feed is None:
             self.active_feed = active_feed
+        else:
+            self.active_feed.clear()
+            self.active_feed.addItems(items)
 
         btn = qtw.QPushButton(text="create feed")
         btn.setObjectName("bacButton")

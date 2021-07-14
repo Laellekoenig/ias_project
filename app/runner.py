@@ -11,19 +11,19 @@ from datetime import datetime
 from bacnet.core import BACCore
 from logic.article import Article
 
-a = Article('SRF')
-json_raw = a.get_json()
-b = BACCore()
-if not b.exists_db():
-    b.setup_db('phil_sim')
-else:
-    b.setup_db()
+#a = Article('SRF')
+#json_raw = a.get_json()
+#b = BACCore()
+#if not b.exists_db():
+#    b.setup_db('phil_sim')
+#else:
+#    b.setup_db()
 #print(b.exists_user())
 #b.create_user('test_user') # only if no user exists
-b.create_feed('test_feed')
-b.create_feed('test_feed2')
-b.create_feed('test_feed3')
-b.create_event('test_feed', json_raw)
+#b.create_feed('test_feed')
+#b.create_feed('test_feed2')
+#b.create_feed('test_feed3')
+#b.create_event('test_feed', json_raw)
 #b.create_event('test_feed', "SRF - Am Gotthard ist zu Ferienbeginn Geduld gefragt")
 #b.create_event('test_feed', "SRF - Am Gotthard ist zu Ferienbeginn Geduld gefragt")
 #b.create_event('test_feed2', "SRF - Am Gotthard ist zu Ferienbeginn Geduld gefragt")
@@ -40,10 +40,10 @@ b.create_event('test_feed', json_raw)
 #b.export_db_to_pcap("pcap")
 #b.import_from_pcap_to_db("pcap")
 ##b.get_user_name()
-print(b.get_feednames_from_host())
-print(b.get_all_feed_ids())
-i = b.get_id_from_feed_name("test_feed")
-print(b.get_json_from_event(i, 2))
+#print(b.get_feednames_from_host())
+#print(b.get_all_feed_ids())
+#i = b.get_id_from_feed_name("test_feed")
+#print(b.get_json_from_event(i, 2))
 # ---------------------------------------------------------------------
 
 # ---------------------- client server test: --------------------------
