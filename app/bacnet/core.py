@@ -110,6 +110,8 @@ class BACCore:
                         'date' : datetime.now().isoformat() }
         second_event = ect.create_event_from_previous(first_event, 'bac_news/new_article', dictionary)
         fcc.add_event(second_event)
+
+        print("feed sucessfully created (from core)")
         """
                 dictionary = {
                     'user_name': 'user1',
@@ -178,6 +180,7 @@ class BACCore:
         new_event = ect.create_event_from_previous(event, 'bac_news/new_article', {'json': json_file})
         fcc = FeedCtrlConnection()
         fcc.add_event(new_event)
+        print("event sucessfully created and appended (from core)")
 
 
     def get_event_content(self, feed_id, seq_no):
@@ -201,14 +204,14 @@ class BACCore:
             self.master_feed_id = self._fcc.get_host_master_id()
             self.db_connector = DatabaseConnector()
             self.user_name = self.get_user_name()
-            print(1)
-            print(self._fcc.get_trusted(self.master_feed_id))
-            print(2)
+            #print(1)
+            #print(self._fcc.get_trusted(self.master_feed_id))
+            #print(2)
         else:
             self._ecf = EventFactory()
             self._eventCreationWrapper = EventCreationWrapper(self._ecf)
             _firstEvent = self._eventCreationWrapper.create_MASTER()
-            _secondEvent = self._eventCreationWrapper.create_radius(10)
+            _secondEvent = self._eventCreationWrapper.create_radius(1)
             _thirdEvent = self._eventCreationWrapper.create_name(user_name)
             self._fcc.add_event(_firstEvent)
             self._fcc.add_event(_secondEvent)
@@ -224,7 +227,7 @@ class BACCore:
         feed_names = list()
         feed_ids = self.get_all_feed_ids()
         for feed_id in feed_ids:
-            if feed_id in self.db_connector.get_all_master_ids():
+            if self.get_event_content(feed_id, 0)[0] == "MASTER/MASTER":
                 continue
             host = self.get_host_from_feed(feed_id)
             if host == self.user_name: #host of this feed is also host of this app

@@ -44,7 +44,7 @@ class DatabaseHandler:
                     try:
                         master_feed = content[1]['master_feed']
                     except KeyError as e:
-                        logger.error(e)
+                        #logger.error(e)
                         return
                     orig_master_feed = self.__eventHandler.get_host_master_id()
                     if master_feed == orig_master_feed or orig_master_feed is None:
@@ -66,7 +66,7 @@ class DatabaseHandler:
             if application != 'ratchet':
                 self.__eventHandler.add_event(event_as_cbor)
         except InvalidApplicationError as e:
-            logger.error(e)
+            #logger.error(e)
             return -1
         return 1
 

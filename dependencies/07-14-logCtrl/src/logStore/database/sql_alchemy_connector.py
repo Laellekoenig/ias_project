@@ -21,7 +21,7 @@ class SqLiteDatabase:
         try:
             self.__Session = sessionmaker()
             dbtype = dbtype.lower()
-            logger.error(dbname)
+            #logger.error(dbname)
             if dbtype in self.DB_ENGINE.keys():
                 engine_url = self.DB_ENGINE[dbtype].format(DB=dbname)
                 self.__db_engine = create_engine(engine_url)
@@ -29,7 +29,8 @@ class SqLiteDatabase:
             else:
                 logger.debug("DBType is not found in DB_ENGINE")
         except Exception as e:
-            logger.error(e)
+            #logger.error(e)
+            pass
         finally:
             with self.session_scope():
                 return
@@ -47,7 +48,8 @@ class SqLiteDatabase:
         try:
             metadata.create_all(self.__db_engine)
         except Exception as e:
-            logger.error(e)
+            #logger.error(e)
+            pass
 
     def insert_byte_array(self, feed_id, seq_no, event_as_cbor):
         with self.session_scope() as session:
@@ -106,7 +108,8 @@ class SqLiteDatabase:
         try:
             metadata.create_all(self.__db_engine)
         except Exception as e:
-            logger.error(e)
+            #logger.error(e)
+            pass
 
     def insert_master_event(self, master, feed_id, app_feed_id, trust_feed_id, seq_no, trust, name, radius,
                             event_as_cbor, app_name):
@@ -259,7 +262,8 @@ class SqLiteDatabase:
         try:
             metadata.create_all(self.__db_engine)
         except Exception as e:
-            logger.error(e)
+            #logger.error(e)
+            pass
 
     def insert_kotlin_event(self, feed_id, seq_no, application, username, oldusername, timestamp, text):
         with self.session_scope() as session:
@@ -341,7 +345,8 @@ class SqLiteDatabase:
         try:
             metadata.create_all(self.__db_engine)
         except Exception as e:
-            logger.error(e)
+            #logger.error(e)
+            pass
 
     def insert_event(self, feed_id, seq_no, application, chat_id, timestamp, data):
         with self.session_scope() as session:
@@ -388,7 +393,8 @@ class SqLiteDatabase:
         try:
             metadata.create_all(self.__db_engine)
         except Exception as e:
-            logger.error(e)
+            #logger.error(e)
+            pass
 
     def insert_ratchet_event(self, feed_id, seq_no, application, chat_id, timestamp, data, special_key):
         with self.session_scope() as session:
@@ -449,7 +455,7 @@ class SqLiteDatabase:
             yield session
             session.commit()
         except Exception as e:
-            logger.error(e)
+            #logger.error(e)
             session.rollback()
             return -1
         finally:
