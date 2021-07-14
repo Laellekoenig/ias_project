@@ -97,8 +97,11 @@ class BACCore:
         eventCreationWrapper = EventCreationWrapper(ecf_master)
 
         new_feed_event = eventCreationWrapper.create_newFeed(public_key, 'bac_news')
+        trust_feed_event = eventCreationWrapper.create_trust(public_key)
         fcc.add_event(new_feed_event)
+        fcc.add_event(trust_feed_event)
         fcc.add_event(first_event)
+        
 
         # create event containing list name, host name and creation date
         ect = EventCreationTool()
@@ -198,11 +201,14 @@ class BACCore:
             self.master_feed_id = self._fcc.get_host_master_id()
             self.db_connector = DatabaseConnector()
             self.user_name = self.get_user_name()
+            print(1)
+            print(self._fcc.get_trusted(self.master_feed_id))
+            print(2)
         else:
             self._ecf = EventFactory()
             self._eventCreationWrapper = EventCreationWrapper(self._ecf)
             _firstEvent = self._eventCreationWrapper.create_MASTER()
-            _secondEvent = self._eventCreationWrapper.create_radius(1)
+            _secondEvent = self._eventCreationWrapper.create_radius(10)
             _thirdEvent = self._eventCreationWrapper.create_name(user_name)
             self._fcc.add_event(_firstEvent)
             self._fcc.add_event(_secondEvent)
@@ -212,20 +218,27 @@ class BACCore:
             self.user_name = user_name
 
     def get_user_name(self):
-        print(self.get_event_content(self.master_feed_id, 2)[1]["name"])
         return(self.get_event_content(self.master_feed_id, 2)[1]["name"])
 
     def get_feednames_from_host(self):
         feed_names = list()
         feed_ids = self.get_all_feed_ids()
-        print(feed_ids)
         for feed_id in feed_ids:
-            if feed_id == self.master_feed_id:
+            if feed_id in self.db_connector.get_all_master_ids():
                 continue
             host = self.get_host_from_feed(feed_id)
             if host == self.user_name: #host of this feed is also host of this app
                 feed_names.append(self.get_feedname_from_id(feed_id))
-        print(feed_names)
+        return feed_names
+
+    def get_all_feed_name_host_tuples(self):
+        feed_names = list()
+        feed_ids = self.get_all_feed_ids()
+        for feed_id in feed_ids:
+            if self.get_event_content(feed_id, 0)[0] == "MASTER/MASTER":
+                continue
+            host = self.get_host_from_feed(feed_id)
+            feed_names.append((self.get_feedname_from_id(feed_id), host))
         return feed_names
 
     def set_path_to_db(self, path):
@@ -253,7 +266,20 @@ class BACCore:
         print(self.get_event_content(feed_id, 1)[1]["list_name"])
         return self.get_event_content(feed_id, 1)[1]["list_name"]
 
-    def get_id_from_feed_name(self, feed_name):
+    def get_id_from_feed_name_and_host(self, feedname_host):
+        feed_name = feedname_host[0]
+        host = feedname_host[1]
+        feed_ids = self.get_all_feed_ids()
+        for feed_id in feed_ids:
+            if self.get_event_content(feed_id, 0)[0] == "MASTER/MASTER":
+                continue
+            feed_host = self.get_host_from_feed(feed_id)
+            if host == feed_host:
+                if feed_name == self.get_feedname_from_id(feed_id):
+                    return feed_id
+        return None
+
+    def get_id_from_feed_name(self, feed_name): # only for own feed_ids
         feed_ids = self.get_all_feed_ids()
         for feed_id in feed_ids:
             if feed_id == self.master_feed_id:
@@ -270,3 +296,13 @@ class BACCore:
 
     def get_json_from_event(self, feed_id, seq_no):
         return self.get_event_content(feed_id, seq_no)[1]['json']
+
+    def get_json_files_from_feed(self, feedname_host):  #feedname_host = tuple with feed_name and its host
+        json_files = list()
+        feed_name = feedname_host[0]
+        host = feedname_host[1]
+        feed_id = self.get_id_from_feed_name_and_host((feed_name, host))
+        max_seq_no = self.db_connector.get_current_seq_no(feed_id)
+        for i in range(2, max_seq_no + 1):
+            json_files.append(self.get_json_from_event(feed_id, i))
+        return json_files  

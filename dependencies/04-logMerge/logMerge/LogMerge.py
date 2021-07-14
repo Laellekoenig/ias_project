@@ -53,8 +53,10 @@ class LogMerge:
                     next_event = self.DB.get_event(master_feed_id, current_seq_no)
                 PCAP.write_pcap(os.path.join(path_to_pcap_folder, master_feed_id.hex() + "_v"), event_list)
         for feed_id, current_seq_no in dict_feed_id_current_seq_no.items():
+            print("get here1")
             if not self.EV.check_outgoing(feed_id):
                 continue
+            print("get here2")
             event_list = []
             current_seq_no += 1
             next_event = self.DB.get_event(feed_id, current_seq_no)
@@ -132,7 +134,7 @@ class LogMerge:
 
     def __verify_event(self, event, previous_event=None):
         if not self.EV.check_incoming(event.meta.feed_id, event.content.content[0].split('/')[0]):
-            return False
+            return True # Default set to false, but for news client true, handled in news client itself (trusts every feed from other user)
         if previous_event is not None:
             previous_hash_type, hash_of_previous = event.meta.hash_of_prev
             prev_meta_as_cbor = previous_event.meta.get_as_cbor()
