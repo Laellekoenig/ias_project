@@ -18,6 +18,8 @@ from transfer.LAN_client import LANClient
 from transfer.bt_server import bt_server as BTServer
 from transfer.bt_client import bt_client as BTClient
 from bacnet.core import BACCore
+from logic.article import Article
+from logic.article import NewsSource
 
 # own label class that can be clicked like a QPushButton
 class imageLabel(qtw.QLabel):
@@ -829,6 +831,23 @@ class MainWindow(qtw.QWidget):
         lst.setWordWrap(True)
         lst.setObjectName("bacLst")
         #TODO
+
+        feeds = self.bac_core.get_feednames_from_host()
+        json_files = []
+        for feed in feeds:
+            json_files.append(self.bac_core.get_json_files_from_feed(feed))
+
+        articles = []
+        for json in json_files:
+            article = Article(NewsSource("SRF"))
+            article.fill_article_from_json_file(json)
+            articles.append(article)
+
+        titles = []
+        for article in articles:
+            titles.append(article.title_1)
+        print(titles)
+
         items = ["hallo", "welt", "wie", "gehts"]
         lst.addItems(items)
         #lst.itemSelectionChanged.connect(TODO)
