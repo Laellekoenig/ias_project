@@ -803,10 +803,15 @@ class MainWindow(qtw.QWidget):
         btn.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
         btn.clicked.connect(self.set_feed_section)
 
-        btn2 = qtw.QPushButton(text="import articles")
+        btn2 = qtw.QPushButton(text="import")
         btn2.setObjectName("bacButton")
         btn2.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
         #btn2.clicked.connect(TODO)
+
+        btn3 = qtw.QPushButton(text="export")
+        btn3.setObjectName("bacButton")
+        btn3.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
+        #btn3.clicked.connect(TODO)
 
         layout = qtw.QVBoxLayout()
         layout.addStretch()
@@ -1136,6 +1141,12 @@ class MainWindow(qtw.QWidget):
         msg.setWindowTitle("Success")
         msg.setText("Added article to {}.".format(feed))
         msg.exec_()
+
+    def file_selector(self):
+        options = qtw.QFileDialog.Options()
+        options |= qtw.QFileDialog.DontUseNativeDialog
+        fileName, _ = qtw.QFileDialog.getOpenFileName(self, "QFileDialog.getOpenFileName()", "All Files (*);;")
+        return fileName
 
     # check current mode downloading/sharing and select corresponding action
     def switch_wlan(self):
