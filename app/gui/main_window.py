@@ -832,21 +832,21 @@ class MainWindow(qtw.QWidget):
         lst.setObjectName("bacLst")
         #TODO
 
-        feeds = self.bac_core.get_feednames_from_host()
-        json_files = []
-        for feed in feeds:
-            json_files.append(self.bac_core.get_json_files_from_feed(feed))
+        #feeds = self.bac_core.get_feednames_from_host()
+        #json_files = []
+        #for feed in feeds:
+        #    json_files.append(self.bac_core.get_json_files_from_feed(feed))
 
-        articles = []
-        for json in json_files:
-            article = Article(NewsSource("SRF"))
-            article.fill_article_from_json_file(json)
-            articles.append(article)
+        #articles = []
+        #for json in json_files:
+        #    article = Article(NewsSource("SRF"))
+        #    article.fill_article_from_json_file(json)
+        #    articles.append(article)
 
-        titles = []
-        for article in articles:
-            titles.append(article.title_1)
-        print(titles)
+        #titles = []
+        #for article in articles:
+        #    titles.append(article.title_1)
+        #print(titles)
 
         items = ["hallo", "welt", "wie", "gehts"]
         lst.addItems(items)
