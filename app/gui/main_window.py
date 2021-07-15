@@ -833,21 +833,14 @@ class MainWindow(qtw.QWidget):
         #TODO
 
         tuples = self.bac_core.get_all_feed_name_host_tuples()
-        feeds = []
+        json = []
         for tuple in tuples:
-            feeds.append(self.bac_core.get_json_files_from_feed(tuple))
-
-        json_lst = []
-        for feed in feeds:
-            json_lst.append(feed)
-
-        unpacked_json = []
-        for item in json_lst:
-            if len(item) > 0:
-                unpacked_json.append(item[0])
+            list = self.bac_core.get_json_files_from_feed(tuple)
+            for item in list:
+                json.append(item)
 
         articles = []
-        for item in unpacked_json:
+        for item in json:
             article = Article("SRF")
             article.fill_article_from_json_string(item)
             articles.append(article)
@@ -856,7 +849,7 @@ class MainWindow(qtw.QWidget):
         for item in articles:
             titles.append(item.title_1)
 
-        print(titles)
+        titles.reverse()
 
         lst.addItems(titles)
         #lst.itemSelectionChanged.connect(TODO)
