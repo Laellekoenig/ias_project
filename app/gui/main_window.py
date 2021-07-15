@@ -126,6 +126,8 @@ class MainWindow(qtw.QWidget):
         self.feed_input = None
         self.bac_btn = None
         self.active_feed = None
+        self.articles_in_feeds = None
+        self.bac_selector = None
 
         # initiate window
         super().__init__(windowTitle="IAS Project")
@@ -830,6 +832,7 @@ class MainWindow(qtw.QWidget):
         lst = qtw.QListWidget()
         lst.setWordWrap(True)
         lst.setObjectName("bacLst")
+        self.bac_selector = lst
         #TODO
 
         tuples = self.bac_core.get_all_feed_name_host_tuples()
@@ -851,6 +854,9 @@ class MainWindow(qtw.QWidget):
 
         titles.reverse()
 
+        lst.itemDoubleClicked.connect(self.bac_double_clicked)
+
+        self.articles_in_feeds = articles
         lst.addItems(titles)
         #lst.itemSelectionChanged.connect(TODO)
 
@@ -957,6 +963,19 @@ class MainWindow(qtw.QWidget):
         horizontal.addStretch()
 
         self.main.addLayout(horizontal, 0, 0)
+
+    def bac_double_clicked(self):
+        title = self.bac_selector.currentItem().text()
+        article = None
+        for item in self.articles_in_feeds:
+            if item.title_1 == title:
+                article = item
+        
+        html = article.get_html()
+        external = externalWindow(title, html, self.window().width(), self.window().height(), self.light)
+        external.show()
+
+        self.open_windows.append(external)
 
     def create_feed(self):
         name = self.feed_input.text()
