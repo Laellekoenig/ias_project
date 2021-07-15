@@ -101,6 +101,26 @@ class Article:
         self.content_index = data['content_index']
         self.content = data['content']
 
+    def fill_article_from_json_string(self, str):
+        data = json.loads(str)
+        print(data)
+
+        self.news_source = data['news_source']
+        self.category = data['category']
+        self.tags = data['tags']
+        self.date_and_time_modified = data['date_and_time_modified']
+        self.bookmarked = data['bookmarked']
+        self.opened = data['opened']
+        self.deleted = data['deleted']
+
+        self.title_0 = data['title_0']
+        self.title_1 = data['title_1']
+        self.lead = data['lead']
+        self.author = data['author']
+        self.date_and_time = data['date_and_time']
+        self.content_index = data['content_index']
+        self.content = data['content']
+
     def get_content(self):
         return (content_index, content)
     

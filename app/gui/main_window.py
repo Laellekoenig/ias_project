@@ -832,24 +832,33 @@ class MainWindow(qtw.QWidget):
         lst.setObjectName("bacLst")
         #TODO
 
-        #feeds = self.bac_core.get_feednames_from_host()
-        #json_files = []
-        #for feed in feeds:
-        #    json_files.append(self.bac_core.get_json_files_from_feed(feed))
+        tuples = self.bac_core.get_all_feed_name_host_tuples()
+        feeds = []
+        for tuple in tuples:
+            feeds.append(self.bac_core.get_json_files_from_feed(tuple))
 
-        #articles = []
-        #for json in json_files:
-        #    article = Article(NewsSource("SRF"))
-        #    article.fill_article_from_json_file(json)
-        #    articles.append(article)
+        json_lst = []
+        for feed in feeds:
+            json_lst.append(feed)
 
-        #titles = []
-        #for article in articles:
-        #    titles.append(article.title_1)
-        #print(titles)
+        unpacked_json = []
+        for item in json_lst:
+            if len(item) > 0:
+                unpacked_json.append(item[0])
 
-        items = ["hallo", "welt", "wie", "gehts"]
-        lst.addItems(items)
+        articles = []
+        for item in unpacked_json:
+            article = Article("SRF")
+            article.fill_article_from_json_string(item)
+            articles.append(article)
+
+        titles = []
+        for item in articles:
+            titles.append(item.title_1)
+
+        print(titles)
+
+        lst.addItems(titles)
         #lst.itemSelectionChanged.connect(TODO)
 
         layout2 = qtw.QVBoxLayout()
