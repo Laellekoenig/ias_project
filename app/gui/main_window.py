@@ -856,6 +856,7 @@ class MainWindow(qtw.QWidget):
         titles.reverse()
 
         lst.itemDoubleClicked.connect(self.bac_double_clicked)
+        lst.setToolTip("double click to open article")
 
         self.articles_in_feeds = articles
         lst.addItems(titles)
@@ -868,8 +869,9 @@ class MainWindow(qtw.QWidget):
         super = qtw.QGridLayout()
         layout2.setContentsMargins(0, 0, 200, 0)
         super.setContentsMargins(0, 0, 100, 0)
-        super.addLayout(layout2, 0, 0, 100, 50)
-        super.addLayout(layout, 0, 80, 100, 20)
+
+        super.addLayout(layout2, 0, 0, 10, 6)
+        super.addLayout(layout, 0, 8, 10, 2)
 
         self.main.addLayout(super, 0, 0)
 
