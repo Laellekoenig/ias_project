@@ -825,6 +825,7 @@ class MainWindow(qtw.QWidget):
         layout.addWidget(btn2)
         layout.addWidget(btn3)
         layout.addStretch()
+        layout.setObjectName("bac-box")
 
         text2 = qtw.QLabel("Articles in feeds:")
         text2.setObjectName("bac-text")
@@ -863,16 +864,14 @@ class MainWindow(qtw.QWidget):
         layout2 = qtw.QVBoxLayout()
         layout2.addWidget(text2)
         layout2.addWidget(lst)
-        layout2.addStretch()
 
-        hLayout = qtw.QHBoxLayout()
-        hLayout.addStretch()
-        hLayout.addLayout(layout)
-        hLayout.addStretch()
-        hLayout.addLayout(layout2)
-        hLayout.addStretch()
+        super = qtw.QGridLayout()
+        layout2.setContentsMargins(0, 0, 200, 0)
+        super.setContentsMargins(0, 0, 100, 0)
+        super.addLayout(layout2, 0, 0, 100, 50)
+        super.addLayout(layout, 0, 80, 100, 20)
 
-        self.main.addLayout(hLayout, 0, 0)
+        self.main.addLayout(super, 0, 0)
 
     def set_login_section(self):
         self.tab_changed()
@@ -970,7 +969,7 @@ class MainWindow(qtw.QWidget):
         for item in self.articles_in_feeds:
             if item.title_1 == title:
                 article = item
-        
+
         html = article.get_html()
         external = externalWindow(title, html, self.window().width(), self.window().height(), self.light)
         external.show()

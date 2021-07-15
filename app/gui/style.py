@@ -291,7 +291,6 @@ def getLightStyleSheet():
         font-size: 35px;
         text-align: center;
         margin-bottom: 10px;
-        margin-top: 100px;
     }"""
     return stylesheet
 
@@ -558,6 +557,5 @@ def getDarkStyleSheet():
         font-size: 35px;
         text-align: center;
         margin-bottom: 10px;
-        margin-top: 100px;
     }"""
     return stylesheet
