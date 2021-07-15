@@ -307,6 +307,8 @@ class BACCore:
         host = feedname_host[1]
         feed_id = self.get_id_from_feed_name_and_host((feed_name, host))
         max_seq_no = self.db_connector.get_current_seq_no(feed_id)
+        if max_seq_no is None:
+            max_seq_no = -1
         for i in range(2, max_seq_no + 1):
             json_files.append(self.get_json_from_event(feed_id, i))
         return json_files  
