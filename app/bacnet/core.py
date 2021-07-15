@@ -192,14 +192,15 @@ class BACCore:
         #print(d.get_current_event(list_of_feed_ids[1]))
     def exists_db(self):
         self._fcc = FeedCtrlConnection()
-        lastEvent = self._fcc.get_my_last_event()
+        lastEvent = self._fcc.get_host_master_id()
+        print(lastEvent)
         if lastEvent is not None:
             return 1
         return 0
 
     def setup_db(self, user_name=''):
         # try catch or if None??
-        lastEvent = self._fcc.get_my_last_event()
+        lastEvent = self._fcc.get_host_master_id()
         if lastEvent is not None:
             self.master_feed_id = self._fcc.get_host_master_id()
             self.db_connector = DatabaseConnector()
@@ -285,7 +286,7 @@ class BACCore:
     def get_id_from_feed_name(self, feed_name): # only for own feed_ids
         feed_ids = self.get_all_feed_ids()
         for feed_id in feed_ids:
-            if feed_id == self.master_feed_id:
+            if self.get_event_content(feed_id, 0)[0] == "MASTER/MASTER": # still need to do this, because master feed of other user could be in front of new feed in db of own host after import.
                 continue
             host = self.get_host_from_feed(feed_id)
             if host == self.user_name:
