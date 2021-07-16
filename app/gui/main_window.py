@@ -19,7 +19,6 @@ from transfer.bt_server import bt_server as BTServer
 from transfer.bt_client import bt_client as BTClient
 from bacnet.core import BACCore
 from logic.article import Article
-from logic.article import NewsSource
 
 # own label class that can be clicked like a QPushButton
 class imageLabel(qtw.QLabel):
@@ -92,26 +91,31 @@ class externalWindow(qtw.QWidget):
         else:
             self.setStyleSheet(style.getDarkStyleSheet())
 
+# pop up window for selecting bac-net feed on which to append article to
 class bacPopUp(qtw.QDialog):
     def __init__(self, core, json):
         super().__init__()
         self.setMinimumWidth(300)
         self.core = core
         self.json = json
-        form = qtw.QFormLayout(self)
-        form.addRow(qtw.QLabel("Select feed:"))
+
+        #create widgets
+        title = qtw.QLabel("Select feed:")
 
         selector = qtw.QComboBox()
-        feeds = core.get_feednames_from_host()
-        selector.addItems(feeds)
+        selector.addItems(core.get_feednames_from_host())
         self.selector = selector
 
         btn = qtw.QPushButton("append")
         btn.clicked.connect(self.append)
 
+        # create layout and add widgets
+        form = qtw.QFormLayout(self)
+        form.addRow(title)
         form.addRow(selector)
         form.addRow(btn)
 
+    # appends the current article to selected feed
     def append(self):
         feed = self.selector.currentText()
         self.core.create_event(feed, self.json)
@@ -805,6 +809,7 @@ class MainWindow(qtw.QWidget):
         self.main.addWidget(text, 0, 20, 100, 75)
         self.main.addLayout(rhs_layout, 0, 95, 100, 5)
 
+    # BAC-net feed reader and creator
     def set_BAC_section(self):
         self.tab_changed()
         self.set_selected_menu_button(self.b5)
@@ -818,6 +823,7 @@ class MainWindow(qtw.QWidget):
         self.bac_core.setup_db()
         articles, titles, feeds = self.get_bac_feeds()
 
+        # create UI elements
         article_lst = qtw.QListWidget()
         article_lst.setWordWrap(True)
         article_lst.itemSelectionChanged.connect(self.bac_article_selection_changed)
@@ -847,11 +853,13 @@ class MainWindow(qtw.QWidget):
         text.setOpenExternalLinks(True)
         self.bac_reader = text
 
+        # update content
         self.update_bac_article_lst()
 
         self.main.addLayout(lhs_layout, 0, 0, 10, 2)
         self.main.addWidget(text, 0, 2, 10, 8)
 
+    # used for creating BAC-net username
     def set_login_section(self):
         self.tab_changed()
         self.set_selected_menu_button(self.b5)
@@ -883,37 +891,6 @@ class MainWindow(qtw.QWidget):
 
         self.main.addLayout(horizontal, 0, 0)
 
-    def set_feed_section(self):
-        self.tab_changed()
-        self.set_selected_menu_button(self.b5)
-
-        text = qtw.QLabel("Enter a feed name:")
-        text.setObjectName("client-text")
-
-        feed_input = qtw.QLineEdit()
-        feed_input.setAttribute(qtc.Qt.WA_MacShowFocusRect, 0)
-        feed_input.setAlignment(qtc.Qt.AlignCenter)
-        self.feed_input = feed_input
-
-        btn = qtw.QPushButton("create")
-        btn.setObjectName("loginBtn")
-        btn.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
-        btn.clicked.connect(self.create_feed)
-
-        layout = qtw.QVBoxLayout()
-        layout.addStretch()
-        layout.addWidget(text)
-        layout.addWidget(feed_input)
-        layout.addWidget(btn)
-        layout.addStretch()
-
-        hLayout = qtw.QHBoxLayout()
-        hLayout.addStretch()
-        hLayout.addLayout(layout)
-        hLayout.addStretch()
-
-        self.main.addLayout(hLayout, 0, 0)
-
     # customizable info screen
     # msg = big text message
     # btn_name = text on btn beneath info
@@ -942,6 +919,7 @@ class MainWindow(qtw.QWidget):
 
         self.main.addLayout(horizontal, 0, 0)
 
+    # used for creating new BAC-net feed
     def set_create_feed_section(self):
         self.tab_changed()
 
@@ -972,11 +950,15 @@ class MainWindow(qtw.QWidget):
 
         self.main.addLayout(h_layout, 0, 0)
 
+    # used for updating the article list in the BAC-net section after a feed has been chosen
     def update_bac_article_lst(self):
         if self.bac_selector is None or self.bac_selector.currentText() is None:
             self.set_info_screen("No feed was selected.", "back", self.set_BAC_section)
             return
 
+        # get current feed name
+        # format: "feedname" by username
+        # extract feedname and username:
         text = self.bac_selector.currentText()
         split = text.split("\"")
 
@@ -986,8 +968,10 @@ class MainWindow(qtw.QWidget):
         feed = split[1]
         name = split[2].split("by ")[1]
 
+        # get json list for corresponding feed
         json_lst = self.bac_core.get_json_files_from_feed((feed, name))
 
+        # create articles from json files
         articles = []
         for json in json_lst:
             article = Article("SRF")
@@ -996,56 +980,74 @@ class MainWindow(qtw.QWidget):
 
         self.bac_articles = articles
 
+        # extract titles and display in UI
         titles = [x.title_1 for x in articles]
         self.bac_article_lst.clear()
         self.bac_article_lst.addItems(titles)
         self.bac_article_lst.setCurrentRow(0)
         self.bac_reader.moveCursor(qtg.QTextCursor.Start)
 
+    # returns a 3-tuple of all articles, article titles and feed names
     def get_bac_feeds(self):
         tuples = self.bac_core.get_all_feed_name_host_tuples()
         feeds = []
         json = []
         for tuple in tuples:
+            # format string for returning later
+            # format: "feedname" by username
             feeds.append("\"" + tuple[0] + "\"" + " by " + tuple[1])
             list = self.bac_core.get_json_files_from_feed(tuple)
             for item in list:
                 json.append(item)
 
+        # create articles from json files
         articles = []
         for item in json:
             article = Article("SRF")
             article.fill_article_from_json_string(item)
             articles.append(article)
 
+        # extract titles
         titles = []
         for item in articles:
             titles.append(item.title_1)
 
+        # reverse so most recently appended article on top of list
         titles.reverse()
+
         return (articles, titles, feeds)
 
+    # creates a new feed with help of input name from self.set_create_feed_section()
     def create_feed(self):
+        # get text
         name = self.feed_input.text()
 
         if len(name) > 0:
             self.bac_core.create_feed(name)
             self.set_BAC_section()
         else:
+            # if input is empty
             self.set_info_screen("Invalid feed name.", "back", self.set_feed_section)
 
+    # creates a new user
     def bac_login(self):
+        # get input username from self.set_login_section()
         name = self.login.text()
 
         if len(name) > 0:
             self.bac_core.setup_db(name)
             self.set_BAC_section()
         else:
+            # empty name not accepted
             self.set_info_screen("Invalid name.", "back", self.set_login_section)
 
+    # used in bac-net section
+    # update article in reader according to selected article
     def bac_article_selection_changed(self):
+        # get currently selected article
         current = self.bac_article_lst.currentItem().text()
 
+        # find article instance with corresponding title
         target_article = None
         for article in self.bac_articles:
             if article.title_1 == current:
@@ -1055,6 +1057,7 @@ class MainWindow(qtw.QWidget):
             #print("article not found")
             return
 
+        # set article to reader
         html = target_article.get_html()
         self.bac_reader.clear()
         self.bac_reader.insertHtml(html)
@@ -1232,36 +1235,48 @@ class MainWindow(qtw.QWidget):
     def srf_download_finished(self):
         self.set_info_screen("Download successful.", "read", self.set_reading_section)
 
+    # if a user wants to add an article to a bac net feed
+    # present pop up window and let user choose feed
     def handle_bac_net(self):
+        # check if bac net is set up, if not let user log in
         if self.bac_core.exists_db() == 0:
             self.set_login_section()
             return
 
+        # set up database, necessary for appending to feed
         self.bac_core.setup_db()
 
+        # if user has not created any feeds
         if len(self.bac_core.get_feednames_from_host()) == 0:
             self.set_info_screen("Please create a feed first.", "create feed", self.set_create_feed_section)
             return
 
+        # get current article
         title = self.selector.currentItem().text()
         article = self.logic.get_article_from_title(title)
 
+        # present pop up
         dialog = bacPopUp(self.bac_core, article.get_json())
         dialog.exec_()
 
+    # imports .pcap files into bac net section of app
     def bac_import(self):
+        # check if bac net is set up
         if self.bac_core.exists_db() == 0:
             self.set_BAC_section()
             return
 
         self.bac_core.setup_db()
 
+        # let user choose directory
         path = str(qtw.QFileDialog.getExistingDirectory(self, "Import"))
 
         # give path to bac core
         self.bac_core.import_from_pcap_to_db(path)
 
+    # exports .pcap files
     def bac_export(self):
+        # check if bac net was set up
         if self.bac_core.exists_db() == 0:
             self.set_BAC_section()
             return
@@ -1288,6 +1303,7 @@ class MainWindow(qtw.QWidget):
         else:
             self.set_blue_server_section()
 
+    # in downloading section, open correct bac net response (import or export)
     def switch_bac(self):
         if self.toggle.isChecked():
             self.bac_import()
@@ -1306,8 +1322,11 @@ class MainWindow(qtw.QWidget):
         self.lan_is_downloading = True
         self.lan_thread.finished.connect(self.finished_lan_download)
 
+    # used if user wants to manually input an IP address for LAN connection
     def connect_manually(self):
+        # get input
         ip = self.IP_input.text()
+        # check validity
         if len(ip) >= 7 and len(ip) <= 15:
             #print("trying to connect to " + ip)
             self.set_loading_screen_section()
