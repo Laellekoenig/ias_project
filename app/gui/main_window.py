@@ -970,13 +970,14 @@ class MainWindow(qtw.QWidget):
 
         text = self.bac_selector.currentText()
         print(text)
-        split = text.split(" ")
+        split = text.split("\"")
 
         if len(split) < 3:
             return
 
-        feed = split[0][1:-1]
-        name = split[2]
+        feed = split[1]
+        name = split[2].split("by ")[1]
+        print(name)
 
         json_lst = self.bac_core.get_json_files_from_feed((feed, name))
 
