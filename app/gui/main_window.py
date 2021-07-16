@@ -61,6 +61,26 @@ class BTThread(qtc.QThread):
     def run(self):
         self.BT_client.start_client(self.mac)
 
+# QThread that exports bac feeds to given path
+class BACExportThread(qtc.QThread):
+    def __init__(self, core, path):
+        super().__init__()
+        self.core = core
+        self.path = path
+
+    def run(self):
+        self.core.export_db_to_pcap(self.path)
+
+# QThread that imports .pcap files from given path
+class BACImportThread(qtc.QThread):
+    def __init__(self, core, path):
+        super().__init__()
+        self.core = core
+        self.path = path
+
+    def run(self):
+        self.core.import_from_pcap_to_db(self.path)
+
 # new window for displaying articles
 class externalWindow(qtw.QWidget):
     def __init__(self, title, html, w, h, light):
@@ -161,6 +181,8 @@ class MainWindow(qtw.QWidget):
         self.bac_selector = None
         self.bac_articles = []
         self.bac_reader = None
+        self.bac_import_thread = None
+        self.bac_export_thread = None
 
         # initiate window
         super().__init__(windowTitle="IAS Project")
@@ -1272,7 +1294,18 @@ class MainWindow(qtw.QWidget):
         path = str(qtw.QFileDialog.getExistingDirectory(self, "Import"))
 
         # give path to bac core
-        self.bac_core.import_from_pcap_to_db(path)
+        # self.bac_core.import_from_pcap_to_db(path)
+        self.set_loading_screen_section()
+        self.lan_is_downloading = True
+
+        self.bac_import_thread = BACImportThread(self.bac_core, path)
+        self.bac_import_thread.finished.connect(self.finished_bac_import)
+        self.bac_import_thread.start()
+
+    # resets loading screen after bac import finished
+    def finished_bac_import(self):
+        self.lan_is_downloading = False
+        self.set_info_screen("Successfully imported feeds.", "BAC-section", self.set_BAC_section)
 
     # exports .pcap files
     def bac_export(self):
@@ -1287,7 +1320,18 @@ class MainWindow(qtw.QWidget):
         path = str(qtw.QFileDialog.getExistingDirectory(self, "Export"))
 
         # give to bac core
-        self.bac_core.export_db_to_pcap(path)
+        # self.bac_core.export_db_to_pcap(path)
+        self.set_loading_screen_section()
+        self.lan_is_downloading = True
+
+        self.bac_export_thread = BACExportThread(self.bac_core, path)
+        self.bac_export_thread.finished.connect(self.finished_bac_export)
+        self.bac_export_thread.start()
+
+    # resets loading screen after bac export finished
+    def finished_bac_export(self):
+        self.lan_is_downloading = False
+        self.set_info_screen("Successfully exported feeds.", "back", self.set_downloading_section)
 
     # check current mode downloading/sharing and select corresponding action
     def switch_wlan(self):
