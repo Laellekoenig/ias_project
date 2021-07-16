@@ -95,10 +95,11 @@ class externalWindow(qtw.QWidget):
 class bacPopUp(qtw.QDialog):
     def __init__(self, core, json):
         super().__init__()
+        self.setMinimumWidth(300)
         self.core = core
         self.json = json
         form = qtw.QFormLayout(self)
-        form.addRow(qtw.QLabel("Choose feed:"))
+        form.addRow(qtw.QLabel("Select feed:"))
 
         selector = qtw.QComboBox()
         feeds = core.get_feednames_from_host()
@@ -246,7 +247,6 @@ class MainWindow(qtw.QWidget):
         self.b1 = qtw.QPushButton(text="read")
         self.b1.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
         self.b1.clicked.connect(self.set_reading_section)
-        menu.addWidget(self.b1)
 
         # used for setting style of currently selected section
         self.selected = self.b1
@@ -255,13 +255,11 @@ class MainWindow(qtw.QWidget):
         self.b2 = qtw.QPushButton(text="get new articles")
         self.b2.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
         self.b2.clicked.connect(self.set_downloading_section)
-        menu.addWidget(self.b2)
 
         # button3 -- archive section
         self.b3 = qtw.QPushButton(text="archive")
         self.b3.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
         self.b3.clicked.connect(self.set_archiving_section)
-        menu.addWidget(self.b3)
 
         # button 4 -- dark/light mode toggle
         self.b4 = qtw.QPushButton(text="dark")
@@ -274,10 +272,13 @@ class MainWindow(qtw.QWidget):
         self.b5 = qtw.QPushButton(text="BAC-net")
         self.b5.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
         self.b5.clicked.connect(self.set_BAC_section)
-        menu.addWidget(self.b5)
 
         # ordering
-        menu.addWidget(self.b4)
+        menu.addWidget(self.b1) # reader
+        menu.addWidget(self.b5) # BAC-net
+        menu.addWidget(self.b3) # archive
+        menu.addWidget(self.b2) # get new articles
+        menu.addWidget(self.b4) # dark/light mode switch
 
         # container for menu bar
         container = qtw.QWidget()
@@ -328,6 +329,7 @@ class MainWindow(qtw.QWidget):
         mdi_book_btn.clicked.connect(self.update_bookmark)
         mdi_book_btn.setIconSize(qtc.QSize(40, 40))
         mdi_book_btn.setIcon(mdi_book)
+        mdi_book_btn.setToolTip("archive article")
         self.mdi_btn = mdi_book_btn
         self.draw_bookmark()
 
@@ -339,6 +341,7 @@ class MainWindow(qtw.QWidget):
         external_btn.clicked.connect(self.open_external)
         external_btn.setIconSize(qtc.QSize(35, 35))
         external_btn.setIcon(mdi_external)
+        external_btn.setToolTip("open in new window")
         self.external_btn = external_btn
 
         # for sharing on bac net
@@ -349,6 +352,7 @@ class MainWindow(qtw.QWidget):
         bac_btn.clicked.connect(self.handle_bac_net)
         bac_btn.setIconSize(qtc.QSize(35, 35))
         bac_btn.setIcon(mdi_bac)
+        bac_btn.setToolTip("add to BAC-net")
         self.bac_btn = bac_btn
 
         # article filters
@@ -379,6 +383,7 @@ class MainWindow(qtw.QWidget):
         # category chooser
         combo = qtw.QComboBox()
         combo.setObjectName("combo")
+        combo.setToolTip("select category")
         combo.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
         combo.addItem("All Categories")
         combo.addItem("Switzerland")
@@ -764,6 +769,7 @@ class MainWindow(qtw.QWidget):
         mdi_book_btn.clicked.connect(self.update_bookmark)
         mdi_book_btn.setIconSize(qtc.QSize(40, 40))
         mdi_book_btn.setIcon(mdi_book)
+        mdi_book_btn.setToolTip("archive article")
         self.mdi_btn = mdi_book_btn
         self.draw_bookmark()
 
@@ -775,6 +781,7 @@ class MainWindow(qtw.QWidget):
         external_btn.clicked.connect(self.open_external)
         external_btn.setIconSize(qtc.QSize(35, 35))
         external_btn.setIcon(mdi_external)
+        external_btn.setToolTip("open in new window")
         self.external_btn = external_btn
 
         # for sharing on bac net
@@ -785,6 +792,7 @@ class MainWindow(qtw.QWidget):
         bac_btn.clicked.connect(self.handle_bac_net)
         bac_btn.setIconSize(qtc.QSize(35, 35))
         bac_btn.setIcon(mdi_bac)
+        bac_btn.setToolTip("add to BAC-net")
         self.bac_btn = bac_btn
 
         rhs_layout = qtw.QVBoxLayout()
@@ -817,6 +825,7 @@ class MainWindow(qtw.QWidget):
 
         bac_selector = qtw.QComboBox()
         bac_selector.setObjectName("combo")
+        bac_selector.setToolTip("select feed")
         bac_selector.addItems(feeds)
         bac_selector.setCurrentIndex(0)
         bac_selector.currentTextChanged.connect(self.update_bac_article_lst)
