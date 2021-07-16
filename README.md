@@ -5,8 +5,8 @@ Easily download articles from SRF and share them with other users via LAN, Bluet
 ![light](screen1.png)
 ![dark](screen2.png)
 
-- [ ] BAC net integration
-- [ ] bluetooth article transmission
+- [x] BAC net integration
+- [x] bluetooth article transmission
 - [x] local network article transmission
 - [x] download articles
 - [x] loading animation when scraping
@@ -57,11 +57,8 @@ Easily download articles from SRF and share them with other users via LAN, Bluet
 - [x] manual input of IP address
 - [x] open article into own window
 - [x] more keyboard shortcuts
----
+- [x] remove bluetooth btn from mac os
 ---
 - [ ] message if download via BT failed  
 - [ ] improve category filter efficiency
-- [ ] remove bluetooth btn from mac os
-
-## difficult to fix
 - [ ] fix bookmark color in dark mode  

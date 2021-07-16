@@ -508,10 +508,10 @@ class MainWindow(qtw.QWidget):
 
         on_macOS = self.BT_server.on_macOS()
 
-        #if not on_macOS:
-        #    downLayout.addWidget(blueB)
+        if not on_macOS:
+            downLayout.addWidget(blueB)
         # for testing:
-        downLayout.addWidget(blueB)
+        #downLayout.addWidget(blueB)
 
         downLayout.addWidget(localB)
         downLayout.addStretch()
