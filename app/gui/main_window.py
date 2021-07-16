@@ -92,6 +92,30 @@ class externalWindow(qtw.QWidget):
         else:
             self.setStyleSheet(style.getDarkStyleSheet())
 
+class bacPopUp(qtw.QDialog):
+    def __init__(self, core, json):
+        super().__init__()
+        self.core = core
+        self.json = json
+        form = qtw.QFormLayout(self)
+        form.addRow(qtw.QLabel("Choose feed:"))
+
+        selector = qtw.QComboBox()
+        feeds = core.get_feednames_from_host()
+        selector.addItems(feeds)
+        self.selector = selector
+
+        btn = qtw.QPushButton("append")
+        btn.clicked.connect(self.append)
+
+        form.addRow(selector)
+        form.addRow(btn)
+
+    def append(self):
+        feed = self.selector.currentText()
+        self.core.create_event(feed, self.json)
+        self.close()
+
 # main GUI class
 class MainWindow(qtw.QWidget):
 
@@ -128,6 +152,10 @@ class MainWindow(qtw.QWidget):
         self.active_feed = None
         self.articles_in_feeds = None
         self.bac_selector = None
+        self.bac_article_lst = None
+        self.bac_selector = None
+        self.bac_articles = []
+        self.bac_reader = None
 
         # initiate window
         super().__init__(windowTitle="IAS Project")
@@ -401,7 +429,7 @@ class MainWindow(qtw.QWidget):
         toggleLayout = qtw.QHBoxLayout()
 
         # -- begin toggles for switching between sharing and downloading --
-        toggle = qtw.QPushButton(text="download")
+        toggle = qtw.QPushButton(text="import")
         toggle.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
         toggle.setCheckable(True)
         # start in downloading mode
@@ -410,7 +438,7 @@ class MainWindow(qtw.QWidget):
         toggle.setObjectName("toggleTrue")
         self.toggle = toggle
 
-        toggle2 = qtw.QPushButton(text="share")
+        toggle2 = qtw.QPushButton(text="export")
         toggle2.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
         toggle2.setCheckable(True)
         toggle2.setChecked(False)
@@ -434,7 +462,7 @@ class MainWindow(qtw.QWidget):
 
         bacB = qtw.QPushButton(text="BAC-Net")
         bacB.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
-        #bacB.clicked.connect()
+        bacB.clicked.connect(self.switch_bac)
         bacB.setObjectName("bacButton")
 
         localB = qtw.QPushButton(text="local network")
@@ -445,7 +473,7 @@ class MainWindow(qtw.QWidget):
         # add buttons to download layout
         downLayout.addLayout(toggleLayout)
         downLayout.addWidget(srfB)
-        #downLayout.addWidget(bacB)
+        downLayout.addWidget(bacB)
 
         on_macOS = self.BT_server.on_macOS()
 
@@ -780,100 +808,40 @@ class MainWindow(qtw.QWidget):
 
         # if exists, go through setup
         self.bac_core.setup_db()
+        articles, titles, feeds = self.get_bac_feeds()
 
-        print("successfully loaded db")
+        article_lst = qtw.QListWidget()
+        article_lst.setWordWrap(True)
+        article_lst.itemSelectionChanged.connect(self.bac_article_selection_changed)
+        self.bac_article_lst = article_lst
 
-        text = qtw.QLabel("Active feed:")
-        text.setObjectName("bac-text")
+        bac_selector = qtw.QComboBox()
+        bac_selector.setObjectName("combo")
+        bac_selector.addItems(feeds)
+        bac_selector.setCurrentIndex(0)
+        bac_selector.currentTextChanged.connect(self.update_bac_article_lst)
+        bac_selector.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
+        self.bac_selector = bac_selector
 
-        #lst = qtw.QListWidget()
-        items = self.bac_core.get_feednames_from_host()
-        #lst.addItems(items)
-
-        active_feed = qtw.QComboBox()
-        active_feed.setObjectName("combo")
-        active_feed.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
-        for item in items:
-            active_feed.addItem(item)
-
-        if self.active_feed is None:
-            self.active_feed = active_feed
-        else:
-            self.active_feed.clear()
-            self.active_feed.addItems(items)
-
-        btn = qtw.QPushButton(text="create feed")
-        btn.setObjectName("bacButton")
+        btn = qtw.QPushButton("Create new feed")
         btn.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
-        btn.clicked.connect(self.set_feed_section)
+        btn.setObjectName("bacButton")
+        btn.clicked.connect(self.set_create_feed_section)
 
-        btn2 = qtw.QPushButton(text="import")
-        btn2.setObjectName("bacButton")
-        btn2.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
-        btn2.clicked.connect(self.bac_import)
+        lhs_layout = qtw.QVBoxLayout()
+        lhs_layout.addWidget(bac_selector)
+        lhs_layout.addWidget(article_lst)
+        lhs_layout.addWidget(btn)
 
-        btn3 = qtw.QPushButton(text="export")
-        btn3.setObjectName("bacButton")
-        btn3.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
-        btn3.clicked.connect(self.bac_export)
+        text = qtw.QTextBrowser()
+        style.setArticleStyle(text)
+        text.setOpenExternalLinks(True)
+        self.bac_reader = text
 
-        layout = qtw.QVBoxLayout()
-        #layout.addWidget(lst)
-        layout.addWidget(text)
-        layout.addWidget(self.active_feed)
-        layout.addWidget(btn)
-        layout.addWidget(btn2)
-        layout.addWidget(btn3)
-        layout.addStretch()
-        layout.setObjectName("bac-box")
+        self.update_bac_article_lst()
 
-        text2 = qtw.QLabel("Articles in feeds:")
-        text2.setObjectName("bac-text")
-
-        lst = qtw.QListWidget()
-        lst.setWordWrap(True)
-        lst.setObjectName("bacLst")
-        self.bac_selector = lst
-        #TODO
-
-        tuples = self.bac_core.get_all_feed_name_host_tuples()
-        json = []
-        for tuple in tuples:
-            list = self.bac_core.get_json_files_from_feed(tuple)
-            for item in list:
-                json.append(item)
-
-        articles = []
-        for item in json:
-            article = Article("SRF")
-            article.fill_article_from_json_string(item)
-            articles.append(article)
-
-        titles = []
-        for item in articles:
-            titles.append(item.title_1)
-
-        titles.reverse()
-
-        lst.itemDoubleClicked.connect(self.bac_double_clicked)
-        lst.setToolTip("double click to open article")
-
-        self.articles_in_feeds = articles
-        lst.addItems(titles)
-        #lst.itemSelectionChanged.connect(TODO)
-
-        layout2 = qtw.QVBoxLayout()
-        layout2.addWidget(text2)
-        layout2.addWidget(lst)
-
-        super = qtw.QGridLayout()
-        layout2.setContentsMargins(0, 0, 200, 0)
-        super.setContentsMargins(0, 0, 100, 0)
-
-        super.addLayout(layout2, 0, 0, 10, 6)
-        super.addLayout(layout, 0, 8, 10, 2)
-
-        self.main.addLayout(super, 0, 0)
+        self.main.addLayout(lhs_layout, 0, 0, 10, 2)
+        self.main.addWidget(text, 0, 2, 10, 8)
 
     def set_login_section(self):
         self.tab_changed()
@@ -965,18 +933,89 @@ class MainWindow(qtw.QWidget):
 
         self.main.addLayout(horizontal, 0, 0)
 
-    def bac_double_clicked(self):
-        title = self.bac_selector.currentItem().text()
-        article = None
-        for item in self.articles_in_feeds:
-            if item.title_1 == title:
-                article = item
+    def set_create_feed_section(self):
+        self.tab_changed()
 
-        html = article.get_html()
-        external = externalWindow(title, html, self.window().width(), self.window().height(), self.light)
-        external.show()
+        title = qtw.QLabel("Enter a feed name:")
+        title.setObjectName("client-text")
 
-        self.open_windows.append(external)
+        input = qtw.QLineEdit()
+        input.setAttribute(qtc.Qt.WA_MacShowFocusRect, 0)
+        input.setAlignment(qtc.Qt.AlignCenter)
+        self.feed_input = input
+
+        btn = qtw.QPushButton("create")
+        btn.setObjectName("bacButton")
+        btn.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
+        btn.clicked.connect(self.create_feed)
+
+        layout = qtw.QVBoxLayout()
+        layout.addStretch()
+        layout.addWidget(title)
+        layout.addWidget(input)
+        layout.addWidget(btn)
+        layout.addStretch()
+
+        h_layout = qtw.QHBoxLayout()
+        h_layout.addStretch()
+        h_layout.addLayout(layout)
+        h_layout.addStretch()
+
+        self.main.addLayout(h_layout, 0, 0)
+
+    def update_bac_article_lst(self):
+        if self.bac_selector is None or self.bac_selector.currentText() is None:
+            self.set_info_screen("No feed was selected.", "back", self.set_BAC_section)
+            return
+
+        text = self.bac_selector.currentText()
+        print(text)
+        split = text.split(" ")
+
+        if len(split) < 3:
+            return
+
+        feed = split[0][1:-1]
+        name = split[2]
+
+        json_lst = self.bac_core.get_json_files_from_feed((feed, name))
+
+        articles = []
+        for json in json_lst:
+            article = Article("SRF")
+            article.fill_article_from_json_string(json)
+            articles.append(article)
+
+        self.bac_articles = articles
+
+        titles = [x.title_1 for x in articles]
+        self.bac_article_lst.clear()
+        self.bac_article_lst.addItems(titles)
+        self.bac_article_lst.setCurrentRow(0)
+        self.bac_reader.moveCursor(qtg.QTextCursor.Start)
+
+    def get_bac_feeds(self):
+        tuples = self.bac_core.get_all_feed_name_host_tuples()
+        feeds = []
+        json = []
+        for tuple in tuples:
+            feeds.append("\"" + tuple[0] + "\"" + " by " + tuple[1])
+            list = self.bac_core.get_json_files_from_feed(tuple)
+            for item in list:
+                json.append(item)
+
+        articles = []
+        for item in json:
+            article = Article("SRF")
+            article.fill_article_from_json_string(item)
+            articles.append(article)
+
+        titles = []
+        for item in articles:
+            titles.append(item.title_1)
+
+        titles.reverse()
+        return (articles, titles, feeds)
 
     def create_feed(self):
         name = self.feed_input.text()
@@ -997,6 +1036,22 @@ class MainWindow(qtw.QWidget):
             self.set_BAC_section()
         else:
             self.set_info_screen("Invalid name.", "back", self.set_login_section)
+
+    def bac_article_selection_changed(self):
+        current = self.bac_article_lst.currentItem().text()
+
+        target_article = None
+        for article in self.bac_articles:
+            if article.title_1 == current:
+                target_article = article
+
+        if target_article is None:
+            print("article not found")
+            return
+
+        html = target_article.get_html()
+        self.bac_reader.clear()
+        self.bac_reader.insertHtml(html)
 
     # if selected article in article selector changes
     # used in reading section
@@ -1172,42 +1227,41 @@ class MainWindow(qtw.QWidget):
         self.set_info_screen("Download successful.", "read", self.set_reading_section)
 
     def handle_bac_net(self):
-        if self.selected == self.b1:
-            current_section = self.set_reading_section
-        else:
-            current_section = self.set_archiving_section
-
-        if self.active_feed is None or self.active_feed.currentText() is None:
-            self.set_info_screen("Please select a feed first.", "back", current_section)
+        if self.bac_core.exists_db() == 0:
+            self.set_login_section()
             return
 
-        if self.selector is None or self.selector.currentItem() is None:
-            self.set_info_screen("Please select an article first.", "back", current_section)
+        self.bac_core.setup_db()
+
+        if len(self.bac_core.get_feednames_from_host()) == 0:
+            self.set_info_screen("Please create a feed first.", "create feed", self.set_create_feed_section)
             return
 
         title = self.selector.currentItem().text()
         article = self.logic.get_article_from_title(title)
-        json = article.get_json()
 
-        feed = self.active_feed.currentText()
-        print("trying to add \"{}\" into feed \"{}\"".format(title, feed))
-
-        # add it to feed
-        self.bac_core.create_event(feed, json)
-        print("added to feed")
-
-        msg = qtw.QMessageBox()
-        msg.setWindowTitle("Success")
-        msg.setText("Added article to {}.".format(feed))
-        msg.exec_()
+        dialog = bacPopUp(self.bac_core, article.get_json())
+        dialog.exec_()
 
     def bac_import(self):
+        if self.bac_core.exists_db() == 0:
+            self.set_BAC_section()
+            return
+
+        self.bac_core.setup_db()
+
         path = str(qtw.QFileDialog.getExistingDirectory(self, "Import"))
 
         # give path to bac core
         self.bac_core.import_from_pcap_to_db(path)
 
     def bac_export(self):
+        if self.bac_core.exists_db() == 0:
+            self.set_BAC_section()
+            return
+
+        self.bac_core.setup_db()
+
         # choose directory
         path = str(qtw.QFileDialog.getExistingDirectory(self, "Export"))
 
@@ -1227,6 +1281,12 @@ class MainWindow(qtw.QWidget):
             self.set_blue_client_section()
         else:
             self.set_blue_server_section()
+
+    def switch_bac(self):
+        if self.toggle.isChecked():
+            self.bac_import()
+        else:
+            self.bac_export()
 
     # used in LAN client UI
     # connect to selected IP address
