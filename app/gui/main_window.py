@@ -978,7 +978,6 @@ class MainWindow(qtw.QWidget):
             return
 
         text = self.bac_selector.currentText()
-        print(text)
         split = text.split("\"")
 
         if len(split) < 3:
@@ -986,7 +985,6 @@ class MainWindow(qtw.QWidget):
 
         feed = split[1]
         name = split[2].split("by ")[1]
-        print(name)
 
         json_lst = self.bac_core.get_json_files_from_feed((feed, name))
 
@@ -1031,7 +1029,6 @@ class MainWindow(qtw.QWidget):
         name = self.feed_input.text()
 
         if len(name) > 0:
-            print("creating feed {}".format(name))
             self.bac_core.create_feed(name)
             self.set_BAC_section()
         else:
@@ -1041,7 +1038,6 @@ class MainWindow(qtw.QWidget):
         name = self.login.text()
 
         if len(name) > 0:
-            print("creating user {}".format(name))
             self.bac_core.setup_db(name)
             self.set_BAC_section()
         else:
@@ -1056,7 +1052,7 @@ class MainWindow(qtw.QWidget):
                 target_article = article
 
         if target_article is None:
-            print("article not found")
+            #print("article not found")
             return
 
         html = target_article.get_html()
@@ -1303,7 +1299,7 @@ class MainWindow(qtw.QWidget):
     def connect(self):
         ip = self.serverLst.currentItem().text()
         ip = ip.split("\t")[0]
-        print("trying to connect to " + ip)
+        #print("trying to connect to " + ip)
         self.set_loading_screen_section()
         self.lan_thread = LANThread(self.LAN_client, ip, self.download_status)
         self.lan_thread.start()
@@ -1313,7 +1309,7 @@ class MainWindow(qtw.QWidget):
     def connect_manually(self):
         ip = self.IP_input.text()
         if len(ip) >= 7 and len(ip) <= 15:
-            print("trying to connect to " + ip)
+            #print("trying to connect to " + ip)
             self.set_loading_screen_section()
             self.lan_thread = LANThread(self.LAN_client, ip, self.download_status)
             self.lan_thread.start()

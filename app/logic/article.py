@@ -103,7 +103,6 @@ class Article:
 
     def fill_article_from_json_string(self, str):
         data = json.loads(str)
-        print(data)
 
         self.news_source = data['news_source']
         self.category = data['category']

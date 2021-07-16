@@ -59,7 +59,7 @@ class BACCore:
         if user_name != "" and len(user_name) <= 32:            
             ecf = EventCreationTool.EventFactory()
             public_key = ecf.get_feed_id()
-            print(public_key)
+            #print(public_key)
             """
             chat_function = ChatFunction()
             first_event = ecf.first_event('chat', chat_function.get_host_master_id())
@@ -72,7 +72,7 @@ class BACCore:
                 'public_key': public_key
             }
             pickle.dump(self.dictionary, open(DIR_BACNET + '/' + self.pickle_file_names[1], "wb"))  # save user_name and key
-            print("Your user_name has been saved:", user_name)
+            #print("Your user_name has been saved:", user_name)
 
             return 1
         else:
@@ -111,7 +111,7 @@ class BACCore:
         second_event = ect.create_event_from_previous(first_event, 'bac_news/new_article', dictionary)
         fcc.add_event(second_event)
 
-        print("feed sucessfully created (from core)")
+        #print("feed sucessfully created (from core)")
         """
                 dictionary = {
                     'user_name': 'user1',
@@ -131,7 +131,7 @@ class BACCore:
                 #print(first_event)
                 
                 list_of_feed_ids = EventCreationTool.EventCreationTool.get_stored_feed_ids()
-                print(list_of_feed_ids)
+                #print(list_of_feed_ids)
                 
                 for seq in range(0, 2):
                     pass
@@ -180,8 +180,7 @@ class BACCore:
         new_event = ect.create_event_from_previous(event, 'bac_news/new_article', {'json': json_file})
         fcc = FeedCtrlConnection()
         fcc.add_event(new_event)
-        print("event sucessfully created and appended (from core)")
-
+        #print("event sucessfully created and appended (from core)")
 
     def get_event_content(self, feed_id, seq_no):
         cbor_event = self.db_connector.get_event(feed_id, seq_no)
@@ -193,7 +192,7 @@ class BACCore:
     def exists_db(self):
         self._fcc = FeedCtrlConnection()
         lastEvent = self._fcc.get_host_master_id()
-        print(lastEvent)
+        #print(lastEvent)
         if lastEvent is not None:
             return 1
         return 0
@@ -267,7 +266,7 @@ class BACCore:
         return self.db_connector.get_all_feed_ids()
     
     def get_feedname_from_id(self, feed_id):
-        print(self.get_event_content(feed_id, 1)[1]["list_name"])
+        #print(self.get_event_content(feed_id, 1)[1]["list_name"])
         return self.get_event_content(feed_id, 1)[1]["list_name"]
 
     def get_id_from_feed_name_and_host(self, feedname_host):

@@ -24,7 +24,7 @@ class LogicInterface:
         for article in articles:
             if article is not None:
                 save_article(article)
-        print("finished downloading")
+        #print("finished downloading")
         self.is_updating = False
 
     def get_articles(self):
