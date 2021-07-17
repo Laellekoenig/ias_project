@@ -185,7 +185,7 @@ class MainWindow(qtw.QWidget):
         self.bac_export_thread = None
 
         # initiate window
-        super().__init__(windowTitle="IAS Project")
+        super().__init__(windowTitle="BAC News")
 
         # keyboard shortcuts
         self.shortcut_book = qtw.QShortcut(qtg.QKeySequence("Ctrl+B"), self)
