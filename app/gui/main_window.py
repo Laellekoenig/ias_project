@@ -1049,7 +1049,7 @@ class MainWindow(qtw.QWidget):
             self.set_BAC_section()
         else:
             # if input is empty
-            self.set_info_screen("Invalid feed name.", "back", self.set_feed_section)
+            self.set_info_screen("Invalid feed name.", "back", self.set_create_feed_section)
 
     # creates a new user
     def bac_login(self):
