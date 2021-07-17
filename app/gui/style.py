@@ -223,16 +223,17 @@ def getLightStyleSheet():
         font-size: 16px;
     }
     QComboBox::Item {
+        background-color: black;
         color: #f7f7f7;
     }
     QComboBox::Item:selected {
+        background-color: #f7f7f7;
         color: black;
     }
     QComboBox::drop-down {
         border-radius: 3px;
     }
     QComboBox QAbstractItemView {
-        background-color: black;
     }
     #client-text {
         font-family: Assistant;
