@@ -14,7 +14,6 @@ DIR_ARTICLES = DIR_MAIN + '/Articles'
 DIR_TRANSFER = DIR_MAIN + '/Export'
 DIR_BACNET = DIR_MAIN + '/BACNet'
 DIR_KEYS = DIR_MAIN + '/Keys'
-DIR_DB = DIR_MAIN + '/Database'
 DELTA_TIME_OLDEST_ARTICLES = timedelta(days = 10)
 
 def make_dirs():
@@ -26,8 +25,6 @@ def make_dirs():
         os.makedirs(DIR_BACNET)
     if not os.path.exists(DIR_KEYS):
         os.makedirs(DIR_KEYS)
-    if not os.path.exists(DIR_DB):
-        os.makedirs(DIR_DB)
 
 def get_stored_articles():
     #todo
