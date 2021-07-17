@@ -40,7 +40,6 @@ class LogMerge:
     def export_logs(self, path_to_pcap_folder, dict_feed_id_current_seq_no, maximum_events_per_feed_id=-1):
         list_of_master_feed_ids = self.DB.get_all_master_ids()
         list_of_master_feed_ids.append(self.DB.get_master_feed_id())
-        print(list_of_master_feed_ids)
         for master_feed_id in list_of_master_feed_ids:
             if master_feed_id not in dict_feed_id_current_seq_no and self.EV.check_outgoing(master_feed_id):
                 event_list = []
@@ -53,10 +52,8 @@ class LogMerge:
                     next_event = self.DB.get_event(master_feed_id, current_seq_no)
                 PCAP.write_pcap(os.path.join(path_to_pcap_folder, master_feed_id.hex() + "_v"), event_list)
         for feed_id, current_seq_no in dict_feed_id_current_seq_no.items():
-            print("get here1")
             if not self.EV.check_outgoing(feed_id):
                 continue
-            print("get here2")
             event_list = []
             current_seq_no += 1
             next_event = self.DB.get_event(feed_id, current_seq_no)
@@ -188,5 +185,4 @@ if __name__ == '__main__':
     events = PCAP.read_pcap('nameofpcapfile.pcap')
     for event in events:
         event = Event.from_cbor(event)
-        print(event.content.content[1]['master_feed'].hex())
         break

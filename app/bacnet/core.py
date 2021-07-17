@@ -2,7 +2,7 @@ import pickle
 import os
 import sys
 from datetime import datetime
-from logic.file_handler import DIR_BACNET, make_dirs
+from logic.file_handler import DIR_MAIN, DIR_BACNET, make_dirs
 from pathlib import Path
 
 import json
@@ -57,7 +57,7 @@ class BACCore:
     def create_user(self, user_name):
         make_dirs()
         if user_name != "" and len(user_name) <= 32:            
-            ecf = EventCreationTool.EventFactory()
+            ecf = EventCreationTool.EventFactory(None, DIR_MAIN + '/' + 'Keys', False)
             public_key = ecf.get_feed_id()
             #print(public_key)
             """
@@ -88,12 +88,13 @@ class BACCore:
         fcc = FeedCtrlConnection()
         
         ect = EventCreationTool()
+        ect.set_path_to_keys(DIR_MAIN + '/' + 'Keys', False)
         public_key = ect.generate_feed()
         first_event = ect.create_first_event(public_key, 'bac_news/new_article', {'master_feed': self.master_feed_id})
         
 
         event = self.db_connector.get_current_event(self.master_feed_id)
-        ecf_master = EventFactory(event)
+        ecf_master = EventFactory(event, DIR_MAIN + '/' + 'Keys', False)
         eventCreationWrapper = EventCreationWrapper(ecf_master)
 
         new_feed_event = eventCreationWrapper.create_newFeed(public_key, 'bac_news')
@@ -105,6 +106,7 @@ class BACCore:
 
         # create event containing list name, host name and creation date
         ect = EventCreationTool()
+        ect.set_path_to_keys(DIR_MAIN + '/' + 'Keys', False)
         dictionary = {  'host' : self.get_event_content(self.master_feed_id, 2)[1]['name'],
                         'list_name' : article_list_name,
                         'date' : datetime.now().isoformat() }
@@ -177,6 +179,7 @@ class BACCore:
         #print(event)
 
         ect = EventCreationTool()
+        ect.set_path_to_keys(DIR_MAIN + '/' + 'Keys', False)
         new_event = ect.create_event_from_previous(event, 'bac_news/new_article', {'json': json_file})
         fcc = FeedCtrlConnection()
         fcc.add_event(new_event)
@@ -208,7 +211,8 @@ class BACCore:
             #print(self._fcc.get_trusted(self.master_feed_id))
             #print(2)
         else:
-            self._ecf = EventFactory()
+            make_dirs()
+            self._ecf = EventFactory(None, DIR_MAIN + '/' + 'Keys', False)
             self._eventCreationWrapper = EventCreationWrapper(self._ecf)
             _firstEvent = self._eventCreationWrapper.create_MASTER()
             _secondEvent = self._eventCreationWrapper.create_radius(1)
