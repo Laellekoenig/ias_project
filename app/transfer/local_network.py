@@ -25,7 +25,9 @@ def get_devices():
             try:
                 if len(parts) >= 3:
                     device = { "name" : "unknown", "ip" : parts[0], "mac" : parts[1] }
-                    if device["ip"].split('.')[0] != '192' or device["ip"].split('.')[-1] == '1' or device["ip"].split('.')[-1] == '255' or not parts[0][0].isnumeric():
+                    ip_start = device["ip"].split('.')[0]
+                    ip_end = device["ip"].split('.')[-1]
+                    if (ip_start != '192' and ip_start != '172' and ip_start != '10') or ip_end == '1' or ip_end == '255' or not parts[0][0].isnumeric():
                         continue
                     devices.append(device)
             except Exception:
@@ -36,7 +38,9 @@ def get_devices():
             try:
                 if len(parts) >= 4:
                     device = { "name" : parts[0], "ip" : re.sub('[()]', '', parts[1]), "mac" : parts[3] }
-                    if device["ip"] == '224.0.0.251' or device["ip"].split('.')[-1] == '1':
+                    ip_start = device["ip"].split('.')[0]
+                    ip_end = device["ip"].split('.')[-1]
+                    if (ip_start != '192' and ip_start != '172' and ip_start != '10') or ip_end == '1' or ip_end == '255':
                         continue
                     devices.append(device)
             except Exception:
