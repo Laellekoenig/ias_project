@@ -1260,6 +1260,13 @@ class MainWindow(qtw.QWidget):
     # if a user wants to add an article to a bac net feed
     # present pop up window and let user choose feed
     def handle_bac_net(self):
+        if self.selector.currentItem() is None:
+            if self.selected == self.b1:
+                self.set_info_screen("Please select an article first.", "back", self.set_reading_section)
+            else:
+                self.set_info_screen("Please select an article first.", "back", self.set_archiving_section)
+            return
+
         # check if bac net is set up, if not let user log in
         if self.bac_core.exists_db() == 0:
             self.set_login_section()
