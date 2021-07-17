@@ -32,16 +32,16 @@ def get_devices():
             except Exception:
                 print("Something went wrong reading arp table entry.")
     else:
-    for line in data.split('\n'):
-        parts = line.split(' ')
-        try:
-            if len(parts) >= 4:
-                device = { "name" : parts[0], "ip" : re.sub('[()]', '', parts[1]), "mac" : parts[3] }
-                if device["ip"] == '224.0.0.251' or device["ip"].split('.')[-1] == '1':
-                    continue
-                devices.append(device)
-        except Exception:
-            print("Something went wrong reading arp table entry.")
+        for line in data.split('\n'):
+            parts = line.split(' ')
+            try:
+                if len(parts) >= 4:
+                    device = { "name" : parts[0], "ip" : re.sub('[()]', '', parts[1]), "mac" : parts[3] }
+                    if device["ip"] == '224.0.0.251' or device["ip"].split('.')[-1] == '1':
+                        continue
+                    devices.append(device)
+            except Exception:
+                print("Something went wrong reading arp table entry.")
         
     return devices
 
