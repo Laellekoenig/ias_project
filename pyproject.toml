@@ -1,8 +1,8 @@
 [tool.poetry]
-name = "news-scraper"
-version = "0.1.0"
-description = ""
-authors = ["Simon Laube <simon.laube96@gmail.com>"]
+name = "BACNews"
+version = "1.0.0"
+description = "A news reader for the BAC-Net"
+authors = ["Maximilian Barth, Philipp Weber, Simon Laube"]
 
 [tool.poetry.dependencies]
 python = "^3.9"
