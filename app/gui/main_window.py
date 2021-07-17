@@ -1045,6 +1045,12 @@ class MainWindow(qtw.QWidget):
         name = self.feed_input.text()
 
         if len(name) > 0:
+            # check if name already exists
+            names = self.bac_core.get_feednames_from_host()
+            if name in names:
+                self.set_info_screen("Feedname already exists.", "back", self.set_create_feed_section)
+                return
+
             self.bac_core.create_feed(name)
             self.set_BAC_section()
         else:
