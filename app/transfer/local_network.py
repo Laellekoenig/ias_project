@@ -16,6 +16,22 @@ def get_devices():
         data = f.read()
 
     devices = []
+    if sys.platform == "win32" or sys.platform == "cygwin":
+        for line in data.split('\n'):
+            line = line[2:] # split off first two spaces
+
+        parts = line.split('\t')
+        print(parts)
+
+        try:
+            if len(parts) >= 3:
+                device = { "name" : "unknown", "ip" : parts[0], "mac" : parts[1] }
+                if device["ip"] == '224.0.0.251' or device["ip"].split('.')[-1] == '1':
+                    continue
+                devices.append(device)
+        except Exception:
+            print("Something went wrong reading arp table entry.")
+    else:
     for line in data.split('\n'):
         parts = line.split(' ')
         try:
