@@ -21,12 +21,11 @@ def get_devices():
             line = line[2:] # split off first two spaces
             #line = ' '.join(line.split())
             parts = line.split()
-            print(parts)
-
+            
             try:
                 if len(parts) >= 3:
                     device = { "name" : "unknown", "ip" : parts[0], "mac" : parts[1] }
-                    if device["ip"] == '224.0.0.251' or device["ip"].split('.')[-1] == '1':
+                    if device["ip"].split('.')[0] != '192' or device["ip"].split('.')[-1] == '1' or device["ip"].split('.')[-1] == '255' or not parts[0][0].isnumeric():
                         continue
                     devices.append(device)
             except Exception:

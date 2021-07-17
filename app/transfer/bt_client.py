@@ -30,14 +30,12 @@ class bt_client:
         while i < 3: # try connecting 3 times
             try:
                 self.socket.connect((self.server_mac_address, self.port))
-                print("successfully connected")
                 self.connect_success = True
                 i = 3
             except:
                 i = i + 1
                 pass
         if self.connect_success is False: # client couldn't connect with server
-            print("something went wrong, please try again")
             return
         self.running = True
         try:
@@ -62,12 +60,9 @@ class bt_client:
 
         try:
             data = self.socket.recv(1024)
-            print("receiving new articles...")
-
             while not data == "!?L=C)(JZB?)K)=FJ(W".encode():
                 f.write(data)
                 data = self.socket.recv(1024)
-            print("new articles successfully added")
             f.close()
             self.socket.close() # everything received, can close now
             self.running = False

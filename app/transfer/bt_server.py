@@ -25,19 +25,14 @@ class bt_server:
         if self.host_mac_address is None:
             print("Your device is currently not supported (you cannot start a bluetooth server)")
             
-        print("your bluetooth server is starting now \n")
         print (self.host_mac_address)
-        print("this is the address somebody else has to type in to receive the articles you have \n")
 
         try: #try to create a socket
             self.socket = socket.socket(socket.AF_BLUETOOTH, socket.SOCK_STREAM, socket.BTPROTO_RFCOMM)
             self.socket.settimeout(self.server_timeout)
-            #####self.socket.settimeout(30)
             self.socket.bind((self.host_mac_address, self.port))
-            #####print("in 30 seconds the server closes, if no client connected")
             self.socket.listen(1)
             self.running = True
-            print("waiting for incoming connections...")
         except Exception:
             print("Socket creation exception")
             return
@@ -45,7 +40,6 @@ class bt_server:
         while self.running:
             try: 
                 client, address = self.socket.accept()
-                print("client {} connected to your server and is receiving your articles now".format(address))
             except socket.timeout:
                 self.socket.listen(1)
                 print("renew timeout")
@@ -64,7 +58,6 @@ class bt_server:
                     date_time = datetime.fromisoformat(date_time_msg.decode())
             except socket.timeout:
                 self.socket.listen(1)
-                print("renew timeout")
                 continue
             except Exception:
                 print("something went wrong...")
@@ -81,13 +74,11 @@ class bt_server:
                     client.close()
                     self.socket.close()
                     self.running = False
-                    print("there are no new articles for you")
                     return
                 else:
                     f = open(path, 'rb')
             except socket.timeout:
                 self.socket.listen(1)
-                print("renew timeout")
                 continue
             except Exception:
                 print("Failed to open or compress files for sending to client.")
@@ -106,16 +97,12 @@ class bt_server:
                         data = "!?L=C)(JZB?)K)=FJ(W".encode() # windows socket doesn't support flush() (problems with sending empty packet, so that receiver doesn't know when last packet arrived, therefore sending this string)
                     client.send(data)
                 #client.flush()  
-                print("finished sending new articles")
             except socket.timeout:
                 self.socket.listen(1)
-                print("renew timeout")
             except Exception:
                 print("something went wrong while sending your articles")
 
             f.close()
-            #if os.path.exists(str(Path.home()) + "/NewsTest/Articles/articles.zip"):
-                #os.remove(str(Path.home()) + "/NewsTest/Articles/articles.zip")
             client.close()
             self.socket.close()
             self.running = False
@@ -155,11 +142,6 @@ class bt_server:
             return None
 
     def stop_server(self):
-        """if self.running:
-            if self.socket != None:
-                self.socket.close()
-                self.running = False
-        print("closed connection")"""
         self.running = False
 
     def keep_alive(self):

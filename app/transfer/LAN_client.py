@@ -23,7 +23,6 @@ class LANClient:
         # bind server address to port
         self.client_socket.bind(self.client_addr)
         # connect to server
-        print("trying to connect to server: {}".format(self.server_addr))
         try:
             self.client_socket.connect(self.server_addr)
             newest_datetime = get_newest_datetime()
@@ -50,7 +49,6 @@ class LANClient:
                     break
                 file.write(data)
             file.close()
-            print("Articles successfully received.")
             unzip_articles(DIR_TRANSFER + "/received_articles.zip")
             self.client_socket.close()
             return 1

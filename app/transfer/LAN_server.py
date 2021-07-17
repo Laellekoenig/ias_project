@@ -2,6 +2,7 @@ import os
 import re
 import socket
 import threading
+import netifaces as ni
 from logic.file_handler import make_dirs, get_newest_datetime, zip_articles, unzip_articles, DIR_TRANSFER
 from datetime import datetime
 
@@ -17,14 +18,16 @@ class LANServer:
         self.thread_running = False
 
     def start_server(self):
+        x = ni.gateways() 
+        y = x['default'][2][1] 
+        ip = ni.ifaddresses(y)[ni.AF_INET][0]['addr']
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.settimeout(self.server_timeout)
-        self.address = (socket.gethostbyname(socket.gethostname()), self.default_port)
+        self.address = (ip, self.default_port)
         self.socket.bind(self.address)
         self.socket.listen(1)
         self.running = True
         self.thread_running = True
-        print("server running on " + self.get_IP())
 
         while self.running:
             try:
@@ -63,7 +66,6 @@ class LANServer:
 
             except socket.timeout:
                 self.socket.listen(1)
-                print("renew timeout") # this line can be removed eventually
             except socket.error as exc:
                 print("Socket exception: %s" % exc)
                 self.socket.close()
@@ -72,7 +74,6 @@ class LANServer:
                 print("An error occurred while listening to client.")
                 self.socket.close()
                 break
-        print("server closed")
         self.thread_running = False
 
     def start_server_threaded(self):
@@ -80,11 +81,6 @@ class LANServer:
         self.thread.start()
 
     def stop_server(self):
-        """if self.running:
-            if self.socket != None:
-                self.socket.close()
-                self.running = False
-        print("closed connection")"""
         self.running = False
 
     def keep_alive(self):

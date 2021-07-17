@@ -196,9 +196,6 @@ def getSRFArticles(old_articles):
         #print(art.title_1)
     urls = getURLsfromRSS(infos)
     
-
-    print("#URLs: " + str(len(urls)))
-
     for url in urls:
         if url is not None:
             article = getArticleFromURL(url)
@@ -224,8 +221,6 @@ def main():
     
     start = time.time()
     articles = getSRFArticles([])
-    print("#Articles: " + str(len(articles)))
-    print(time.time() - start)
 
 if __name__ == "__main__":
     main()
