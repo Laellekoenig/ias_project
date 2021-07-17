@@ -30,7 +30,7 @@ def get_devices():
                         continue
                     devices.append(device)
             except Exception:
-            print("Something went wrong reading arp table entry.")
+                print("Something went wrong reading arp table entry.")
     else:
     for line in data.split('\n'):
         parts = line.split(' ')
