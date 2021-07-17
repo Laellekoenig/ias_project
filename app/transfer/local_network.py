@@ -19,8 +19,8 @@ def get_devices():
     if sys.platform == "win32" or sys.platform == "cygwin":
         for line in data.split('\n'):
             line = line[2:] # split off first two spaces
-
-            parts = line.split('\t')
+            #line = ' '.join(line.split())
+            parts = line.split()
             print(parts)
 
             try:
