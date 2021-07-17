@@ -233,8 +233,6 @@ def getLightStyleSheet():
     QComboBox::drop-down {
         border-radius: 3px;
     }
-    QComboBox QAbstractItemView {
-    }
     #client-text {
         font-family: Assistant;
         font-size: 35px;
@@ -497,9 +495,6 @@ def getDarkStyleSheet():
     }
     QComboBox::drop-down {
         border-radius: 3px;
-    }
-    QComboBox QAbstractItemView {
-        background-color: #f7f7f7;
     }
     #client-text {
         font-family: Assistant;
